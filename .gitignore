@@ -1,0 +1,7 @@
+# executables
+*.exe
+*.out
+*.o
+
+# vscode
+.vscode
