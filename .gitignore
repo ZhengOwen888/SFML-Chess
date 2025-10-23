@@ -5,3 +5,8 @@
 
 # vscode
 .vscode
+
+# build
+build
+
+cmake_test.txt
