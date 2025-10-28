@@ -20,13 +20,11 @@ namespace GameLogic
             Rook,
             Queen,
             King,
-            None
         };
 
         enum class MoveType
         {
             Normal,
-            Capture,
             CastleKS,   // castling king side
             CastleQS,   // castling queen side
             DoublePawn, // pawn moving foward 2 squares as their first move
