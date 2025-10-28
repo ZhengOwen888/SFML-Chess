@@ -11,7 +11,7 @@ namespace GameLogic
     {
         public:
             NormalMove(Position from_position, Position to_position);
-            ~NormalMove();
+            ~NormalMove() override = default;
 
             void executeMove(Board &board) override;
     };

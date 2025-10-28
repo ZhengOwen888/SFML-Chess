@@ -13,7 +13,7 @@ namespace GameLogic
             // Constructors and destructor
             Pawn(Enums::Color color);
             Pawn(Enums::Color color, bool has_moved, bool has_promoted);
-            ~Pawn() = default;
+            ~Pawn() override = default;
 
             // Make a clone of this pawn
             std::unique_ptr<Piece> clonePiece() const override;
