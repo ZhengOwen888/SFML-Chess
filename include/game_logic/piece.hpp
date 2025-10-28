@@ -1,8 +1,9 @@
 #ifndef GAMELOGIC_PIECE_HPP
 #define GAMELOGIC_PIECE_HPP
 
-#include "enums.hpp"
 #include <memory>
+
+#include "enums.hpp"
 
 namespace GameLogic
 {
