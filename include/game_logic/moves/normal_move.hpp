@@ -13,7 +13,7 @@ namespace GameLogic
             NormalMove(Position from_position, Position to_position);
             ~NormalMove();
 
-            void executeMove(Board &board_) override;
+            void executeMove(Board &board) override;
     };
 }
 

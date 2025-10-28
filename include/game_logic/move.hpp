@@ -17,7 +17,7 @@ namespace GameLogic
             Move(Enums::MoveType move_type,Position from_position, Position to_position);
             ~Move();
 
-            virtual void executeMove(Board &board_) = 0;
+            virtual void executeMove(Board &board) = 0;
 
             Position getFromPos() const;
             Position getToPos() const;
