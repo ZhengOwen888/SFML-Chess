@@ -17,9 +17,6 @@ namespace GameLogic
 
             // Make a clone of this pawn
             std::unique_ptr<Piece> clonePiece() const override;
-
-            // Getter for Pawn type
-            Enums::PieceType getPieceType() const override;
     };
 }
 
