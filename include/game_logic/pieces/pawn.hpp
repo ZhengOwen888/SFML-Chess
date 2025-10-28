@@ -20,6 +20,6 @@ namespace GameLogic
             // Make a clone of this pawn
             std::unique_ptr<Piece> clonePiece() const override;
     };
-}
+} // namespace GameLogic
 
 #endif

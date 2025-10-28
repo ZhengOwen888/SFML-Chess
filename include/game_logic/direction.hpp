@@ -21,19 +21,19 @@ namespace GameLogic
             int getColDelta() const;
 
             // static chess directions
-            static const Direction North;
-            static const Direction South;
-            static const Direction East;
-            static const Direction West;
-            static const Direction NorthEast;
-            static const Direction NorthWest;
-            static const Direction SouthEast;
-            static const Direction SouthWest;
+            static const Direction North;     // (-1,  0)
+            static const Direction South;     // ( 1,  0)
+            static const Direction East;      // ( 0,  1)
+            static const Direction West;      // ( 0, -1)
+            static const Direction NorthEast; // (-1,  1) or North + East
+            static const Direction NorthWest; // (-1, -1) or North + West
+            static const Direction SouthEast; // ( 1,  1) or South + East
+            static const Direction SouthWest; // ( 1, -1) or South + West
 
         private:
             int row_delta_; // change in row (-1 = up, 1 = down)
             int col_delta_; // change in col (-1 = left, 1 = right)
     };
-}
+} // namespace GameLogic
 
 #endif

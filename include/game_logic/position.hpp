@@ -29,6 +29,6 @@ namespace GameLogic
             int row_;
             int col_;
     };
-}
+} // namespace GameLogic
 
 #endif
