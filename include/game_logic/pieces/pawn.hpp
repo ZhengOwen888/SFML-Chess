@@ -2,9 +2,7 @@
 #define GAMELOGIC_PAWN_HPP
 
 #include <memory>
-
 #include "piece.hpp"
-
 #include "enums.hpp"
 
 namespace GameLogic

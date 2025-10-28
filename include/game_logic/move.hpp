@@ -2,10 +2,8 @@
 #define GAMELOGIC_MOVE_HPP
 
 #include <memory>
-
 #include "board.hpp"
 #include "position.hpp"
-
 #include "enums.hpp"
 
 namespace GameLogic
