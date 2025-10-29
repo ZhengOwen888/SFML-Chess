@@ -20,7 +20,7 @@ namespace GameLogic
             Position operator+(const Direction &other_direction) const;
 
             // Getters
-            Enums::Color getColor() const; // calculate color of the square
+            Enums::Color getSquareColor() const; // calculate color of the square
             int getRow() const;
             int getCol() const;
 
