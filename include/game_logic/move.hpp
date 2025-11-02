@@ -13,7 +13,7 @@ namespace GameLogic
         public:
             // contructors and destructors
             Move(Enums::MoveType move_type, Position&  from_position, Position& to_position);
-            virtual ~Move() = default;
+            virtual ~Move();
 
             // execute given move on board
             virtual void executeMove(Board& board) = 0;

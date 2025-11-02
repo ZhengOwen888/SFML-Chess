@@ -9,7 +9,7 @@ namespace GameLogic
     {
         public:
             Player(Enums::Color color);
-            ~Player() = default;
+            ~Player();
 
             // Get own player color
             Enums::Color getColor() const;
