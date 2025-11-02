@@ -2,6 +2,7 @@
 #define GAMELOGIC_PIECE_HPP
 
 #include <memory>
+#include <vector>
 #include "move.hpp"
 #include "position.hpp"
 #include "direction.hpp"
