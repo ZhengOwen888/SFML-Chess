@@ -6,21 +6,21 @@ namespace GameLogic
     class Direction
     {
         public:
-            // Construct a direction with row and col deltas
+            // contruct Direction object with change in rows and change in columns
             Direction(int row_delta, int col_delta);
             ~Direction();
 
-            // Vector addition, adding two directions
+            // return a new Direction object with the sum of this direction and another direction
             Direction operator+(const Direction &other_direction) const;
 
-            // Scalar multiplication, scale direction
+            // return a new Direction with the scalar of this direction
             Direction operator*(int scalar) const;
 
             // Getters
-            int getRowDelta() const;
-            int getColDelta() const;
+            int GetRowDelta() const;
+            int GetColDelta() const;
 
-            // static chess directions
+            // static cardinal directions
             static const Direction North;     // (-1,  0)
             static const Direction South;     // ( 1,  0)
             static const Direction East;      // ( 0,  1)

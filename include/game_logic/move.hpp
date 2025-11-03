@@ -1,27 +1,24 @@
 #ifndef GAMELOGIC_MOVE_HPP
 #define GAMELOGIC_MOVE_HPP
 
-#include <memory>
-#include "board.hpp"
 #include "position.hpp"
 #include "enums.hpp"
+
+#include <memory>
 
 namespace GameLogic
 {
     class Move
     {
         public:
-            // contructors and destructors
-            Move(Enums::MoveType move_type, Position&  from_position, Position& to_position);
-            virtual ~Move();
+            // contructor a Move object with move type, start position and destination position
+            Move(Enums::MoveType move_type, const Position&  from_position, const Position& to_position);
+            ~Move();
 
-            // execute given move on board
-            virtual void executeMove(Board& board) = 0;
-
-            // Getters
-            Enums::MoveType getMoveType() const;
-            const Position& getFromPos() const;
-            const Position& getToPos() const;
+            // getters
+            Enums::MoveType GetMoveType() const;
+            const Position& GetFromPos() const;
+            const Position& GetToPos() const;
 
         private:
             Enums::MoveType move_type_;

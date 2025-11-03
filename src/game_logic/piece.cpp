@@ -1,39 +1,40 @@
-#include "piece.hpp"
-
-#include <memory>
-#include <vector>
 #include "board.hpp"
+#include "piece.hpp"
 #include "move.hpp"
 #include "position.hpp"
 #include "direction.hpp"
 #include "enums.hpp"
 
+#include <memory>
+#include <vector>
 
 namespace GameLogic
 {
+    // contruct a piece object with piece type and color
     Piece::Piece(Enums::PieceType piece_type, Enums::Color color)
         : piece_type_(piece_type), color_(color) {};
 
+    // default destructor
     Piece::~Piece() {};
 
 
-
-    std::vector<Position> Piece::getPositionsInDir(
+    // get all positions a piece can move to from its current position (in EXACTLY ONE Direction)
+    std::vector<Position> Piece::GetPositionsInDir(
         const Position& from_position, const Board& board, const Direction& direction) const
     {
         std::vector<Position> positions;
 
-        for (Position pos = from_position; board.isPositionOnBoard(pos); pos = pos + direction)
+        for (Position pos = from_position; board.IsPositionOnBoard(pos); pos = pos + direction)
         {
-            if (board.isPositionEmpty(pos))
+            if (board.IsPositionEmpty(pos))
             {
                 positions.push_back(pos);
                 continue;
             }
 
-            Piece* piece = board[pos].get();
+            const Piece* piece = board.GetPieceAt(pos);
 
-            if (piece->getColor() != color_)
+            if (piece->GetColor() != color_)
             {
                 positions.push_back(pos);
             }
@@ -43,14 +44,15 @@ namespace GameLogic
         return positions;
     }
 
-    std::vector<Position> Piece::getPositionsInDirs(
+    // get all positions a piece can move to from its current position (in a SET of MANY Directions)
+    std::vector<Position> Piece::GetPositionsInDirs(
         const Position& from_position, const Board &board, const std::vector<Direction>& directions) const
     {
         std::vector<Position> positions;
 
         for (const Direction& dir : directions)
         {
-            std::vector<Position> temp = getPositionsInDir(from_position, board, dir);
+            std::vector<Position> temp = GetPositionsInDir(from_position, board, dir);
             positions.insert(positions.end(), temp.begin(), temp.end());
         }
 
@@ -58,37 +60,39 @@ namespace GameLogic
     }
 
 
-
-    // Setters
-    void Piece::setHasMoved()
+    // mark the piece as having already moved (use for castling and pawn double step)
+    void Piece::SetHasMoved()
     {
         has_moved_ = true;
     }
 
-    void Piece::setHasPromoted()
+    // mark the piece as having already promoted (for pawns)
+    void Piece::SetHasPromoted()
     {
         has_promoted_ = true;
     }
 
 
-
-    // Getters
-    Enums::PieceType Piece::getPieceType() const
+    // get the piece type of a piece (pawn, knight, bishop ...)
+    Enums::PieceType Piece::GetPieceType() const
     {
         return piece_type_;
     }
 
-    Enums::Color Piece::getColor() const
+    // get the color of the piece (Dark, Light, None)
+    Enums::Color Piece::GetColor() const
     {
         return color_;
     }
 
-    bool Piece::hasMoved() const
+    // returns true if piece has already moved, false otherwise
+    bool Piece::HasMoved() const
     {
         return has_moved_;
     }
 
-    bool Piece::hasPromoted() const
+    // returns true if piece has already promoted, false otherwise
+    bool Piece::HasPromoted() const
     {
         return has_promoted_;
     }
