@@ -1,49 +1,50 @@
 #ifndef GAMELOGIC_PIECE_HPP
 #define GAMELOGIC_PIECE_HPP
 
-#include <memory>
-#include <vector>
 #include "move.hpp"
 #include "position.hpp"
 #include "direction.hpp"
 #include "enums.hpp"
 
+#include <memory>
+#include <vector>
+
 namespace GameLogic
 {
-    class Board; // forward direction to avoid circular imports
+    // forward direction to avoid circular imports
+    class Board;
 
     class Piece
     {
         public:
-            // Construct a piece with their color and or has_moved, has_promoted
+            // construct a Piece object with piece type and color
             Piece(Enums::PieceType piece_type, Enums::Color color);
-            Piece(Enums::PieceType piece_type, Enums::Color color, bool has_moved, bool has_promoted);
             virtual ~Piece();
 
-            // Clone creates a new piece object with the same property and values
-            virtual std::unique_ptr<Piece> clonePiece() const = 0;
+            // clone a new Piece object with the same properties
+            virtual std::unique_ptr<Piece> ClonePiece() const = 0;
 
             // get all legal moves
-            virtual std::vector<Move> getLegalMoves(
+            virtual std::vector<Move> GetLegalMoves(
                 const Position& from_position, const Board &board) const = 0;
 
-            // helper for getPositionsInDirs: it gets all the positions in one certain directioin if it is legal
-            std::vector<Position> getPositionsInDir(
+            // get all positions a piece can move to from its current position (in EXACTLY ONE Direction)
+            std::vector<Position> GetPositionsInDir(
                 const Position& from_position, const Board &board, const Direction& direction) const;
 
-            // helper for getLegalMoves: it gets all the positions in many directions if it is legal
-            std::vector<Position> getPositionsInDirs(
+            // get all positions a piece can move to from its current position (in a SET of MANY Directions)
+            std::vector<Position> GetPositionsInDirs(
                 const Position& from_position, const Board &board, const std::vector<Direction>& directions) const;
 
-            // Setters
-            void setHasMoved();
-            void setHasPromoted();
+            // setters
+            void SetHasMoved();
+            void SetHasPromoted();
 
-            // Getters
-            Enums::PieceType getPieceType() const;
-            Enums::Color getColor() const;
-            bool hasMoved() const;
-            bool hasPromoted() const;
+            // getters
+            Enums::PieceType GetPieceType() const;
+            Enums::Color GetColor() const;
+            bool HasMoved() const;
+            bool HasPromoted() const;
 
         private:
             Enums::PieceType piece_type_;

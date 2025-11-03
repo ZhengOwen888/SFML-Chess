@@ -8,14 +8,15 @@ namespace GameLogic
     class Player
     {
         public:
+            // contruct a Player object with color
             Player(Enums::Color color);
             ~Player();
 
-            // Get own player color
-            Enums::Color getColor() const;
+            // return the color of this player
+            Enums::Color GetColor() const;
 
             // Use this with caution
-            void setColor(Enums::Color color);
+            void SetColor(Enums::Color color);
 
         private:
             Enums::Color color_;

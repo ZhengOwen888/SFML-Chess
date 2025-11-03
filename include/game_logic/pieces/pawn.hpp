@@ -1,26 +1,26 @@
 #ifndef GAMELOGIC_PAWN_HPP
 #define GAMELOGIC_PAWN_HPP
 
-#include <memory>
-#include <vector>
 #include "piece.hpp"
 #include "enums.hpp"
+
+#include <memory>
+#include <vector>
 
 namespace GameLogic
 {
     class Pawn: public Piece
     {
         public:
-            // Constructors and destructor
+            // construct a Pawn object with color
             Pawn(Enums::Color color);
-            Pawn(Enums::Color color, bool has_moved, bool has_promoted);
             ~Pawn() override = default;
 
-            // Make a clone of this pawn
-            std::unique_ptr<Piece> clonePiece() const override;
+            // clone of this pawn
+            std::unique_ptr<Piece> ClonePiece() const override;
 
-            // Get all legal moves for a pawn from a given position
-            std::vector<Move> getLegalMoves(const Position& from_position, Board &board) const override;
+            // get all legal moves for a Pawn from a given position
+            std::vector<Move> GetLegalMoves(const Position& from_position, Board &board) const;
     };
 } // namespace GameLogic
 
