@@ -15,9 +15,6 @@ namespace GameLogic
             // return the color of this player
             Enums::Color GetColor() const;
 
-            // Use this with caution
-            void SetColor(Enums::Color color);
-
         private:
             Enums::Color color_;
     };
