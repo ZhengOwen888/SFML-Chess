@@ -12,7 +12,7 @@ namespace GameLogic
 {
     // contruct a piece object with piece type and color
     Piece::Piece(Enums::PieceType piece_type, Enums::Color color)
-        : piece_type_(piece_type), color_(color) {};
+        : piece_type_(piece_type), color_(color), has_moved_(false), has_promoted_(false) {};
 
     // default destructor
     Piece::~Piece() {};

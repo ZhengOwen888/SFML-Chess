@@ -17,8 +17,8 @@ namespace GameLogic
 
             // getters
             Enums::MoveType GetMoveType() const;
-            const Position& GetFromPos() const;
-            const Position& GetToPos() const;
+            const Position& GetFromPosition() const;
+            const Position& GetToPosition() const;
 
         private:
             Enums::MoveType move_type_;

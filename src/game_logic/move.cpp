@@ -19,13 +19,13 @@ namespace GameLogic
     }
 
     // return the position the piece is moving from
-    const Position& Move::GetFromPos() const
+    const Position& Move::GetFromPosition() const
     {
         return from_position_;
     }
 
     // return the position the piece is moving to
-    const Position& Move::GetToPos() const
+    const Position& Move::GetToPosition() const
     {
         return to_position_;
     }

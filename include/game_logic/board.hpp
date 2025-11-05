@@ -21,19 +21,15 @@ namespace GameLogic
             bool ExecuteMove(const Move& move);
 
             // returns an immutable piece at a given position otherwise nullptr (for read purpose only)
-            const Piece* GetPieceAt(int row, int col) const;
             const Piece* GetPieceAt(const Position &position) const;
 
             // returns a mutable piece at a given position otherwise nullptr
-            Piece* GetMutablePieceAt(int row, int col);
             Piece* GetMutablePieceAt(const Position &position);
 
             // returns true if position is inside board and false otherwise
-            bool IsPositionOnBoard(int row, int col) const;
             bool IsPositionOnBoard(const Position &position) const;
 
             // returns true of positions has no piece on it and false otherwise
-            bool IsPositionEmpty(int row, int col) const;
             bool IsPositionEmpty(const Position &position) const;
 
         private:
