@@ -17,19 +17,16 @@ namespace GameLogic
             Board();
             ~Board();
 
-            // set up all pieces in starting positions
-            void InitializeBoard();
-
             // execute a move
-            void ExecuteMove(const Move& move);
+            bool ExecuteMove(const Move& move);
 
             // returns an immutable piece at a given position otherwise nullptr (for read purpose only)
             const Piece* GetPieceAt(int row, int col) const;
             const Piece* GetPieceAt(const Position &position) const;
 
             // returns a mutable piece at a given position otherwise nullptr
-            Piece* GetMutablePieceAt(int row, int col) const;
-            Piece* GetMutablePieceAt(const Position &position) const;
+            Piece* GetMutablePieceAt(int row, int col);
+            Piece* GetMutablePieceAt(const Position &position);
 
             // returns true if position is inside board and false otherwise
             bool IsPositionOnBoard(int row, int col) const;
@@ -43,10 +40,13 @@ namespace GameLogic
             // 8 by 8 vector that keeps track of what piece is on what square and if a square is empty
             std::vector<std::vector<std::unique_ptr<Piece>>> board_;
 
+            // set up all pieces in starting positions
+            void InitializeBoard();
+
             // helpers used to execute moves
-            void MovePiece(const Position& from_position, const Position& to_position);
-            void RemovePieceAt(const Position& position);
-            void PlacePieceAt(std::unique_ptr<Piece> piece, const Position& position);
+            bool MovePiece(const Position& from_position, const Position& to_position);
+            bool RemovePieceAt(const Position& position);
+            bool PlacePieceAt(std::unique_ptr<Piece> piece, const Position& position);
     };
 }
 

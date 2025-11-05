@@ -14,7 +14,7 @@ namespace GameLogic
         public:
             // construct a Pawn object with color
             Pawn(Enums::Color color);
-            ~Pawn() override = default;
+            ~Pawn() override;
 
             // clone of this pawn
             std::unique_ptr<Piece> ClonePiece() const override;
