@@ -21,19 +21,15 @@ namespace GameLogic
             bool ExecuteMove(const Move& move);
 
             // returns an immutable piece at a given position otherwise nullptr (for read purpose only)
-            const Piece* GetPieceAt(int row, int col) const;
             const Piece* GetPieceAt(const Position &position) const;
 
             // returns a mutable piece at a given position otherwise nullptr
-            Piece* GetMutablePieceAt(int row, int col);
             Piece* GetMutablePieceAt(const Position &position);
 
             // returns true if position is inside board and false otherwise
-            bool IsPositionOnBoard(int row, int col) const;
             bool IsPositionOnBoard(const Position &position) const;
 
             // returns true of positions has no piece on it and false otherwise
-            bool IsPositionEmpty(int row, int col) const;
             bool IsPositionEmpty(const Position &position) const;
 
         private:
@@ -44,9 +40,17 @@ namespace GameLogic
             void InitializeBoard();
 
             // helpers used to execute moves
-            bool MovePiece(const Position& from_position, const Position& to_position);
-            bool RemovePieceAt(const Position& position);
-            bool PlacePieceAt(std::unique_ptr<Piece> piece, const Position& position);
+            // move a Piece object from one position to another on the board
+            void MovePiece(const Position& from_position, const Position& to_position);
+
+            // remove a Piece object at a position on the board
+            void RemovePieceAt(const Position& position);
+
+            // place a Piece object at a position on the board
+            void PlacePieceAt(std::unique_ptr<Piece> piece, const Position& position);
+
+            // take a pointer to a Piece object at a position
+            std::unique_ptr<Piece> TakePieceAt(const Position &position);
     };
 }
 
