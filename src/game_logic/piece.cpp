@@ -24,19 +24,20 @@ namespace GameLogic
     {
         std::vector<Position> positions;
 
-        for (Position pos = from_position; board.IsPositionOnBoard(pos); pos = pos + direction)
+        for (Position position = from_position + direction; board.IsPositionOnBoard(position); position = position + direction)
         {
-            if (board.IsPositionEmpty(pos))
+            if (board.IsPositionEmpty(position))
             {
-                positions.push_back(pos);
+                positions.push_back(position);
                 continue;
             }
 
-            const Piece* piece = board.GetPieceAt(pos);
+            const Piece* piece = board.GetPieceAt(position);
+
 
             if (piece->GetColor() != color_)
             {
-                positions.push_back(pos);
+                positions.push_back(position);
             }
             break;
         }
@@ -50,9 +51,9 @@ namespace GameLogic
     {
         std::vector<Position> positions;
 
-        for (const Direction& dir : directions)
+        for (const Direction& direction : directions)
         {
-            std::vector<Position> temp = GetPositionsInDir(from_position, board, dir);
+            std::vector<Position> temp = GetPositionsInDir(from_position, board, direction);
             positions.insert(positions.end(), temp.begin(), temp.end());
         }
 
