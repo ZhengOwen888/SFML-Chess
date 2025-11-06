@@ -40,9 +40,17 @@ namespace GameLogic
             void InitializeBoard();
 
             // helpers used to execute moves
-            bool MovePiece(const Position& from_position, const Position& to_position);
-            bool RemovePieceAt(const Position& position);
-            bool PlacePieceAt(std::unique_ptr<Piece> piece, const Position& position);
+            // move a Piece object from one position to another on the board
+            void MovePiece(const Position& from_position, const Position& to_position);
+
+            // remove a Piece object at a position on the board
+            void RemovePieceAt(const Position& position);
+
+            // place a Piece object at a position on the board
+            void PlacePieceAt(std::unique_ptr<Piece> piece, const Position& position);
+
+            // take a pointer to a Piece object at a position
+            std::unique_ptr<Piece> TakePieceAt(const Position &position);
     };
 }
 
