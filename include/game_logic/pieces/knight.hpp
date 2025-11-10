@@ -1,6 +1,10 @@
 #ifndef GAMELOGIC_KNIGHT_HPP
 #define GAMELOGIC_KNIGHT_HPP
 
+#include <memory>
+#include <vector>
+#include <array>
+
 #include "piece.hpp"
 #include "enums.hpp"
 
@@ -16,11 +20,25 @@ namespace GameLogic
             Knight(Enums::Color color);
             ~Knight() override;
 
-            // clone this piece
+
+            // Make a copy of this piece
             std::unique_ptr<Piece> ClonePiece() const override;
 
-            // get all legal moves for a Knight from a given position
-            std::vector<Move> GetLegalMoves(const Position& from_position, Board &board) const;
+            // Get knight moves from a square
+            // For each jump target: if on board and not friendly piece, include.
+            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+
+            // Knight jump directions (8 L-shapes)
+            static inline const std::array<Direction, 8>& JumpDirs()
+            {
+                static const std::array<Direction, 8> dirs = {
+                    Direction(-2, -1), Direction(-2, +1),
+                    Direction(-1, -2), Direction(-1, +2),
+                    Direction(+1, -2), Direction(+1, +2),
+                    Direction(+2, -1), Direction(+2, +1)
+                };
+                return dirs;
+            }
     };
 } // namespace GameLogic
 
