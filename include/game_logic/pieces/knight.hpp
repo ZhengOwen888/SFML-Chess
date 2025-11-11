@@ -20,10 +20,11 @@ namespace GameLogic
             // Make a clone of this Knight object
             std::unique_ptr<Piece> ClonePiece() const override;
 
+            // Get all positions this Knight piece can move to from its current position
             std::vector<Position> GetPositionsFromJumpDirs(
                 const Position& from_position, const Board &board, const std::vector<Direction>& directions) const;
 
-                // Get Knight moves from a position
+            // Get Knight moves from a position
             // For each jump target: if on board and not friendly piece, include.
             std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
 

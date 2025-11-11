@@ -21,20 +21,26 @@ namespace GameLogic
             // Make a clone of King object
             std::unique_ptr<Piece> ClonePiece() const override;
 
+            std::vector<Position> GetPositionsFromAdjacentDirs(
+                const Position &from_position, const Board &board, const std::vector<Direction> &directions) const;
+
             // Get King moves from a position
             // For each adjacent position: if on board and (empty or enemy) include.
             // Castling is handled elsewhere.
-            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+            std::vector<Move> GetLegalMoves(const Position &from_position, const Board &board) const override;
 
             // 8 adjacent directions
-            static inline const std::array<Direction, 8>& AdjacentDirs()
+            static inline const std::vector<Direction> AdjacentDirs =
             {
-                static const std::array<Direction, 8> dirs = {
-                    Direction::North, Direction::South, Direction::East, Direction::West,
-                    Direction::NorthEast, Direction::NorthWest, Direction::SouthEast, Direction::SouthWest
-                };
-                return dirs;
-            }
+                Direction::North,
+                Direction::South,
+                Direction::East,
+                Direction::West,
+                Direction::NorthEast,
+                Direction::NorthWest,
+                Direction::SouthEast,
+                Direction::SouthWest
+            };
     };
 } // namespace GameLogic
 
