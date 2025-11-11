@@ -24,8 +24,8 @@ namespace GameLogic
             return {}; // Return no moves
         }
 
-        // imcomplete, it does not return legal moves yet
-        return piece->GetPotentialMoves(position, board_);
+        // Return legal moves of a piece at a given position
+        return piece->GetLegalMoves(position, board_);
     }
 
     // Execute the move that is given by the player

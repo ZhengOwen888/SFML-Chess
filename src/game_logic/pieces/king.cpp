@@ -57,7 +57,7 @@ namespace GameLogic
 	// Get King moves from a position
     // For each adjacent position: if on board and (empty or enemy) include.
     // Castling is handled elsewhere.
-	std::vector<Move> King::GetPotentialMoves(const Position& from_position, const Board& board) const
+	std::vector<Move> King::GetLegalMoves(const Position& from_position, const Board& board) const
 	{
 		std::vector<Position> to_positions = GetPositionsFromAdjacentDirs(from_position, board, King::AdjacentDirs);
 

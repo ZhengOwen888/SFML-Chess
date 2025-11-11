@@ -25,8 +25,8 @@ namespace GameLogic
             // Clone a new Piece object with the same properties
             virtual std::unique_ptr<Piece> ClonePiece() const = 0;
 
-            // Get all potential moves
-            virtual std::vector<Move> GetPotentialMoves(
+            // Get all legal moves
+            virtual std::vector<Move> GetLegalMoves(
                 const Position& from_position, const Board &board) const = 0;
 
             // Get all positions a piece can move to from its current position (in EXACTLY ONE Direction)
