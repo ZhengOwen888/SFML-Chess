@@ -25,7 +25,7 @@ namespace GameLogic
             // - For each orthogonal dir, go step by step until off the board.
             // - Stop at the first piece. If enemy, include that position; if friendly, do not include it.
             // - Do not check king safety here.
-            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
 
             // Orthogonal directions: N, S, E, W
             static inline const std::vector<Direction> OrthogonalDirs =

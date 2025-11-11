@@ -26,7 +26,8 @@ namespace GameLogic
 
             // Get Knight moves from a position
             // For each jump target: if on board and not friendly piece, include.
-            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+            // - Do not check king safety here.
+            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
 
             // Knight jump directions (8 L-shapes)
             static inline const std::vector<Direction> JumpDirs =

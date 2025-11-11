@@ -70,7 +70,7 @@ namespace GameLogic
 		return to_positions;
 	}
 
-	std::vector<Move> Pawn::GetLegalMoves(const Position& from_position, const Board& board) const
+	std::vector<Move> Pawn::GetPotentialMoves(const Position& from_position, const Board& board) const
 	{
 		std::vector<Position> forward_to_positions = GetForwardPositions(from_position, board);
 		std::vector<Position> capture_to_positions = GetCapturePositions(from_position, board);

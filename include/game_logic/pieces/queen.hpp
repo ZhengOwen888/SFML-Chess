@@ -23,7 +23,8 @@ namespace GameLogic
             // Get queen moves from a position
             // Combine rook + bishop logic (8 directions).
             // Walk each direction until off board or blocked; include first enemy then stop.
-            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+            // - Do not check king safety here.
+            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
 
             // All 8 directions (orthogonal + diagonal)
             static inline const std::vector<Direction> AllDirs =

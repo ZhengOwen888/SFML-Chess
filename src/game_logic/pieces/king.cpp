@@ -21,7 +21,7 @@ namespace GameLogic
 		return std::make_unique<King>(*this);
 	}
 
-	// Get legal positions that are 1 step away from the king in the 8 cardinal directions
+	// Get potential positions that are 1 step away from the king in the 8 cardinal directions
 	std::vector<Position> King::GetPositionsFromAdjacentDirs(
 		const Position& from_position, const Board& board, const std::vector<Direction>& directions) const
 	{
@@ -57,7 +57,7 @@ namespace GameLogic
 	// Get King moves from a position
     // For each adjacent position: if on board and (empty or enemy) include.
     // Castling is handled elsewhere.
-	std::vector<Move> King::GetLegalMoves(const Position& from_position, const Board& board) const
+	std::vector<Move> King::GetPotentialMoves(const Position& from_position, const Board& board) const
 	{
 		std::vector<Position> to_positions = GetPositionsFromAdjacentDirs(from_position, board, King::AdjacentDirs);
 

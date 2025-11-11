@@ -24,7 +24,7 @@ namespace GameLogic
 	// Steps similar to rook but only diagonal directions.
 	// Walk each diagonal until off board or blocked.
     // Include first enemy then stop; stop on friendly.
-	std::vector<Move> Bishop::GetLegalMoves(const Position& from_position, const  Board& board) const
+	std::vector<Move> Bishop::GetPotentialMoves(const Position& from_position, const  Board& board) const
 	{
 		// List of positions this Bishop piece can move to
 		std::vector<Position> to_positions = GetPositionsInDirs(from_position, board, Bishop::DiagonalDirs);
