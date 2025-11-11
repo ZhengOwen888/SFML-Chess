@@ -1,10 +1,7 @@
 #ifndef GAMELOGIC_KNIGHT_HPP
 #define GAMELOGIC_KNIGHT_HPP
 
-#include <memory>
-#include <vector>
-#include <array>
-
+#include "direction.hpp"
 #include "piece.hpp"
 #include "enums.hpp"
 
@@ -16,29 +13,39 @@ namespace GameLogic
     class Knight: public Piece
     {
         public:
-            // construct a Knight object with color
+            // Construct a Knight object with color
             Knight(Enums::Color color);
             ~Knight() override;
 
-
-            // Make a copy of this piece
+            // Make a clone of this Knight object
             std::unique_ptr<Piece> ClonePiece() const override;
 
-            // Get knight moves from a square
+            std::vector<Position> GetPositionsFromJumpDirs(
+                const Position& from_position, const Board &board, const std::vector<Direction>& directions) const;
+
+                // Get Knight moves from a position
             // For each jump target: if on board and not friendly piece, include.
             std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
 
             // Knight jump directions (8 L-shapes)
-            static inline const std::array<Direction, 8>& JumpDirs()
+            static inline const std::vector<Direction> JumpDirs =
             {
-                static const std::array<Direction, 8> dirs = {
-                    Direction(-2, -1), Direction(-2, +1),
-                    Direction(-1, -2), Direction(-1, +2),
-                    Direction(+1, -2), Direction(+1, +2),
-                    Direction(+2, -1), Direction(+2, +1)
-                };
-                return dirs;
-            }
+                // North side jump
+                Direction(-2, -1),
+                Direction(-2,  1),
+
+                // South side jump
+                Direction( 2, -1),
+                Direction( 2,  1),
+
+                // West side jump
+                Direction(-1, -2),
+                Direction( 1, -2),
+
+                // East side jump
+                Direction(-1,  2),
+                Direction( 1,  2)
+            };
     };
 } // namespace GameLogic
 

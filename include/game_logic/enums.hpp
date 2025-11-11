@@ -24,11 +24,11 @@ namespace GameLogic
 
         enum class MoveType
         {
-            Normal,
-            CastleKS,   // castling king side
-            CastleQS,   // castling queen side
-            DoublePawn, // pawn moving foward 2 squares as their first move
-            EnPassant,  // pawn capture an opponent's pawn that has just moved two squares from its start position and landed beside it
+            Normal,     // Normal Moves and Capture
+            CastleKS,   // Castling king side
+            CastleQS,   // Castling queen side
+            DoublePawn, // Pawn moving foward 2 squares as their first move
+            EnPassant,  // Pawn capture an opponent's pawn that has just moved two squares from its start position and landed beside it
             PawnPromotion,
         };
 

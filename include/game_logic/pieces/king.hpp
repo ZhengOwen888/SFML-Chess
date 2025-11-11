@@ -1,30 +1,28 @@
 #ifndef GAMELOGIC_KING_HPP
 #define GAMELOGIC_KING_HPP
 
-#include <memory>
-#include <vector>
-#include <array>
-
+#include "direction.hpp"
 #include "piece.hpp"
 #include "enums.hpp"
 
 #include <memory>
 #include <vector>
+#include <array>
 
 namespace GameLogic
 {
     class King: public Piece
     {
         public:
-            // construct a King object with color
+            // Construct a King object with color
             King(Enums::Color color);
             ~King() override;
 
-            // make a clone of this piece
+            // Make a clone of King object
             std::unique_ptr<Piece> ClonePiece() const override;
 
-            // Get king moves from a square
-            // For each adjacent square: if on board and (empty or enemy) include.
+            // Get King moves from a position
+            // For each adjacent position: if on board and (empty or enemy) include.
             // Castling is handled elsewhere.
             std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
 

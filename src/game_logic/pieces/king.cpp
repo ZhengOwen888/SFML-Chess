@@ -1,22 +1,27 @@
-#include "pieces/king.hpp"
+#include "direction.hpp"
+#include "position.hpp"
+#include "move.hpp"
+#include "board.hpp"
+#include "king.hpp"
+#include "enums.hpp"
+
+#include <memory>
+#include <vector>
+#include <array>
 
 namespace GameLogic
 {
 	King::King(Enums::Color color)
 		: Piece(Enums::PieceType::King, color) {}
 
-	King::King(Enums::Color color, bool has_moved, bool has_promoted)
-		: Piece(Enums::PieceType::King, color, has_moved, has_promoted) {}
-
-	std::unique_ptr<Piece> King::clonePiece() const
+	std::unique_ptr<Piece> King::ClonePiece() const
 	{
 		return std::make_unique<King>(*this);
 	}
 
-	std::vector<Move> King::getLegalMoves(const Position& /*from_position*/, Board& /*board*/) const
+	std::vector<Move> King::GetLegalMoves(const Position& from_position, const Board& board) const
 	{
 		// Will be implemented when Board occupancy APIs are available.
 		return {};
 	}
 }
-

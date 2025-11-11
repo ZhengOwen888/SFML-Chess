@@ -9,14 +9,14 @@ namespace GameLogic
     class Position
     {
         public:
-            // construct a Position object with row and column
+            // Construct a Position object with row and column
             Position(int row, int col);
             ~Position();
 
-            // returns true if this position and another position are eqaul in terms of row and column
+            // Returns true if this position and another position are eqaul in terms of row and column
             bool operator==(const Position& other_position) const;
 
-            // returns a new Position object by adding change in row and change column to this position's row and column respectively
+            // Returns a new Position object by adding change in row and change column to this position's row and column respectively
             Position operator+(const Direction &other_direction) const;
 
             // Getters

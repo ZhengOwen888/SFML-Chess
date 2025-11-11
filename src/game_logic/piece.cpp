@@ -10,92 +10,94 @@
 
 namespace GameLogic
 {
-    // contruct a piece object with piece type and color
+    // Contruct a piece object with piece type and color
     Piece::Piece(Enums::PieceType piece_type, Enums::Color color)
         : piece_type_(piece_type), color_(color), has_moved_(false), has_promoted_(false) {};
 
-    // default destructor
+    // Default destructor
     Piece::~Piece() {};
 
 
-    // get all positions a piece can move to from its current position (in EXACTLY ONE Direction)
+    // Get all positions a piece can move to from its current position (in EXACTLY ONE Direction)
     std::vector<Position> Piece::GetPositionsInDir(
         const Position& from_position, const Board& board, const Direction& direction) const
     {
-        std::vector<Position> positions;
+        std::vector<Position> to_positions;
 
-        for (Position position = from_position + direction; board.IsPositionOnBoard(position); position = position + direction)
+        for (Position to_position = from_position + direction; board.IsPositionOnBoard(to_position); to_position = to_position + direction)
         {
-            if (board.IsPositionEmpty(position))
+            // If square or position is empty, we can move the piece there
+            if (board.IsPositionEmpty(to_position))
             {
-                positions.push_back(position);
+                to_positions.push_back(to_position);
                 continue;
             }
 
-            const Piece* piece = board.GetPieceAt(position);
-
-
-            if (piece->GetColor() != color_)
+            const Piece* piece = board.GetPieceAt(to_position);
+            // If square or position contains enemy piece we can capture.
+            if (piece->GetColor() != this->color_)
             {
-                positions.push_back(position);
+                to_positions.push_back(to_position);
             }
+
+            // When enemy or ally piece is met stop scanning in this direction
             break;
         }
 
-        return positions;
+        return to_positions;
     }
 
-    // get all positions a piece can move to from its current position (in a SET of MANY Directions)
+    // Get all positions a piece can move to from its current position (in a SET of MANY Directions)
     std::vector<Position> Piece::GetPositionsInDirs(
         const Position& from_position, const Board &board, const std::vector<Direction>& directions) const
     {
-        std::vector<Position> positions;
+        std::vector<Position> to_positions;
 
         for (const Direction& direction : directions)
         {
             std::vector<Position> temp = GetPositionsInDir(from_position, board, direction);
-            positions.insert(positions.end(), temp.begin(), temp.end());
+            to_positions.insert(to_positions.end(), temp.begin(), temp.end());
         }
 
-        return positions;
+        return to_positions;
     }
 
 
-    // mark the piece as having already moved (use for castling and pawn double step)
+    // Mark the piece as having already moved (use for castling and pawn double step)
     void Piece::SetHasMoved()
     {
-        has_moved_ = true;
+        this->has_moved_ = true;
     }
 
-    // mark the piece as having already promoted (for pawns)
+    // Mark the piece as having already promoted (for pawns)
     void Piece::SetHasPromoted()
     {
-        has_promoted_ = true;
+        this->has_promoted_ = true;
     }
 
 
-    // get the piece type of a piece (pawn, knight, bishop ...)
+    // Get the piece type of a piece (pawn, knight, bishop ...)
     Enums::PieceType Piece::GetPieceType() const
     {
-        return piece_type_;
+        return this->piece_type_;
     }
 
-    // get the color of the piece (Dark, Light, None)
+    // Get the color of the piece (Dark, Light, None)
     Enums::Color Piece::GetColor() const
     {
-        return color_;
+        return this->color_;
     }
 
-    // returns true if piece has already moved, false otherwise
+    // Returns true if piece has already moved, false otherwise
     bool Piece::HasMoved() const
     {
-        return has_moved_;
+        return this->has_moved_;
     }
 
-    // returns true if piece has already promoted, false otherwise
+    // Returns true if piece has already promoted, false otherwise
     bool Piece::HasPromoted() const
     {
-        return has_promoted_;
+        return this->has_promoted_;
     }
 
 } // namespace GameLogic
