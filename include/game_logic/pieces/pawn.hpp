@@ -1,6 +1,7 @@
 #ifndef GAMELOGIC_PAWN_HPP
 #define GAMELOGIC_PAWN_HPP
 
+#include "direction.hpp"
 #include "piece.hpp"
 #include "enums.hpp"
 
@@ -12,15 +13,37 @@ namespace GameLogic
     class Pawn: public Piece
     {
         public:
-            // construct a Pawn object with color
+            // Construct a Pawn object with color
             Pawn(Enums::Color color);
             ~Pawn() override;
 
-            // clone of this pawn
+            // Make a clone of this Pawn object
             std::unique_ptr<Piece> ClonePiece() const override;
 
-            // get all legal moves for a Pawn from a given position
-            std::vector<Move> GetLegalMoves(const Position& from_position, Board &board) const;
+            // Get pawn moves from a position (basic):
+            // 1) One step forward: if empty include.
+            // 2) Two steps: only if first move and both positions are empty.
+            // 3) Captures: check two diagonal targets; include if enemy there.
+            // 4) Promotion / en passant handled later.
+            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+
+            std::vector<Position> GetForwardPositions(const Position &from_position, const Board &board) const;
+            std::vector<Position> GetCapturePositions(const Position &from_position, const Board &board) const;
+
+            // Forward direction by color (Light = North, Dark = South)
+            static inline Direction Forward(Enums::Color color)
+            {
+                return (color == Enums::Color::Light) ? Direction::North : Direction::South;
+            }
+
+            static inline std::vector<Direction> CaptureDirs(Enums::Color color)
+            {
+                if (color == Enums::Color::Light)
+                {
+                    return {Direction::NorthEast, Direction::NorthWest};
+                }
+                return {Direction::SouthEast, Direction::SouthWest};
+            }
     };
 } // namespace GameLogic
 

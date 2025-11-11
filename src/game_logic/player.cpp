@@ -10,6 +10,6 @@ namespace GameLogic
 
     Enums::Color Player::GetColor() const
     {
-        return color_;
+        return this->color_;
     }
 } // namespace GameLogic

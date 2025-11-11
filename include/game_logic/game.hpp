@@ -9,14 +9,14 @@ namespace GameLogic
     class Game
     {
         public:
-            // construct a Game object
+            // Construct a Game object
             Game();
             ~Game();
 
-            // return the color of the current player
+            // Return the color of the current player
             const Player &GetCurrentPlayer() const;
 
-            // return the color of the current player's opponent's color
+            // Return the color of the current player's opponent's color
             const Player &GetOpponentPlayer() const;
 
         private:

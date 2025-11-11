@@ -1,6 +1,7 @@
 #ifndef GAMELOGIC_ROOK_HPP
 #define GAMELOGIC_ROOK_HPP
 
+#include "direction.hpp"
 #include "piece.hpp"
 #include "enums.hpp"
 
@@ -12,15 +13,28 @@ namespace GameLogic
     class Rook: public Piece
     {
         public:
-            // construct a Rook object with color
+            // Construct a Rook object with color
             Rook(Enums::Color color);
             ~Rook() override;
 
-            // clone this piece
+            // Make a clone of this Rook object
             std::unique_ptr<Piece> ClonePiece() const override;
 
-            // get all legal moves for a Rook from a given position
-            std::vector<Move> GetLegalMoves(const Position& from_position, Board &board) const;
+            // Get rook moves from a position
+            // Steps:
+            // - For each orthogonal dir, go step by step until off the board.
+            // - Stop at the first piece. If enemy, include that position; if friendly, do not include it.
+            // - Do not check king safety here.
+            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+
+            // Orthogonal directions: N, S, E, W
+            static inline const std::vector<Direction> OrthogonalDirs =
+            {
+                Direction::North,
+                Direction::South,
+                Direction::East,
+                Direction::West
+            };
     };
 } // namespace GameLogic
 

@@ -11,11 +11,14 @@ namespace GameLogic
     class Move
     {
         public:
-            // contructor a Move object with move type, start position and destination position
+            // Contructor a Move object with move type, start position and destination position
             Move(Enums::MoveType move_type, const Position&  from_position, const Position& to_position);
             ~Move();
 
-            // getters
+            // Returns true if both moves have the same from and to position
+            bool operator==(const Move &other_move) const;
+
+            // Getters
             Enums::MoveType GetMoveType() const;
             const Position& GetFromPosition() const;
             const Position& GetToPosition() const;
