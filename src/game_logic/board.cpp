@@ -75,13 +75,6 @@ namespace GameLogic
             return false;
         }
 
-        // Check if the move is legal
-        std::vector<Move> legal_moves = piece->GetLegalMoves(from_position, *this);
-        if (std::find(legal_moves.begin(), legal_moves.end(), move) == legal_moves.end())
-        {
-            return false;
-        }
-
         // Execute the move
         MovePiece(from_position, to_position);
         return true;
