@@ -35,14 +35,11 @@ namespace GameLogic
         enum class GameState
         {
             Ongoing,
-            Check,
             Checkmate,
-            Draw,                // general draw - could be Stalemate, ThreeFoldRepetition ...
             Stalemate,           // (draw) not in check, but no legal moves
             ThreeFoldRepetition, // (draw) same position repeated 3 times
             FiftyMoveRule,       // (draw) no pawn move or capture for 50 moves
-            WhiteWin,
-            BlackWin
+            InsufficientMaterial,// (draw) niether player has enough pieces to give the other a checkmate
         };
     }
 }

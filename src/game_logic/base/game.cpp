@@ -23,6 +23,37 @@ namespace GameLogic
         return MoveValidator::GetLegalMovesAtPosition(position, this->current_player_color_, this->board_);
     }
 
+    // Get all legal move a player can make
+    std::vector<Move> Game::GetAllLegalMovesForPlayer(Enums::Color player_color)
+    {
+        return MoveValidator::GetAllLegalMovesForPlayer(player_color, board_);
+    }
+
+    // Update the game state after each move
+    void Game::UpdateGameState()
+    {
+        // Check if the current player has any legal moves
+        if (GetAllLegalMovesForPlayer(current_player_color_).size() == 0)
+        {
+            // Checkmate if current player has no legal moves and their king is in check
+            if (MoveValidator::IsKingInCheck(current_player_color_, board_))
+            {
+                result_.SetWin(GetOpponentPlayerColor());
+            }
+            // Stalemate if current player has no legal moves but their king is not in check
+            else
+            {
+                result_.SetDraw(Enums::GameState::Stalemate);
+            }
+        }
+    }
+
+    // Check if the game is over
+    bool Game::IsGameOver() const
+    {
+        return !result_.IsOngoing();
+    }
+
     // Execute the move that is given by the player
     // Return True and switch player turn if it was successful
     bool Game::ExecuteMove(const Move& move)
@@ -34,6 +65,7 @@ namespace GameLogic
         {
             // Switch to opponenet's turn
             current_player_color_ = GetOpponentPlayerColor();
+            UpdateGameState();
         }
 
         return execute_move_success;
@@ -42,26 +74,13 @@ namespace GameLogic
     // Return the current player
     const Player& Game::GetCurrentPlayer() const
     {
-        if (current_player_color_ == Enums::Color::Light)
-        {
-            return player_light_;
-        }
-        else {
-            return player_dark_;
-        }
+        return (current_player_color_ == Enums::Color::Light) ? player_light_ : player_dark_;
     }
 
     // Return the current player's opponent's
     const Player& Game::GetOpponentPlayer() const
     {
-        if (current_player_color_ == Enums::Color::Light)
-        {
-            return player_dark_;
-        }
-        else
-        {
-            return player_light_;
-        }
+        return (current_player_color_ == Enums::Color::Light) ? player_dark_ : player_light_;
     }
 
     // Return the current player's color
@@ -73,14 +92,7 @@ namespace GameLogic
     // Return the current player's opponent's color
     Enums::Color Game::GetOpponentPlayerColor() const
     {
-        if (current_player_color_ == Enums::Color::Light)
-        {
-            return Enums::Color::Dark;
-        }
-        else
-        {
-            return Enums::Color::Light;
-        }
+        return (current_player_color_ == Enums::Color::Light) ? Enums::Color::Dark : Enums::Color::Light;
     }
 
 } // namespace GameLogic

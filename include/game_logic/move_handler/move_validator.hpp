@@ -11,8 +11,11 @@ namespace GameLogic
     class MoveValidator
     {
         public:
-            // Get all legal moves for a piece at a given position
-            static std::vector<Move> GetLegalMovesAtPosition(const Position &position, Enums::Color player_color,  Board& board);
+            // Get legal moves for a piece at a given position
+            static std::vector<Move> GetLegalMovesAtPosition(const Position &position, Enums::Color player_color,  Board &board);
+
+            // Get all legal move a player can make
+            static std::vector<Move> GetAllLegalMovesForPlayer(Enums::Color player_color, Board &board);
 
             // Helpers used for finding legal moves
              // Returns true if the move is legal

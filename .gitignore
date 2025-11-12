@@ -9,4 +9,4 @@
 # build
 build
 
-*.txt
+cmake_test.txt

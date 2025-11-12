@@ -1,5 +1,7 @@
 #include "game_logic/base/board.hpp"
 #include "game_logic/base/move.hpp"
+#include "game_logic/base/piece.hpp"
+#include "game_logic/base/position.hpp"
 
 #include "game_logic/move_handler/move_validator.hpp"
 
@@ -7,35 +9,10 @@
 #include "game_logic/constants.hpp"
 
 #include <vector>
+#include <memory>
 
 namespace GameLogic
 {
-    // Get all legal moves for a piece at a given position
-    std::vector<Move> MoveValidator::GetLegalMovesAtPosition(const Position &position, Enums::Color player_color, Board& board)
-    {
-        std::vector<Move> legal_moves;
-
-        // Get the piece at the given position
-        const Piece *piece = board.GetPieceAt(position);
-        if (piece == nullptr)
-        {
-            return {}; // No piece at given position
-        }
-
-        // Get the potential moves for the piece at the given position
-        std::vector<Move> potential_moves = piece->GetPotentialMoves(position, board);
-
-        // Check if each potential move is legal
-        for (const Move& move : potential_moves)
-        {
-            if (IsLegalMove(move, player_color, board))
-            {
-                legal_moves.push_back(move);
-            }
-        }
-
-        return legal_moves;
-    }
 
     // Helpers used for finding legal moves
     // Returns true if the move is legal
@@ -58,8 +35,8 @@ namespace GameLogic
         {
             for (int col = 0; col < Constants::BOARD_SIZE; col++)
             {
-                Position piece_position{row, col};
-                const Piece *piece = board.GetPieceAt(piece_position);
+                Position position{row, col};
+                const Piece *piece = board.GetPieceAt(position);
 
                 // Skip if there is no piece or the piece is not the same color as the player
                 if (piece == nullptr || piece->GetColor() != player_color)
@@ -68,7 +45,7 @@ namespace GameLogic
                 }
 
                 // Get all potential moves for this piece
-                const std::vector<Move> potential_moves = piece->GetPotentialMoves(piece_position, board);
+                const std::vector<Move> potential_moves = piece->GetPotentialMoves(position, board);
 
                 // Check if any move lands on the opponent's king
                 for (const Move &potential_move : potential_moves)
@@ -77,7 +54,9 @@ namespace GameLogic
                     const Piece *target_piece = board.GetPieceAt(to_position);
 
                     // Return true if there is a piece at the target location which is also of Type King
-                    if (target_piece != nullptr && target_piece->GetPieceType() == Enums::PieceType::King)
+                    if (target_piece != nullptr
+                        && target_piece->GetPieceType() == Enums::PieceType::King
+                        && target_piece->GetColor() != player_color)
                     {
                         return true;
                     }
