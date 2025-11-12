@@ -30,7 +30,7 @@ namespace GameLogic
     {
         this->board_.resize(8);  // 8 rows
         for (auto& row : this->board_) {
-            row.resize(8);  // 8 columns, each element default-initialized to nullptr
+            row.resize(8);  // 8 columns, each element initialized to nullptr
         }
 
         // Place Dark pieces
@@ -79,6 +79,18 @@ namespace GameLogic
         {
             case Enums::MoveType::Normal:
                 return MovePiece(from_position, to_position);
+
+            // The rest of the move type also uses MovePiece funciton but might neeed some extra logic
+            case Enums::MoveType::DoublePawn:
+                return;
+            case Enums::MoveType::CastleKS:
+                return;
+            case Enums::MoveType::CastleQS:
+                return;
+            case Enums::MoveType::EnPassant:
+                return;
+            case Enums::MoveType::PawnPromotion:
+                return;
             // Invalid move type
             default:
                 return false;
