@@ -12,5 +12,5 @@ add_library(GameRender STATIC ${GAME_RENDER_SRC})
 # Include directory for GameLogic headers
 target_include_directories(GameRender
 	PUBLIC
-		"${CMAKE_SOURCE_DIR}/include/game_render"
+		"${CMAKE_SOURCE_DIR}/include"
 )

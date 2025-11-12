@@ -1,6 +1,7 @@
-#include "position.hpp"
-#include "direction.hpp"
-#include "enums.hpp"
+#include "game_logic/base/position.hpp"
+#include "game_logic/base/direction.hpp"
+
+#include "game_logic/enums.hpp"
 
 namespace GameLogic
 {

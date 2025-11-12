@@ -1,8 +1,9 @@
 #ifndef GAMELOGIC_POSITION_HPP
 #define GAMELOGIC_POSITION_HPP
 
-#include "enums.hpp"
-#include "direction.hpp"
+#include "game_logic/base/direction.hpp"
+
+#include "game_logic/enums.hpp"
 
 namespace GameLogic
 {

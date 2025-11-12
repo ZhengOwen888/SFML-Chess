@@ -1,6 +1,7 @@
-#include "move.hpp"
-#include "position.hpp"
-#include "enums.hpp"
+#include "game_logic/base/move.hpp"
+#include "game_logic/base/position.hpp"
+
+#include "game_logic/enums.hpp"
 
 #include <memory>
 

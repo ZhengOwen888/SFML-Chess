@@ -1,8 +1,9 @@
 #ifndef GAMELOGIC_MOVE_HPP
 #define GAMELOGIC_MOVE_HPP
 
-#include "position.hpp"
-#include "enums.hpp"
+#include "game_logic/base/position.hpp"
+
+#include "game_logic/enums.hpp"
 
 #include <memory>
 

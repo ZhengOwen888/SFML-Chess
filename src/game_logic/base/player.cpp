@@ -1,5 +1,6 @@
-#include "player.hpp"
-#include "enums.hpp"
+#include "game_logic/base/player.hpp"
+
+#include "game_logic/enums.hpp"
 
 namespace GameLogic
 {
