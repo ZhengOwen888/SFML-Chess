@@ -2,7 +2,7 @@
 #include "position.hpp"
 #include "move.hpp"
 #include "board.hpp"
-#include "queen.hpp"
+#include "pieces/queen.hpp"
 #include "enums.hpp"
 
 #include <memory>

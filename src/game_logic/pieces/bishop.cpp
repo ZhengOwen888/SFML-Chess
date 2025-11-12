@@ -2,7 +2,7 @@
 #include "position.hpp"
 #include "move.hpp"
 #include "board.hpp"
-#include "bishop.hpp"
+#include "pieces/bishop.hpp"
 #include "enums.hpp"
 
 #include <memory>

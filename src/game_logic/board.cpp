@@ -3,12 +3,12 @@
 
 #include "board.hpp"
 #include "piece.hpp"
-#include "pawn.hpp"
-#include "knight.hpp"
-#include "bishop.hpp"
-#include "rook.hpp"
-#include "queen.hpp"
-#include "king.hpp"
+#include "pieces/pawn.hpp"
+#include "pieces/knight.hpp"
+#include "pieces/bishop.hpp"
+#include "pieces/rook.hpp"
+#include "pieces/queen.hpp"
+#include "pieces/king.hpp"
 
 #include "enums.hpp"
 #include "constants.hpp"
@@ -81,16 +81,7 @@ namespace GameLogic
                 return MovePiece(from_position, to_position);
 
             // The rest of the move type also uses MovePiece funciton but might neeed some extra logic
-            case Enums::MoveType::DoublePawn:
-                return;
-            case Enums::MoveType::CastleKS:
-                return;
-            case Enums::MoveType::CastleQS:
-                return;
-            case Enums::MoveType::EnPassant:
-                return;
-            case Enums::MoveType::PawnPromotion:
-                return;
+
             // Invalid move type
             default:
                 return false;
