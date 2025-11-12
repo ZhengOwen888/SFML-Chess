@@ -18,10 +18,11 @@ namespace GameLogic
             ~Game();
 
             // Get all legal moves a piece can make at the given position
-            std::vector<Move> GetLegalMovesAtPosition(const Position &position) const;
+            std::vector<Move> GetLegalMovesAtPosition(const Position &position);
 
             // Execute the move that is given by the player
-            void MakeMove(const Move& move);
+            // Return True and switch player turn if it was successful
+            bool ExecuteMove(const Move& move);
 
             // Return the current player
             const Player &GetCurrentPlayer() const;

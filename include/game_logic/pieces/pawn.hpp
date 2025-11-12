@@ -25,7 +25,8 @@ namespace GameLogic
             // 2) Two steps: only if first move and both positions are empty.
             // 3) Captures: check two diagonal targets; include if enemy there.
             // 4) Promotion / en passant handled later.
-            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+            // !!! Does not check king safety
+            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
 
             std::vector<Position> GetForwardPositions(const Position &from_position, const Board &board) const;
             std::vector<Position> GetCapturePositions(const Position &from_position, const Board &board) const;

@@ -24,7 +24,8 @@ namespace GameLogic
             // Steps similar to Rook but only diagonal directions.
             // Walk each diagonal until off board or blocked.
             // Include first enemy then stop; stop on friendly.
-            std::vector<Move> GetLegalMoves(const Position& from_position, const Board &board) const override;
+            // !!! Does not check king safety
+            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
 
             // Diagonal directions: NE, NW, SE, SW
             static inline const std::vector<Direction> DiagonalDirs =

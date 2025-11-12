@@ -24,7 +24,8 @@ namespace GameLogic
     // Steps:
     // - For each orthogonal dir, go step by step until off the board.
     // - Stop at the first piece. If enemy, include that position; if friendly, do not include it.
-	std::vector<Move> Rook::GetLegalMoves(const Position& from_position, const Board& board) const
+	// !!! Does not check king safety
+	std::vector<Move> Rook::GetPotentialMoves(const Position& from_position, const Board& board) const
 	{
 		// List of positions this Rook piece can move to
 		std::vector<Position> to_positions = this->GetPositionsInDirs(from_position, board, Rook::OrthogonalDirs);

@@ -13,28 +13,26 @@ namespace GameLogic
         current_player_color_(Enums::Color::Light){};
 
     // Get all legal moves a piece can make at the given position
-    std::vector<Move> Game::GetLegalMovesAtPosition(const Position &position) const
+    std::vector<Move> Game::GetLegalMovesAtPosition(const Position &position)
     {
-        // Get the piece at the given position
-        const Piece *piece = board_.GetPieceAt(position);
-
-        // If there is no piece at the given position or the color does not match the current players turn
-        if (board_.IsPositionEmpty(position) || piece->GetColor() != current_player_color_)
-        {
-            return {}; // Return no moves
-        }
-
-        // Return legal moves of a piece at a given position
-        return piece->GetLegalMoves(position, board_);
+        // Call board object to get all legal moves at the given position
+        return board_.GetLegalMovesAtPosition(position);
     }
 
     // Execute the move that is given by the player
-    void Game::MakeMove(const Move& move)
+    // Return True and switch player turn if it was successful
+    bool Game::ExecuteMove(const Move& move)
     {
-        board_.ExecuteMove(move);
+         // Call board object to execute the move
+        bool execute_move_success = board_.ExecuteMove(move);
 
-        // Switch turn to opponenet
-        current_player_color_ = GetOpponentPlayerColor();
+        if (execute_move_success)
+        {
+            // Switch to opponenet's turn
+            current_player_color_ = GetOpponentPlayerColor();
+        }
+
+        return execute_move_success;
     }
 
     // Return the current player
