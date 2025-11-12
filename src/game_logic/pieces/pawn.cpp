@@ -80,8 +80,19 @@ namespace GameLogic
 
 		for (const Position& forward_to_position : forward_to_positions)
 		{
-			moves.push_back(Move(Enums::MoveType::Normal, from_position, forward_to_position));
+			int row_difference = std::abs(forward_to_position.GetRow() - from_position.GetRow());
+			// If the pawn moves 2 steps foward then it has a move type of Double Pawn
+			// Used for EnPassants
+			if (row_difference == 2)
+			{
+				moves.push_back(Move(Enums::MoveType::DoublePawn, from_position, forward_to_position));
+			}
+			else
+			{
+				moves.push_back(Move(Enums::MoveType::Normal, from_position, forward_to_position));
+			}
 		}
+
 		for (const Position& capture_to_position : capture_to_positions)
 		{
 			moves.push_back(Move(Enums::MoveType::Normal, from_position, capture_to_position));
