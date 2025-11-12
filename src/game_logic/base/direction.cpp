@@ -1,4 +1,4 @@
-#include "direction.hpp"
+#include "game_logic/base/direction.hpp"
 
 namespace GameLogic
 {

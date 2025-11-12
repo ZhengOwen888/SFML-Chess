@@ -1,7 +1,11 @@
-#include "game.hpp"
-#include "board.hpp"
-#include "player.hpp"
-#include "enums.hpp"
+#include "game_logic/base/game.hpp"
+#include "game_logic/base/board.hpp"
+#include "game_logic/base/player.hpp"
+
+#include "game_logic/move_handler/move_validator.hpp"
+#include "game_logic/move_handler/move_executor.hpp"
+
+#include "game_logic/enums.hpp"
 
 namespace GameLogic
 {
@@ -15,16 +19,16 @@ namespace GameLogic
     // Get all legal moves a piece can make at the given position
     std::vector<Move> Game::GetLegalMovesAtPosition(const Position &position)
     {
-        // Call board object to get all legal moves at the given position
-        return board_.GetLegalMovesAtPosition(position);
+        // Get all legal moves at the given position for the board object
+        return MoveValidator::GetLegalMovesAtPosition(position, this->current_player_color_, this->board_);
     }
 
     // Execute the move that is given by the player
     // Return True and switch player turn if it was successful
     bool Game::ExecuteMove(const Move& move)
     {
-         // Call board object to execute the move
-        bool execute_move_success = board_.ExecuteMove(move);
+         //  Execute the move with move executor
+        bool execute_move_success = MoveExecutor::ExecuteMove(move, this->board_);
 
         if (execute_move_success)
         {

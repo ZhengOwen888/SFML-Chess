@@ -1,7 +1,7 @@
 #ifndef GAMELOGIC_PLAYER_HEADER
 #define GAMELOGIC_PLAYER_HEADER
 
-#include "enums.hpp"
+#include "game_logic/enums.hpp"
 
 namespace GameLogic
 {

@@ -1,10 +1,11 @@
 #ifndef GAMELOGIC_GAME_HEADER
 #define GAMELOGIC_GAME_HEADER
 
-#include "board.hpp"
-#include "player.hpp"
-#include "move.hpp"
-#include "enums.hpp"
+#include "game_logic/base/board.hpp"
+#include "game_logic/base/player.hpp"
+#include "game_logic/base/move.hpp"
+
+#include "game_logic/enums.hpp"
 
 #include <vector>
 

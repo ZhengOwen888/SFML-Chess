@@ -1,11 +1,12 @@
 #ifndef GAMELOGIC_PIECE_HPP
 #define GAMELOGIC_PIECE_HPP
 
-#include "move.hpp"
-#include "position.hpp"
-#include "direction.hpp"
-#include "enums.hpp"
-#include "constants.hpp"
+#include "game_logic/base/move.hpp"
+#include "game_logic/base/position.hpp"
+#include "game_logic/base/direction.hpp"
+
+#include "game_logic/enums.hpp"
+#include "game_logic/constants.hpp"
 
 #include <memory>
 #include <vector>

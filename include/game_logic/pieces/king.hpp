@@ -1,13 +1,13 @@
 #ifndef GAMELOGIC_KING_HPP
 #define GAMELOGIC_KING_HPP
 
-#include "direction.hpp"
-#include "piece.hpp"
-#include "enums.hpp"
+#include "game_logic/base/direction.hpp"
+#include "game_logic/base/piece.hpp"
+
+#include "game_logic/enums.hpp"
 
 #include <memory>
 #include <vector>
-#include <array>
 
 namespace GameLogic
 {

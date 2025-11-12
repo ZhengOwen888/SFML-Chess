@@ -1,9 +1,11 @@
-#include "direction.hpp"
-#include "position.hpp"
-#include "move.hpp"
-#include "board.hpp"
-#include "pieces/bishop.hpp"
-#include "enums.hpp"
+#include "game_logic/base/direction.hpp"
+#include "game_logic/base/position.hpp"
+#include "game_logic/base/move.hpp"
+#include "game_logic/base/board.hpp"
+
+#include "game_logic/pieces/bishop.hpp"
+
+#include "game_logic/enums.hpp"
 
 #include <memory>
 #include <vector>

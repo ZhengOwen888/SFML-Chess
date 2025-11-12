@@ -1,13 +1,14 @@
-#include "direction.hpp"
-#include "position.hpp"
-#include "move.hpp"
-#include "board.hpp"
-#include "pieces/king.hpp"
-#include "enums.hpp"
+#include "game_logic/base/direction.hpp"
+#include "game_logic/base/position.hpp"
+#include "game_logic/base/move.hpp"
+#include "game_logic/base/board.hpp"
+
+#include "game_logic/pieces/king.hpp"
+
+#include "game_logic/enums.hpp"
 
 #include <memory>
 #include <vector>
-#include <array>
 
 namespace GameLogic
 {
