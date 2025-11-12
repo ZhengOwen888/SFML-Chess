@@ -11,7 +11,7 @@ namespace GameLogic
         Position from_position = move.GetFromPosition();
         Position to_position = move.GetToPosition();
 
-        // Return false check if the move does not stay on the board
+        // Return false if the move does not stay on the board
         if (!board.IsPositionOnBoard(from_position) || !board.IsPositionOnBoard(to_position))
         {
             return false;
