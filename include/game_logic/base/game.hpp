@@ -36,6 +36,9 @@ namespace GameLogic
             // Return True and switch player turn if it was successful
             bool ExecuteMove(const Move& move);
 
+            // Return the latest move made
+            const Move GetLastMove() const;
+
             // Return the current player
             const Player &GetCurrentPlayer() const;
 
@@ -53,6 +56,7 @@ namespace GameLogic
             Player player_light_;
             Player player_dark_;
             Enums::Color current_player_color_;
+            std::vector<Move> move_history_;
             GameResult result_;
     };
 }

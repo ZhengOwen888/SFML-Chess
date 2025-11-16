@@ -20,6 +20,7 @@ namespace GameLogic
             Rook,
             Queen,
             King,
+            None
         };
 
         enum class MoveType
@@ -30,6 +31,7 @@ namespace GameLogic
             DoublePawn, // Pawn moving foward 2 squares as their first move
             EnPassant,  // Pawn capture an opponent's pawn that has just moved two squares from its start position and landed beside it
             PawnPromotion,
+            None
         };
 
         enum class GameState
