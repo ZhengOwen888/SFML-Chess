@@ -89,13 +89,13 @@ namespace GameLogic
 			{
 				moves.push_back(Move(Enums::MoveType::DoublePawn, from_position, forward_to_position));
 			}
+			else if (CanPromotePawn(forward_to_position, board))
+			{
+				moves.push_back(Move(Enums::MoveType::PawnPromotion, from_position, forward_to_position));
+			}
 			else
 			{
 				moves.push_back(Move(Enums::MoveType::Normal, from_position, forward_to_position));
-			}
-			if (CanPromotePawn(forward_to_position, board))
-			{
-				moves.push_back(Move(Enums::MoveType::PawnPromotion, from_position, forward_to_position));
 			}
 		}
 
