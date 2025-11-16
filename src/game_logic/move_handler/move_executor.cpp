@@ -30,11 +30,18 @@ namespace GameLogic
             case Enums::MoveType::Normal:
                 return board.MovePiece(from_position, to_position);
 
+            // case Enums::MoveType::PawnPromotion:
+                
             // The rest of the move type can also use MovePiece funciton but might neeed some extra logic
 
             // Invalid move type
             default:
                 return false;
         }
+    }
+
+    bool MoveExecutor::PromotePawn(const Move &move, Board &board)
+    {
+        
     }
 } // namespace GameLogic

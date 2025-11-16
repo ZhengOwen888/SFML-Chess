@@ -29,6 +29,9 @@ namespace GameLogic
 
             // Returns true if a normal move would result in the player's king to be in check
             static bool NormalMoveLeaveKingInCheck(const Move &move, Enums::Color player_color, Board &board);
+
+            // Returns true if a pawn promotion move would result in a promotion of a pawn 
+            static bool CanPromotePawn(const Move &move, Enums::Color player_color, Board &board);
     };
 } // namespace GameLogic
 
