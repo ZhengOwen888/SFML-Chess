@@ -29,6 +29,13 @@ namespace GameLogic
 
             // Returns true if a normal move would result in the player's king to be in check
             static bool NormalMoveLeaveKingInCheck(const Move &move, Enums::Color player_color, Board &board);
+
+        private:
+            // Helper to add castling moves if legal
+            static void AddCastlingMovesIfLegal(const Position &king_position, Enums::Color player_color, Board &board, std::vector<Move> &moves);
+
+            // Check if a square is under attack by the opponent
+            static bool IsSquareUnderAttack(const Position &square, Enums::Color by_opponent, Board &board);
     };
 } // namespace GameLogic
 

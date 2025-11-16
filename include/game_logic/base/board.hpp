@@ -42,9 +42,27 @@ namespace GameLogic
             // Returns true of positions has no piece on it and false otherwise
             bool IsPositionEmpty(const Position &position) const;
 
+            // Castling rights getters
+            bool CanCastleLightKingSide() const;
+            bool CanCastleLightQueenSide() const;
+            bool CanCastleDarkKingSide() const;
+            bool CanCastleDarkQueenSide() const;
+
+            // Update castling rights (called when king or rook moves)
+            void UpdateCastlingRights(const Position &from_position);
+
+            // Update castling rights when a piece is captured (e.g., rook captured at starting position)
+            void UpdateCastlingRightsOnCapture(const Position &capture_position);
+
         private:
             // 8 by 8 vector that keeps track of what piece is on what square and if a square is empty
             std::vector<std::vector<std::unique_ptr<Piece>>> board_;
+
+            // Castling rights tracking (initialized as true, set to false when king/rook moves)
+            bool can_castle_light_king_side_;
+            bool can_castle_light_queen_side_;
+            bool can_castle_dark_king_side_;
+            bool can_castle_dark_queen_side_;
 
             // Set up all pieces in starting positions
             void InitializeBoard();

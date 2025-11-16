@@ -30,6 +30,42 @@ namespace GameLogic
             case Enums::MoveType::Normal:
                 return board.MovePiece(from_position, to_position);
 
+            case Enums::MoveType::CastleKS:
+            {
+                // King side castling
+                // Move king two squares towards the rook
+                if (!board.MovePiece(from_position, to_position))
+                {
+                    return false;
+                }
+
+                // Determine rook positions based on king's final position
+                int king_row = to_position.GetRow();
+                Position rook_from(king_row, 7); // h-file
+                Position rook_to(king_row, 5);   // f-file (next to king)
+
+                // Move rook
+                return board.MovePiece(rook_from, rook_to);
+            }
+
+            case Enums::MoveType::CastleQS:
+            {
+                // Queen side castling
+                // Move king two squares towards the rook
+                if (!board.MovePiece(from_position, to_position))
+                {
+                    return false;
+                }
+
+                // Determine rook positions based on king's final position
+                int king_row = to_position.GetRow();
+                Position rook_from(king_row, 0); // a-file
+                Position rook_to(king_row, 3);   // d-file (next to king)
+
+                // Move rook
+                return board.MovePiece(rook_from, rook_to);
+            }
+
             // The rest of the move type can also use MovePiece funciton but might neeed some extra logic
 
             // Invalid move type
