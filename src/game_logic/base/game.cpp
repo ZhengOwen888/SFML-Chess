@@ -60,26 +60,26 @@ namespace GameLogic
     }
 
     // Execute the move that is given by the player
-    // Return True and switch player turn if it was successful
     bool Game::ExecuteMove(const Move& move)
     {
         // Check if the move is legal
         bool is_legal_move = MoveValidator::IsLegalMove(move, this->current_player_color_, this->board_);
 
-        //  Execute the move with move executor
-        bool execute_move_success = MoveExecutor::ExecuteMove(move, this->board_);
-
-        if (execute_move_success)
+        if (is_legal_move == false)
         {
-            // Switch to opponenet's turn and update move_history
-            this->current_player_color_ = GetOpponentPlayerColor();
-            this->move_history_.push_back(move);
-            UpdateGameState();
+            return false;
         }
 
-        return execute_move_success;
-    }
+        //  Execute the move with move executor
+        MoveExecutor::ExecuteMove(move, this->current_player_color_, this->board_);
 
+        // Switch to opponenet's turn and update move_history
+        this->current_player_color_ = GetOpponentPlayerColor();
+        this->move_history_.push_back(move);
+        UpdateGameState();
+
+        return true;
+    }
 
     // Return the latest move that was made
     const Move Game::GetLastMove() const

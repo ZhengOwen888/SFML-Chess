@@ -28,13 +28,14 @@ namespace GameLogic
             // Returns true if the player's king is in check
             static bool IsKingInCheck(Enums::Color player_color, const Board &board);
 
-            // Returns true if a normal move would result in the player's king to be in check
-            static bool NormalMoveLeaveKingInCheck(const Move &move, Enums::Color player_color, Board &board);
+            // Returns true if normal move is legal
+            static bool NormalMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
 
-            // Returns true if a pawn promotion move would result in a promotion of a pawn 
-            static bool CanPromotePawn(const Move &move, Enums::Color player_color, Board &board);
-            // Returns true if enpassant move would result in the player's king to be in check
-            static bool EnPassantMoveLeaveKingInCheck(const Move &move, Enums::Color player, Board &board);
+            // Returns true if enpassant move is legal
+            static bool EnPassantMoveIsLegal(const Move &move, Enums::Color player, Board &board);
+
+            // Returns true if pawn promotion is legal
+            static bool PawnPromotionMoveIsLegal(const Move &move, Enums::Color player, Board &board);
     };
 } // namespace GameLogic
 

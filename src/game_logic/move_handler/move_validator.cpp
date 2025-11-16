@@ -32,7 +32,7 @@ namespace GameLogic
         if (piece->GetPieceType() == Enums::PieceType::Pawn)
         {
             // last move is used by pawns to detect double pawn moves and enpassant
-            potential_moves = legal_moves = piece->GetPotentialMoves(position, board, last_move);
+            potential_moves = piece->GetPotentialMoves(position, board, last_move);
         }
         else
         {
@@ -97,14 +97,17 @@ namespace GameLogic
         switch (move.GetMoveType())
         {
             case Enums::MoveType::Normal:
-                return NormalMoveLeaveKingInCheck(move, player_color, board);
+                return NormalMoveIsLegal(move, player_color, board);
 
             case Enums::MoveType::DoublePawn:
                 // double pawn is a normal move except the pawn moves 2 steps forward
-                return NormalMoveLeaveKingInCheck(move, player_color, board);
+                return NormalMoveIsLegal(move, player_color, board);
 
             case Enums::MoveType::EnPassant:
-                return EnPassantMoveLeaveKingInCheck(move, player_color, board);
+                return EnPassantMoveIsLegal(move, player_color, board);
+
+            case Enums::MoveType::PawnPromotion:
+                return PawnPromotionMoveIsLegal(move, player_color, board);
 
             default:
                 return false;
@@ -161,8 +164,8 @@ namespace GameLogic
         return CanCaptureKing(opponent_color, board);
     }
 
-    // Returns true if a normal move would result in the player's king to be in check
-    bool MoveValidator::NormalMoveLeaveKingInCheck(const Move &move, Enums::Color player_color, Board &board)
+    // Returns true if normal move is legal
+    bool MoveValidator::NormalMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
     {
         Position from_position = move.GetFromPosition();
         Position to_position = move.GetToPosition();
@@ -180,11 +183,11 @@ namespace GameLogic
         // Place back the captured piece
         board.PlacePieceAt(std::move(captured_piece), to_position);
 
-        return king_in_check;
+        return king_in_check == false;
     }
 
-    // Returns true if enpassant move would result in the player's king to be in check
-    bool MoveValidator::EnPassantMoveLeaveKingInCheck(const Move &move, Enums::Color player_color, Board &board)
+    // Returns true if enpassant move is legal
+    bool MoveValidator::EnPassantMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
     {
         Position from_position = move.GetFromPosition();
         Position to_position = move.GetToPosition();
@@ -196,63 +199,18 @@ namespace GameLogic
         std::unique_ptr<Piece> captured_pawn = board.TakePieceAt(captured_pawn_position);
 
         // Reuse normal move check for king safety
-        bool king_in_check = NormalMoveLeaveKingInCheck(move, player_color, board);
+        bool king_in_check = NormalMoveIsLegal(move, player_color, board);
 
         // Put the captured pawn back
         board.PlacePieceAt(std::move(captured_pawn), captured_pawn_position);
 
-        return king_in_check;
+        return king_in_check == false;
     }
 
-    // Returns true if a pawn is moved and can be promoted
-    bool MoveValidator::CanPromotePawn(const Move &move, Enums::Color player_color, Board &board)
+    // Return true if promoting the would would result in the player's king to be in check
+    bool MoveValidator::PawnPromotionMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
     {
-        // Different conditions for pawn promotion depending on color
-        switch(player_color)
-        {
-            // first check if move is legal
-            case Enums::Color::Dark:
-                if (IsLegalMove(move, player_color, board))
-                {
-                    // getting the piece that is moving
-                    const Piece* pawn = board.GetPieceAt(move.GetFromPosition());
-                    // checking if the piece type is pawn and is reaching end of board
-                    if (pawn->GetPieceType() == Enums::PieceType::Pawn && move.GetToPosition().GetRow() == 7)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            case Enums::Color::Light:
-                if (IsLegalMove(move, player_color, board))
-                {
-                    // getting piece that is moving
-                    const Piece* pawn = board.GetPieceAt(move.GetFromPosition());
-                    // checking if the piece type is pawn and is reaching end of board
-                    if (pawn->GetPieceType() == Enums::PieceType::Pawn && move.GetToPosition().GetRow() == 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            default:
-                return false;
-
-        }
-
+        // If you can't move the pawn, you can't promote
+        return NormalMoveIsLegal(move, player_color, board);
     }
 } // namespace GameLogic

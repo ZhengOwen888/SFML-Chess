@@ -28,11 +28,11 @@ namespace GameLogic
 
             // Get all potential moves for Pawns
             virtual std::vector<Move> GetPotentialMoves(
-                const Position& from_position, const Board &board, const Move &last_move) const = 0;
+                const Position& from_position, const Board &board, const Move &last_move) const;
 
             // Get all potential moves
             virtual std::vector<Move> GetPotentialMoves(
-                const Position& from_position, const Board &board) const = 0;
+                const Position& from_position, const Board &board) const;
 
             // Get all positions a piece can move to from its current position (in EXACTLY ONE Direction)
             std::vector<Position> GetPositionsInDir(
