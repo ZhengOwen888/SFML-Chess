@@ -21,6 +21,8 @@ namespace GameLogic
             // Make a clone of this Pawn object
             std::unique_ptr<Piece> ClonePiece() const override;
 
+            // checks if pawn can be promoted returns true if possible and false otherwise
+            bool CanPromotePawn(const Position &forward_to_position, const Board &board) const;
             // Get pawn moves from a position (basic):
             // 1) One step forward: if empty include.
             // 2) Two steps: only if first move and both positions are empty.

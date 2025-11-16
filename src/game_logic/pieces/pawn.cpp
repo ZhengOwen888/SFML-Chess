@@ -93,6 +93,10 @@ namespace GameLogic
 			{
 				moves.push_back(Move(Enums::MoveType::Normal, from_position, forward_to_position));
 			}
+			if (CanPromotePawn(forward_to_position, board))
+			{
+				moves.push_back(Move(Enums::MoveType::PawnPromotion, from_position, forward_to_position));
+			}
 		}
 
 		for (const Position& capture_to_position : capture_to_positions)
@@ -101,5 +105,20 @@ namespace GameLogic
 		}
 
 		return moves;
+	}
+
+	bool Pawn::CanPromotePawn(const Position &forward_to_position, const Board &board) const
+	{
+		
+		// if pawn's forward move is either end of the board then we know that the pawn can be promoted
+		if (forward_to_position.GetRow() == 7 || forward_to_position.GetRow() == 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+		
 	}
 }
