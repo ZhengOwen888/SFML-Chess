@@ -45,7 +45,7 @@ namespace GameLogic
 		return to_positions;
 	}
 
-	std::vector<Position> Pawn::GetCapturePositions(const Position& from_position, const Board& board) const
+	std::vector<Position> Pawn::GetCapturePositions(const Position& from_position, const Board& board, const Move &last_move) const
 	{
 		std::vector<Position> to_positions;
 
@@ -56,14 +56,20 @@ namespace GameLogic
 		{
 			Position to_position = from_position + capture_direction;
 
-			// Skip is position is off the board or position is empty with no enemy piece
-			if (!board.IsPositionOnBoard(to_position) || board.IsPositionEmpty(to_position))
+			// Skip if position is off the board
+			if (!board.IsPositionOnBoard(to_position))
 			{
 				continue;
 			}
 
 			// Add position if position contains an enemy piece
-			if (board.GetPieceAt(to_position)->GetColor() != this->color_)
+			if (!board.IsPositionEmpty(to_position) && board.GetPieceAt(to_position)->GetColor() != this->color_)
+			{
+				to_positions.push_back(to_position);
+			}
+
+			// If the position is empty check if enpassant is possible
+			if (CanEnPassant(from_position, to_position, board, last_move))
 			{
 				to_positions.push_back(to_position);
 			}
@@ -72,11 +78,23 @@ namespace GameLogic
 		return to_positions;
 	}
 
+	// Check if a pawn can EnPassant
+	bool Pawn::CanEnPassant(const Position &from_position, const Position &to_position, const Board& board, const Move &last_move) const
+	{
+		if (last_move.GetMoveType() == Enums::MoveType::DoublePawn && board.IsPositionEmpty(to_position))
+		{
+			return from_position.GetRow() == last_move.GetToPosition().GetRow()
+				&& to_position.GetCol()   == last_move.GetToPosition().GetCol();
+		}
+
+		return false;
+	}
+
 	// !!! Does not check king safety
-	std::vector<Move> Pawn::GetPotentialMoves(const Position& from_position, const Board& board) const
+	std::vector<Move> Pawn::GetPotentialMoves(const Position& from_position, const Board& board, const Move &last_move) const
 	{
 		std::vector<Position> forward_to_positions = GetForwardPositions(from_position, board);
-		std::vector<Position> capture_to_positions = GetCapturePositions(from_position, board);
+		std::vector<Position> capture_to_positions = GetCapturePositions(from_position, board, last_move);
 
 		std::vector<Move> moves;
 
@@ -87,17 +105,29 @@ namespace GameLogic
 			// Used for EnPassants
 			if (row_difference == 2)
 			{
+				// Double Forward Step
 				moves.push_back(Move(Enums::MoveType::DoublePawn, from_position, forward_to_position));
 			}
 			else
 			{
+				// Single Forward Step
 				moves.push_back(Move(Enums::MoveType::Normal, from_position, forward_to_position));
 			}
 		}
 
 		for (const Position& capture_to_position : capture_to_positions)
 		{
-			moves.push_back(Move(Enums::MoveType::Normal, from_position, capture_to_position));
+			// Check if pawn can capture by EnPassant otherwise it a normal capture
+			if (CanEnPassant(from_position, capture_to_position, board, last_move))
+			{
+				// EnPassant Capture
+				moves.push_back(Move(Enums::MoveType::EnPassant, from_position, capture_to_position));
+			}
+			else
+			{
+				// Normal Capture
+				moves.push_back(Move(Enums::MoveType::Normal, from_position, capture_to_position));
+			}
 		}
 
 		return moves;

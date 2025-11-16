@@ -26,6 +26,10 @@ namespace GameLogic
             // Clone a new Piece object with the same properties
             virtual std::unique_ptr<Piece> ClonePiece() const = 0;
 
+            // Get all potential moves for Pawns
+            virtual std::vector<Move> GetPotentialMoves(
+                const Position& from_position, const Board &board, const Move &last_move) const = 0;
+
             // Get all potential moves
             virtual std::vector<Move> GetPotentialMoves(
                 const Position& from_position, const Board &board) const = 0;

@@ -8,27 +8,14 @@ namespace GameLogic
     // Returns true if move is executed successfully, otherwise false
     bool MoveExecutor::ExecuteMove(const Move &move, Board &board)
     {
-        Position from_position = move.GetFromPosition();
-        Position to_position = move.GetToPosition();
-
-        // Return false if the move does not stay on the board
-        if (!board.IsPositionOnBoard(from_position) || !board.IsPositionOnBoard(to_position))
-        {
-            return false;
-        }
-
-        // Check if there is a piece on starting position
-        const Piece *piece = board.GetPieceAt(from_position);
-        if (piece == nullptr)
-        {
-            return false;
-        }
-
         // Execute Move base on move type
         switch (move.GetMoveType())
         {
             case Enums::MoveType::Normal:
-                return board.MovePiece(from_position, to_position);
+                return ExecuteNormalMove(move, board);
+
+            case Enums::MoveType::EnPassant:
+                return ExecuteEnPassantMove(move, board);
 
             // The rest of the move type can also use MovePiece funciton but might neeed some extra logic
 
@@ -37,4 +24,24 @@ namespace GameLogic
                 return false;
         }
     }
+
+    bool MoveExecutor::ExecuteNormalMove(const Move &move, Board &board)
+    {
+        Position from_position = move.GetFromPosition();
+        Position to_position = move.GetToPosition();
+
+        return board.MovePiece(from_position, to_position);
+    }
+
+    bool MoveExecutor::ExecuteEnPassantMove(const Move &move, Board &board)
+    {
+        Position from_position = move.GetFromPosition();
+        Position to_position = move.GetToPosition();
+
+        Position capture_pawn_position(from_position.GetRow(), to_position.GetCol());
+        board.RemovePieceAt(capture_pawn_position);
+
+        return board.MovePiece(from_position, to_position);
+    }
+
 } // namespace GameLogic

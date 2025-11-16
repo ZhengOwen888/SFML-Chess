@@ -12,10 +12,11 @@ namespace GameLogic
     {
         public:
             // Get legal moves for a piece at a given position
-            static std::vector<Move> GetLegalMovesAtPosition(const Position &position, Enums::Color player_color,  Board &board);
+            static std::vector<Move> GetLegalMovesAtPosition(
+                const Position &position, Enums::Color player_color,  Board &board, const Move &last_move);
 
             // Get all legal move a player can make
-            static std::vector<Move> GetAllLegalMovesForPlayer(Enums::Color player_color, Board &board);
+            static std::vector<Move> GetAllLegalMovesForPlayer(Enums::Color player_color, Board &board, const Move &last_move);
 
             // Helpers used for finding legal moves
              // Returns true if the move is legal
@@ -29,6 +30,9 @@ namespace GameLogic
 
             // Returns true if a normal move would result in the player's king to be in check
             static bool NormalMoveLeaveKingInCheck(const Move &move, Enums::Color player_color, Board &board);
+
+            // Returns true if enpassant move would result in the player's king to be in check
+            static bool EnPassantMoveLeaveKingInCheck(const Move &move, Enums::Color player, Board &board);
     };
 } // namespace GameLogic
 
