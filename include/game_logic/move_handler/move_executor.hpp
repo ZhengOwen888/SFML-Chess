@@ -10,7 +10,10 @@ namespace GameLogic
     {
         public:
             // Returns true if move is executed successfully, otherwise false
-            static bool ExecuteMove(const Move &move, Board &board);
+            static bool ExecuteMove(const Move &move, Enums::Color player_color, Board &board);
+
+            // does not move pawn but only promotes it to a different piece
+            static void PromotePawn(const Move &move, Enums::Color player_color, Board &board);
 
         private:
             // The board class already has a function that takes care of a bare bone move

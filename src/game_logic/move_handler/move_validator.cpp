@@ -203,4 +203,56 @@ namespace GameLogic
 
         return king_in_check;
     }
+
+    // Returns true if a pawn is moved and can be promoted
+    bool MoveValidator::CanPromotePawn(const Move &move, Enums::Color player_color, Board &board)
+    {
+        // Different conditions for pawn promotion depending on color
+        switch(player_color)
+        {
+            // first check if move is legal
+            case Enums::Color::Dark:
+                if (IsLegalMove(move, player_color, board))
+                {
+                    // getting the piece that is moving
+                    const Piece* pawn = board.GetPieceAt(move.GetFromPosition());
+                    // checking if the piece type is pawn and is reaching end of board
+                    if (pawn->GetPieceType() == Enums::PieceType::Pawn && move.GetToPosition().GetRow() == 7)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            case Enums::Color::Light:
+                if (IsLegalMove(move, player_color, board))
+                {
+                    // getting piece that is moving
+                    const Piece* pawn = board.GetPieceAt(move.GetFromPosition());
+                    // checking if the piece type is pawn and is reaching end of board
+                    if (pawn->GetPieceType() == Enums::PieceType::Pawn && move.GetToPosition().GetRow() == 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            default:
+                return false;
+
+        }
+
+    }
 } // namespace GameLogic
