@@ -124,7 +124,7 @@ namespace GameLogic
                                         ? king_from_position + Direction::East * Constants::KING_SIDE_ROOK_OFFSET
                                         : king_from_position + Direction::West * Constants::QUEEN_SIDE_ROOK_OFFSET;
 
-        Position rook_to_position = move.GetMoveType() == Enums::MoveType::CastleQS
+        Position rook_to_position = move.GetMoveType() == Enums::MoveType::CastleKS
                                         ? king_to_position + Direction::West
                                         : king_to_position + Direction::East;
 
