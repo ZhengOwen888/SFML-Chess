@@ -304,4 +304,22 @@ namespace GameLogic
         }
         return true;
     }
+
+    // Returns true if the move captures a piece
+    bool MoveValidator::IsCaptureMove(const Move &move, const Board &board)
+    {
+        Position to_position = move.GetToPosition();
+        const Piece *piece = board.GetPieceAt(to_position);
+
+        return piece != nullptr;
+    }
+
+    // Returns true if the move uses a pawn
+    bool MoveValidator::IsPawnMove(const Move &move, const Board &board)
+    {
+        Position from_position = move.GetFromPosition();
+        const Piece *piece = board.GetPieceAt(from_position);
+
+        return piece != nullptr && piece->GetPieceType() == Enums::PieceType::Pawn;
+    }
 } // namespace GameLogic

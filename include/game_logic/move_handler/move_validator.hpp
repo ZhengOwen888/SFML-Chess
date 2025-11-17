@@ -42,6 +42,13 @@ namespace GameLogic
 
             // Returns true if castling is legal
             static bool CastleMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
+
+            // Other helpers that can be used for the 50 move rule
+            // Returns true if the move captures a piece
+            static bool IsCaptureMove(const Move &move, const Board &board);
+
+            // Returns true if the move uses a pawn
+            static bool IsPawnMove(const Move &move, const Board &board);
     };
 } // namespace GameLogic
 
