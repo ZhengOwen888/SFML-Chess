@@ -226,6 +226,10 @@ namespace GameLogic
         return NormalMoveIsLegal(move, player_color, board);
     }
 
+    // 1. King must not have moved (checked via castling rights) (!!! Handled in King class)
+    // 2. Squares between king and rook are empty (!!! Handled in King class)
+    // 3. King is not in check
+    // 4. King does not pass through or land on a square under attack
     bool MoveValidator::CastleMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
     {
         Position king_position = move.GetFromPosition();
