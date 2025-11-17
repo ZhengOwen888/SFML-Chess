@@ -15,7 +15,8 @@ namespace GameLogic
 {
 
     // Get all legal moves for a piece at a given position
-    std::vector<Move> MoveValidator::GetLegalMovesAtPosition(const Position &position, Enums::Color player_color, Board& board, const Move &last_move)
+    std::vector<Move> MoveValidator::GetLegalMovesAtPosition(
+        const Position &position, Enums::Color player_color, Board& board, const Move &last_move)
     {
         std::vector<Move> legal_moves;
 
@@ -109,13 +110,53 @@ namespace GameLogic
             case Enums::MoveType::PawnPromotion:
                 return PawnPromotionMoveIsLegal(move, player_color, board);
 
+            case Enums::MoveType::CastleKS:
+                return CastleMoveIsLegal(move, player_color, board);
+
+            case Enums::MoveType::CastleQS:
+                return CastleMoveIsLegal(move, player_color, board);
+
             default:
                 return false;
         }
     }
 
+    // Returns true if a specified position can be attacked by a specified player
+    bool MoveValidator::IsSquareUnderAttack(Enums::Color attacker_color, const Board &board, const Position &target_position)
+    {
+        // Iterate over all the squares or positions in the board
+        for (int row = 0; row < Constants::BOARD_SIZE; row++)
+        {
+            for (int col = 0; col < Constants::BOARD_SIZE; col++)
+            {
+                Position position{row, col};
+                const Piece *piece = board.GetPieceAt(position);
+
+                // Skip if there is no piece or the piece is not the same color as the attacker
+                if (piece == nullptr || piece->GetColor() != attacker_color)
+                {
+                    continue;
+                }
+
+                // Get all potential moves for this piece
+                const std::vector<Move> potential_moves = piece->GetPotentialMoves(position, board);
+
+                // Check if any move land on the target position
+                for (const Move &potential_move : potential_moves)
+                {
+                    // Returns true of the piece is able to attack the target position
+                    if (potential_move.GetToPosition() == target_position)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     // Returns true if any one of the piece can capture the opponent's players king
-    bool MoveValidator::CanCaptureKing(Enums::Color player_color, const Board &board)
+    bool MoveValidator::CanCaptureOpponentKing(Enums::Color player_color, const Board &board)
     {
         // Iterate over all the square or position in the board
         for (int row = 0; row < Constants::BOARD_SIZE; row++)
@@ -161,7 +202,7 @@ namespace GameLogic
         Enums::Color opponent_color = (player_color == Enums::Color::Light) ? Enums::Color::Dark : Enums::Color::Light;
 
         // Check if opponent can capture the player's king
-        return CanCaptureKing(opponent_color, board);
+        return CanCaptureOpponentKing(opponent_color, board);
     }
 
     // Returns true if normal move is legal
@@ -172,14 +213,19 @@ namespace GameLogic
 
         // Temporarily take piece from target position
         std::unique_ptr<Piece> captured_piece = board.TakePieceAt(to_position);
+
+        // Simulate a move
+        bool simulate = true;
+
         // Temporarily make the move
-        board.MovePiece(from_position, to_position);
+        board.MovePiece(from_position, to_position, simulate);
 
         // Check if the move results the king being in check
         bool king_in_check = IsKingInCheck(player_color, board);
 
         // Undo the move
-        board.MovePiece(to_position, from_position);
+        board.MovePiece(to_position, from_position, simulate);
+
         // Place back the captured piece
         board.PlacePieceAt(std::move(captured_piece), to_position);
 
@@ -214,273 +260,66 @@ namespace GameLogic
         return NormalMoveIsLegal(move, player_color, board);
     }
 
-    // Get legal moves for a piece at a given position
-    std::vector<Move> MoveValidator::GetLegalMovesAtPosition(const Position &position, Enums::Color player_color, Board &board)
+    // 1. King must not have moved (checked via castling rights) (!!! Handled in King class)
+    // 2. Squares between king and rook are empty (!!! Handled in King class)
+    // 3. King is not in check
+    // 4. King does not pass through or land on a square under attack
+    bool MoveValidator::CastleMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
     {
-        std::vector<Move> legal_moves;
+        Position king_position = move.GetFromPosition();
+        std::vector<Position> in_between_position;
 
-        // Get the piece at the position
-        const Piece *piece = board.GetPieceAt(position);
-
-        // Return empty if no piece or wrong color
-        if (piece == nullptr || piece->GetColor() != player_color)
+        // Determine the intermediate position between the king and the rook
+        if (move.GetMoveType() == Enums::MoveType::CastleKS)
         {
-            return legal_moves;
+            // King side castling, the positions between the king and the king side rook
+            in_between_position =
+            {
+                king_position + Direction::East * 1,
+                king_position + Direction::East * 2
+            };
+        }
+        else if (move.GetMoveType() == Enums::MoveType::CastleQS)
+        {
+            // Queen side castling, the positions between the king and the queen side rook
+            in_between_position =
+            {
+                king_position + Direction::West * 1,
+                king_position + Direction::West * 2,
+                king_position + Direction::West * 3
+            };
         }
 
-        // Get all potential moves for this piece
-        std::vector<Move> potential_moves = piece->GetPotentialMoves(position, board);
-
-        // Filter moves that would leave king in check
-        for (const Move &move : potential_moves)
+        // Check each intermediate position for king safety
+        for (const Position& to_position : in_between_position)
         {
-            if (!NormalMoveLeaveKingInCheck(move, player_color, board))
+            // Simulate normal move
+            Move in_between_move = Move(Enums::MoveType::Normal, king_position, to_position);
+
+            // Returns false if the king would be in check in any of the intermidiate moves
+            if (!NormalMoveIsLegal(in_between_move, player_color, board))
             {
-                legal_moves.push_back(move);
+                return false;
             }
         }
-
-        // Add castling moves if this is a king
-        if (piece->GetPieceType() == Enums::PieceType::King)
-        {
-            AddCastlingMovesIfLegal(position, player_color, board, legal_moves);
-        }
-
-        return legal_moves;
+        return true;
     }
 
-    // Get all legal moves for a player
-    std::vector<Move> MoveValidator::GetAllLegalMovesForPlayer(Enums::Color player_color, Board &board)
+    // Returns true if the move captures a piece
+    bool MoveValidator::IsCaptureMove(const Move &move, const Board &board)
     {
-        std::vector<Move> all_legal_moves;
+        Position to_position = move.GetToPosition();
+        const Piece *piece = board.GetPieceAt(to_position);
 
-        // Iterate over all squares
-        for (int row = 0; row < Constants::BOARD_SIZE; row++)
-        {
-            for (int col = 0; col < Constants::BOARD_SIZE; col++)
-            {
-                Position position{row, col};
-                const Piece *piece = board.GetPieceAt(position);
-
-                // Skip if no piece or wrong color
-                if (piece == nullptr || piece->GetColor() != player_color)
-                {
-                    continue;
-                }
-
-                // Get legal moves for this position
-                std::vector<Move> moves = GetLegalMovesAtPosition(position, player_color, board);
-                all_legal_moves.insert(all_legal_moves.end(), moves.begin(), moves.end());
-            }
-        }
-
-        return all_legal_moves;
+        return piece != nullptr;
     }
 
-    // Check if a square is under attack by the opponent
-    bool MoveValidator::IsSquareUnderAttack(const Position &square, Enums::Color by_opponent, Board &board)
+    // Returns true if the move uses a pawn
+    bool MoveValidator::IsPawnMove(const Move &move, const Board &board)
     {
-        // Iterate over all squares
-        for (int row = 0; row < Constants::BOARD_SIZE; row++)
-        {
-            for (int col = 0; col < Constants::BOARD_SIZE; col++)
-            {
-                Position position{row, col};
-                const Piece *piece = board.GetPieceAt(position);
+        Position from_position = move.GetFromPosition();
+        const Piece *piece = board.GetPieceAt(from_position);
 
-                // Skip if no piece or not opponent's piece
-                if (piece == nullptr || piece->GetColor() != by_opponent)
-                {
-                    continue;
-                }
-
-                // Special handling for pawns: check diagonal attack squares directly
-                // Pawn attacks are independent of whether the target square is occupied
-                if (piece->GetPieceType() == Enums::PieceType::Pawn)
-                {
-                    // Determine pawn's attack directions based on color
-                    std::vector<Direction> attack_dirs;
-                    if (by_opponent == Enums::Color::Light)
-                    {
-                        // Light pawns attack upward diagonally (North-East, North-West)
-                        attack_dirs = {Direction::NorthEast, Direction::NorthWest};
-                    }
-                    else
-                    {
-                        // Dark pawns attack downward diagonally (South-East, South-West)
-                        attack_dirs = {Direction::SouthEast, Direction::SouthWest};
-                    }
-
-                    // Check if square is in pawn's attack range
-                    for (const Direction &dir : attack_dirs)
-                    {
-                        Position attack_square = position + dir;
-                        if (attack_square == square)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                else
-                {
-                    // For other pieces, use GetPotentialMoves
-                    std::vector<Move> potential_moves = piece->GetPotentialMoves(position, board);
-
-                    // Check if any move targets the square
-                    for (const Move &move : potential_moves)
-                    {
-                        if (move.GetToPosition() == square)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-
-        return false;
+        return piece != nullptr && piece->GetPieceType() == Enums::PieceType::Pawn;
     }
-
-    // Add castling moves if legal
-    void MoveValidator::AddCastlingMovesIfLegal(const Position &king_position, Enums::Color player_color, Board &board, std::vector<Move> &moves)
-    {
-        // 1. King must not have moved (checked via castling rights)
-        // 2. King is not in check
-        // 3. Squares between king and rook are empty
-        // 4. King does not pass through or land on a square under attack
-
-        // Determine opponent color
-        Enums::Color opponent_color = (player_color == Enums::Color::Light) ? Enums::Color::Dark : Enums::Color::Light;
-
-        // Check if king is currently in check - cannot castle if in check
-        if (IsKingInCheck(player_color, board))
-        {
-            return;
-        }
-
-        int king_row = king_position.GetRow();
-        int king_col = king_position.GetCol();
-
-        // Verify king is on starting square (row 7 for Light, row 0 for Dark, col 4 for both)
-        if (king_col != 4)
-        {
-            return;
-        }
-
-        if (player_color == Enums::Color::Light && king_row == 7)
-        {
-            // Light King Side Castling (e1 -> g1)
-            if (board.CanCastleLightKingSide())
-            {
-                // Check squares f1 (7,5) and g1 (7,6) are empty
-                Position f1(7, 5);
-                Position g1(7, 6);
-
-                if (board.IsPositionEmpty(f1) && board.IsPositionEmpty(g1))
-                {
-                    // Check f1 and g1 are not under attack
-                    if (!IsSquareUnderAttack(f1, opponent_color, board) &&
-                        !IsSquareUnderAttack(g1, opponent_color, board))
-                    {
-                        // Verify rook is still at h1 (7,7)
-                        Position h1(7, 7);
-                        const Piece *rook = board.GetPieceAt(h1);
-                        if (rook != nullptr &&
-                            rook->GetPieceType() == Enums::PieceType::Rook &&
-                            rook->GetColor() == Enums::Color::Light &&
-                            !rook->HasMoved())
-                        {
-                            moves.push_back(Move(Enums::MoveType::CastleKS, king_position, g1));
-                        }
-                    }
-                }
-            }
-
-            // Light Queen Side Castling (e1 -> c1)
-            if (board.CanCastleLightQueenSide())
-            {
-                // Check squares d1 (7,3), c1 (7,2), and b1 (7,1) are empty
-                Position d1(7, 3);
-                Position c1(7, 2);
-                Position b1(7, 1);
-
-                if (board.IsPositionEmpty(d1) && board.IsPositionEmpty(c1) && board.IsPositionEmpty(b1))
-                {
-                    // Check d1 and c1 are not under attack (b1 doesn't matter for king's path)
-                    if (!IsSquareUnderAttack(d1, opponent_color, board) &&
-                        !IsSquareUnderAttack(c1, opponent_color, board))
-                    {
-                        // Verify rook is still at a1 (7,0)
-                        Position a1(7, 0);
-                        const Piece *rook = board.GetPieceAt(a1);
-                        if (rook != nullptr &&
-                            rook->GetPieceType() == Enums::PieceType::Rook &&
-                            rook->GetColor() == Enums::Color::Light &&
-                            !rook->HasMoved())
-                        {
-                            moves.push_back(Move(Enums::MoveType::CastleQS, king_position, c1));
-                        }
-                    }
-                }
-            }
-        }
-        else if (player_color == Enums::Color::Dark && king_row == 0)
-        {
-            // Dark King Side Castling (e8 -> g8)
-            if (board.CanCastleDarkKingSide())
-            {
-                // Check squares f8 (0,5) and g8 (0,6) are empty
-                Position f8(0, 5);
-                Position g8(0, 6);
-
-                if (board.IsPositionEmpty(f8) && board.IsPositionEmpty(g8))
-                {
-                    // Check f8 and g8 are not under attack
-                    if (!IsSquareUnderAttack(f8, opponent_color, board) &&
-                        !IsSquareUnderAttack(g8, opponent_color, board))
-                    {
-                        // Verify rook is still at h8 (0,7)
-                        Position h8(0, 7);
-                        const Piece *rook = board.GetPieceAt(h8);
-                        if (rook != nullptr &&
-                            rook->GetPieceType() == Enums::PieceType::Rook &&
-                            rook->GetColor() == Enums::Color::Dark &&
-                            !rook->HasMoved())
-                        {
-                            moves.push_back(Move(Enums::MoveType::CastleKS, king_position, g8));
-                        }
-                    }
-                }
-            }
-
-            // Dark Queen Side Castling (e8 -> c8)
-            if (board.CanCastleDarkQueenSide())
-            {
-                // Check squares d8 (0,3), c8 (0,2), and b8 (0,1) are empty
-                Position d8(0, 3);
-                Position c8(0, 2);
-                Position b8(0, 1);
-
-                if (board.IsPositionEmpty(d8) && board.IsPositionEmpty(c8) && board.IsPositionEmpty(b8))
-                {
-                    // Check d8 and c8 are not under attack (b8 doesn't matter for king's path)
-                    if (!IsSquareUnderAttack(d8, opponent_color, board) &&
-                        !IsSquareUnderAttack(c8, opponent_color, board))
-                    {
-                        // Verify rook is still at a8 (0,0)
-                        Position a8(0, 0);
-                        const Piece *rook = board.GetPieceAt(a8);
-                        if (rook != nullptr &&
-                            rook->GetPieceType() == Enums::PieceType::Rook &&
-                            rook->GetColor() == Enums::Color::Dark &&
-                            !rook->HasMoved())
-                        {
-                            moves.push_back(Move(Enums::MoveType::CastleQS, king_position, c8));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
 } // namespace GameLogic

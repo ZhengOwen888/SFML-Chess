@@ -21,12 +21,6 @@ namespace GameLogic
     // Construct the Board object, initialize the 8x8 board with nullptr
     Board::Board()
     {
-        // Initialize castling rights to true
-        can_castle_light_king_side_ = true;
-        can_castle_light_queen_side_ = true;
-        can_castle_dark_king_side_ = true;
-        can_castle_dark_queen_side_ = true;
-
         InitializeBoard(); // Initialize the Pieces objects
     }
 
@@ -68,14 +62,8 @@ namespace GameLogic
     }
 
     // Make a Normal move for a Piece object from one position to another on the board
-    bool Board::MovePiece(const Position &from_position, const Position &to_position)
+    bool Board::MovePiece(const Position &from_position, const Position &to_position, bool simulate)
     {
-        // Update castling rights BEFORE moving the piece
-        UpdateCastlingRights(from_position);
-
-        // Also check if we're capturing a rook at its starting position
-        UpdateCastlingRightsOnCapture(to_position);
-
         // Take the piece from the start position
         std::unique_ptr<Piece> piece = TakePieceAt(from_position);
 
@@ -84,8 +72,13 @@ namespace GameLogic
         {
             return false;
         }
-        // Mark the piece as having moved
-        piece->SetHasMoved();
+
+        // Check if it is a simulation of a move
+        if (simulate == false)
+        {
+            // Mark the piece as having moved
+            piece->SetHasMoved();
+        }
 
         // Remove the piece at target position
         RemovePieceAt(to_position);
@@ -140,126 +133,17 @@ namespace GameLogic
         return (IsPositionOnBoard(position) && GetPieceAt(position) == nullptr);
     }
 
-    // Castling rights getters
-    bool Board::CanCastleLightKingSide() const
+    // Returns true if a list of specified positions are empty
+    bool Board::ArePositionsEmpty(const std::vector<Position> &positions) const
     {
-        return can_castle_light_king_side_;
-    }
-
-    bool Board::CanCastleLightQueenSide() const
-    {
-        return can_castle_light_queen_side_;
-    }
-
-    bool Board::CanCastleDarkKingSide() const
-    {
-        return can_castle_dark_king_side_;
-    }
-
-    bool Board::CanCastleDarkQueenSide() const
-    {
-        return can_castle_dark_queen_side_;
-    }
-
-    // Update castling rights based on piece movement
-    // Called after a piece moves from a position
-    void Board::UpdateCastlingRights(const Position &from_position)
-    {
-        int row = from_position.GetRow();
-        int col = from_position.GetCol();
-
-        // Check if the moving piece affects castling rights
-        const Piece* piece = GetPieceAt(from_position);
-        if (piece == nullptr)
+        for (const Position& position : positions)
         {
-            return;
-        }
-
-        Enums::PieceType type = piece->GetPieceType();
-        Enums::Color color = piece->GetColor();
-
-        // Light side (row 7)
-        if (color == Enums::Color::Light && row == 7)
-        {
-            // King moved from e1 (7,4)
-            if (type == Enums::PieceType::King && col == 4)
+            if (IsPositionEmpty(position) == false)
             {
-                can_castle_light_king_side_ = false;
-                can_castle_light_queen_side_ = false;
-            }
-            // Rook moved from h1 (7,7) - king side
-            else if (type == Enums::PieceType::Rook && col == 7)
-            {
-                can_castle_light_king_side_ = false;
-            }
-            // Rook moved from a1 (7,0) - queen side
-            else if (type == Enums::PieceType::Rook && col == 0)
-            {
-                can_castle_light_queen_side_ = false;
+                return false;
             }
         }
-        // Dark side (row 0)
-        else if (color == Enums::Color::Dark && row == 0)
-        {
-            // King moved from e8 (0,4)
-            if (type == Enums::PieceType::King && col == 4)
-            {
-                can_castle_dark_king_side_ = false;
-                can_castle_dark_queen_side_ = false;
-            }
-            // Rook moved from h8 (0,7) - king side
-            else if (type == Enums::PieceType::Rook && col == 7)
-            {
-                can_castle_dark_king_side_ = false;
-            }
-            // Rook moved from a8 (0,0) - queen side
-            else if (type == Enums::PieceType::Rook && col == 0)
-            {
-                can_castle_dark_queen_side_ = false;
-            }
-        }
-    }
-
-    // Update castling rights when a piece is captured
-    // Called when a piece at the capture position is about to be removed
-    void Board::UpdateCastlingRightsOnCapture(const Position &capture_position)
-    {
-        int row = capture_position.GetRow();
-        int col = capture_position.GetCol();
-
-        // Check if a rook at starting position is being captured
-        const Piece* captured_piece = GetPieceAt(capture_position);
-        if (captured_piece == nullptr || captured_piece->GetPieceType() != Enums::PieceType::Rook)
-        {
-            return;
-        }
-
-        Enums::Color color = captured_piece->GetColor();
-
-        // Light rook captured at starting position (row 7)
-        if (color == Enums::Color::Light && row == 7)
-        {
-            if (col == 7) // h1 captured
-            {
-                can_castle_light_king_side_ = false;
-            }
-            else if (col == 0) // a1 captured
-            {
-                can_castle_light_queen_side_ = false;
-            }
-        }
-        // Dark rook captured at starting position (row 0)
-        else if (color == Enums::Color::Dark && row == 0)
-        {
-            if (col == 7) // h8 captured
-            {
-                can_castle_dark_king_side_ = false;
-            }
-            else if (col == 0) // a8 captured
-            {
-                can_castle_dark_queen_side_ = false;
-            }
-        }
+        return true;
     }
 
 } // namespace GameLogic

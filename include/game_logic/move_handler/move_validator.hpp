@@ -19,11 +19,14 @@ namespace GameLogic
             static std::vector<Move> GetAllLegalMovesForPlayer(Enums::Color player_color, Board &board, const Move &last_move);
 
             // Helpers used for finding legal moves
-             // Returns true if the move is legal
+            // Returns true if the move is legal
             static bool IsLegalMove(const Move &move, Enums::Color player_color, Board &board);
 
+            // Returns true if a specified position can be attacked by a specified player
+            static bool IsSquareUnderAttack(Enums::Color attacker_color, const Board &board, const Position &position);
+
             // Returns true if any one of the piece can capture the opponent's players king
-            static bool CanCaptureKing(Enums::Color player_color, const Board &board);
+            static bool CanCaptureOpponentKing(Enums::Color player_color, const Board &board);
 
             // Returns true if the player's king is in check
             static bool IsKingInCheck(Enums::Color player_color, const Board &board);
@@ -32,17 +35,20 @@ namespace GameLogic
             static bool NormalMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
 
             // Returns true if enpassant move is legal
-            static bool EnPassantMoveIsLegal(const Move &move, Enums::Color player, Board &board);
+            static bool EnPassantMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
 
             // Returns true if pawn promotion is legal
-            static bool PawnPromotionMoveIsLegal(const Move &move, Enums::Color player, Board &board);
+            static bool PawnPromotionMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
 
-        private:
-            // Helper to add castling moves if legal
-            static void AddCastlingMovesIfLegal(const Position &king_position, Enums::Color player_color, Board &board, std::vector<Move> &moves);
+            // Returns true if castling is legal
+            static bool CastleMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
 
-            // Check if a square is under attack by the opponent
-            static bool IsSquareUnderAttack(const Position &square, Enums::Color by_opponent, Board &board);
+            // Other helpers that can be used for the 50 move rule
+            // Returns true if the move captures a piece
+            static bool IsCaptureMove(const Move &move, const Board &board);
+
+            // Returns true if the move uses a pawn
+            static bool IsPawnMove(const Move &move, const Board &board);
     };
 } // namespace GameLogic
 

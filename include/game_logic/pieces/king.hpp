@@ -21,8 +21,18 @@ namespace GameLogic
             // Make a clone of King object
             std::unique_ptr<Piece> ClonePiece() const override;
 
+            // Get potential positions that are 1 step away from the king in the 8 cardinal directions
             std::vector<Position> GetPositionsFromAdjacentDirs(
                 const Position &from_position, const Board &board, const std::vector<Direction> &directions) const;
+
+            // Get potential positions for king side and queen side castling
+            std::vector<Position> GetPositionsFromCastling(
+                const Position &from_position, const Board &board) const;
+
+            // Returns true if the king can castle !!! Does not check for king safety
+            bool CanCastle(
+                const Position &king_position, const Position &rook_position,
+                const std::vector<Position> &positions_in_between, const Board &board) const;
 
             // Get King moves from a position
             // For each adjacent position: if on board and (empty or enemy) include.

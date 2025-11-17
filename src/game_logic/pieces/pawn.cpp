@@ -170,4 +170,3 @@ namespace GameLogic
 		return moves;
 	}
 }
-

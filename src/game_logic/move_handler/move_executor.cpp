@@ -8,13 +8,15 @@
 
 namespace GameLogic
 {
-    // Returns true if move is executed successfully, otherwise false
     bool MoveExecutor::ExecuteMove(const Move &move, Enums::Color player_color, Board &board)
     {
         // Execute Move base on move type
         switch (move.GetMoveType())
         {
             case Enums::MoveType::Normal:
+                return ExecuteNormalMove(move, board);
+
+            case Enums::MoveType::DoublePawn:
                 return ExecuteNormalMove(move, board);
 
             case Enums::MoveType::EnPassant:
@@ -26,41 +28,13 @@ namespace GameLogic
 
             case Enums::MoveType::CastleKS:
             {
-                // King side castling
-                // Move king two squares towards the rook
-                if (!board.MovePiece(from_position, to_position))
-                {
-                    return false;
-                }
-
-                // Determine rook positions based on king's final position
-                int king_row = to_position.GetRow();
-                Position rook_from(king_row, 7); // h-file
-                Position rook_to(king_row, 5);   // f-file (next to king)
-
-                // Move rook
-                return board.MovePiece(rook_from, rook_to);
+                return ExecuteCastleMove(move, board);
             }
 
             case Enums::MoveType::CastleQS:
             {
-                // Queen side castling
-                // Move king two squares towards the rook
-                if (!board.MovePiece(from_position, to_position))
-                {
-                    return false;
-                }
-
-                // Determine rook positions based on king's final position
-                int king_row = to_position.GetRow();
-                Position rook_from(king_row, 0); // a-file
-                Position rook_to(king_row, 3);   // d-file (next to king)
-
-                // Move rook
-                return board.MovePiece(rook_from, rook_to);
+                return ExecuteCastleMove(move, board);
             }
-
-            // The rest of the move type can also use MovePiece funciton but might neeed some extra logic
 
             // Invalid move type
             default:
@@ -140,4 +114,24 @@ namespace GameLogic
         return true;
     }
 
+    bool MoveExecutor::ExecuteCastleMove(const Move &move, Board &board)
+    {
+        Position king_from_position = move.GetFromPosition();
+        Position king_to_position = move.GetToPosition();
+
+        // The position of the rook before castling
+        Position rook_from_position = move.GetMoveType() == Enums::MoveType::CastleKS
+                                        ? king_from_position + Direction::East * Constants::KING_SIDE_ROOK_OFFSET
+                                        : king_from_position + Direction::West * Constants::QUEEN_SIDE_ROOK_OFFSET;
+
+        // The position of the rook after castling
+        Position rook_to_position = move.GetMoveType() == Enums::MoveType::CastleKS
+                                        ? king_to_position + Direction::West
+                                        : king_to_position + Direction::East;
+
+        board.MovePiece(king_from_position, king_to_position); // move the king
+        board.MovePiece(rook_from_position, rook_to_position); // move the rook
+
+        return true;
+    }
 } // namespace GameLogic

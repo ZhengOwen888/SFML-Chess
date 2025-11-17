@@ -12,7 +12,6 @@ namespace GameLogic
     class MoveExecutor
     {
         public:
-            // Returns true if move is executed successfully, otherwise false
             static bool ExecuteMove(const Move &move, Enums::Color player_color, Board &board);
 
         private:
@@ -26,6 +25,8 @@ namespace GameLogic
             static std::unique_ptr<Piece> PromotePawn(Enums::PieceType piece_type, Enums::Color player_color);
 
             static bool ExecutePawnPromotionMove(const Move &move, Enums::Color player_color, Board &board);
+
+            static bool ExecuteCastleMove(const Move &move, Board &board);
     };
 } // namespace GameLogic
 
