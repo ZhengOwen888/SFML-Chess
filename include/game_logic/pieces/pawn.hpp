@@ -27,10 +27,16 @@ namespace GameLogic
             // 3) Captures: check two diagonal targets; include if enemy there.
             // 4) Promotion / en passant handled later.
             // !!! Does not check king safety
-            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
+            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board, const Move &last_move) const override;
 
             std::vector<Position> GetForwardPositions(const Position &from_position, const Board &board) const;
-            std::vector<Position> GetCapturePositions(const Position &from_position, const Board &board) const;
+            std::vector<Position> GetCapturePositions(const Position &from_position, const Board &board, const Move &last_move) const;
+
+            // Return true if pawn can EnPassant
+            bool CanEnPassant(const Position &from_position, const Position &to_position, const Board& board, const Move &last_move) const;
+
+            // Return true is pawn can be promoted
+            bool CanPromotePawn(const Position &forward_to_position, const Board &board) const;
 
             // Forward direction by color (Light = North, Dark = South)
             static inline Direction Forward(Enums::Color color)
