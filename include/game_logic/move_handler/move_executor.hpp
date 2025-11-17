@@ -12,7 +12,6 @@ namespace GameLogic
     class MoveExecutor
     {
         public:
-            // Returns true if move is executed successfully, otherwise false
             static bool ExecuteMove(const Move &move, Enums::Color player_color, Board &board);
 
         private:

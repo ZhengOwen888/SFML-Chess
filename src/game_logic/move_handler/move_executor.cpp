@@ -8,7 +8,6 @@
 
 namespace GameLogic
 {
-    // Returns true if move is executed successfully, otherwise false
     bool MoveExecutor::ExecuteMove(const Move &move, Enums::Color player_color, Board &board)
     {
         // Execute Move base on move type
@@ -120,16 +119,18 @@ namespace GameLogic
         Position king_from_position = move.GetFromPosition();
         Position king_to_position = move.GetToPosition();
 
+        // The position of the rook before castling
         Position rook_from_position = move.GetMoveType() == Enums::MoveType::CastleKS
                                         ? king_from_position + Direction::East * Constants::KING_SIDE_ROOK_OFFSET
                                         : king_from_position + Direction::West * Constants::QUEEN_SIDE_ROOK_OFFSET;
 
+        // The position of the rook after castling
         Position rook_to_position = move.GetMoveType() == Enums::MoveType::CastleKS
                                         ? king_to_position + Direction::West
                                         : king_to_position + Direction::East;
 
-        board.MovePiece(king_from_position, king_to_position);
-        board.MovePiece(rook_from_position, rook_to_position);
+        board.MovePiece(king_from_position, king_to_position); // move the king
+        board.MovePiece(rook_from_position, rook_to_position); // move the rook
 
         return true;
     }

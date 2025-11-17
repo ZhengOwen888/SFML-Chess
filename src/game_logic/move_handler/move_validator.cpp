@@ -121,8 +121,42 @@ namespace GameLogic
         }
     }
 
+    // Returns true if a specified position can be attacked by a specified player
+    bool MoveValidator::IsSquareUnderAttack(Enums::Color attacker_color, const Board &board, const Position &target_position)
+    {
+        // Iterate over all the squares or positions in the board
+        for (int row = 0; row < Constants::BOARD_SIZE; row++)
+        {
+            for (int col = 0; col < Constants::BOARD_SIZE; col++)
+            {
+                Position position{row, col};
+                const Piece *piece = board.GetPieceAt(position);
+
+                // Skip if there is no piece or the piece is not the same color as the attacker
+                if (piece == nullptr || piece->GetColor() != attacker_color)
+                {
+                    continue;
+                }
+
+                // Get all potential moves for this piece
+                const std::vector<Move> potential_moves = piece->GetPotentialMoves(position, board);
+
+                // Check if any move land on the target position
+                for (const Move &potential_move : potential_moves)
+                {
+                    // Returns true of the piece is able to attack the target position
+                    if (potential_move.GetToPosition() == target_position)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     // Returns true if any one of the piece can capture the opponent's players king
-    bool MoveValidator::CanCaptureKing(Enums::Color player_color, const Board &board)
+    bool MoveValidator::CanCaptureOpponentKing(Enums::Color player_color, const Board &board)
     {
         // Iterate over all the square or position in the board
         for (int row = 0; row < Constants::BOARD_SIZE; row++)
@@ -168,7 +202,7 @@ namespace GameLogic
         Enums::Color opponent_color = (player_color == Enums::Color::Light) ? Enums::Color::Dark : Enums::Color::Light;
 
         // Check if opponent can capture the player's king
-        return CanCaptureKing(opponent_color, board);
+        return CanCaptureOpponentKing(opponent_color, board);
     }
 
     // Returns true if normal move is legal
