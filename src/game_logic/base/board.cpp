@@ -62,7 +62,7 @@ namespace GameLogic
     }
 
     // Make a Normal move for a Piece object from one position to another on the board
-    bool Board::MovePiece(const Position &from_position, const Position &to_position)
+    bool Board::MovePiece(const Position &from_position, const Position &to_position, bool simulate)
     {
         // Take the piece from the start position
         std::unique_ptr<Piece> piece = TakePieceAt(from_position);
@@ -72,8 +72,13 @@ namespace GameLogic
         {
             return false;
         }
-        // Mark the piece as having moved
-        piece->SetHasMoved();
+
+        // Check if it is a simulation of a move
+        if (simulate == false)
+        {
+            // Mark the piece as having moved
+            piece->SetHasMoved();
+        }
 
         // Remove the piece at target position
         RemovePieceAt(to_position);
@@ -126,6 +131,19 @@ namespace GameLogic
     bool Board::IsPositionEmpty(const Position& position) const
     {
         return (IsPositionOnBoard(position) && GetPieceAt(position) == nullptr);
+    }
+
+    // Returns true if a list of specified positions are empty
+    bool Board::ArePositionsEmpty(const std::vector<Position> &positions) const
+    {
+        for (const Position& position : positions)
+        {
+            if (IsPositionEmpty(position) == false)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
 } // namespace GameLogic

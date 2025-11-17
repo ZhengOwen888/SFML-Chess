@@ -32,10 +32,13 @@ namespace GameLogic
             static bool NormalMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
 
             // Returns true if enpassant move is legal
-            static bool EnPassantMoveIsLegal(const Move &move, Enums::Color player, Board &board);
+            static bool EnPassantMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
 
             // Returns true if pawn promotion is legal
-            static bool PawnPromotionMoveIsLegal(const Move &move, Enums::Color player, Board &board);
+            static bool PawnPromotionMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
+
+            // Returns true if castling is legal
+            static bool CastleMoveIsLegal(const Move &move, Enums::Color player_color, Board &board);
     };
 } // namespace GameLogic
 

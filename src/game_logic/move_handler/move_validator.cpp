@@ -15,7 +15,8 @@ namespace GameLogic
 {
 
     // Get all legal moves for a piece at a given position
-    std::vector<Move> MoveValidator::GetLegalMovesAtPosition(const Position &position, Enums::Color player_color, Board& board, const Move &last_move)
+    std::vector<Move> MoveValidator::GetLegalMovesAtPosition(
+        const Position &position, Enums::Color player_color, Board& board, const Move &last_move)
     {
         std::vector<Move> legal_moves;
 
@@ -109,6 +110,12 @@ namespace GameLogic
             case Enums::MoveType::PawnPromotion:
                 return PawnPromotionMoveIsLegal(move, player_color, board);
 
+            case Enums::MoveType::CastleKS:
+                return CastleMoveIsLegal(move, player_color, board);
+
+            case Enums::MoveType::CastleQS:
+                return CastleMoveIsLegal(move, player_color, board);
+
             default:
                 return false;
         }
@@ -172,14 +179,19 @@ namespace GameLogic
 
         // Temporarily take piece from target position
         std::unique_ptr<Piece> captured_piece = board.TakePieceAt(to_position);
+
+        // Simulate a move
+        bool simulate = true;
+
         // Temporarily make the move
-        board.MovePiece(from_position, to_position);
+        board.MovePiece(from_position, to_position, simulate);
 
         // Check if the move results the king being in check
         bool king_in_check = IsKingInCheck(player_color, board);
 
         // Undo the move
-        board.MovePiece(to_position, from_position);
+        board.MovePiece(to_position, from_position, simulate);
+
         // Place back the captured piece
         board.PlacePieceAt(std::move(captured_piece), to_position);
 
@@ -212,5 +224,46 @@ namespace GameLogic
     {
         // If you can't move the pawn, you can't promote
         return NormalMoveIsLegal(move, player_color, board);
+    }
+
+    bool MoveValidator::CastleMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
+    {
+        Position king_position = move.GetFromPosition();
+        std::vector<Position> in_between_position;
+
+        // Determine the intermediate position between the king and the rook
+        if (move.GetMoveType() == Enums::MoveType::CastleKS)
+        {
+            // King side castling, the positions between the king and the king side rook
+            in_between_position =
+            {
+                king_position + Direction::East * 1,
+                king_position + Direction::East * 2
+            };
+        }
+        else if (move.GetMoveType() == Enums::MoveType::CastleQS)
+        {
+            // Queen side castling, the positions between the king and the queen side rook
+            in_between_position =
+            {
+                king_position + Direction::West * 1,
+                king_position + Direction::West * 2,
+                king_position + Direction::West * 3
+            };
+        }
+
+        // Check each intermediate position for king safety
+        for (const Position& to_position : in_between_position)
+        {
+            // Simulate normal move
+            Move in_between_move = Move(Enums::MoveType::Normal, king_position, to_position);
+
+            // Returns false if the king would be in check in any of the intermidiate moves
+            if (!NormalMoveIsLegal(in_between_move, player_color, board))
+            {
+                return false;
+            }
+        }
+        return true;
     }
 } // namespace GameLogic

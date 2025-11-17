@@ -26,6 +26,8 @@ namespace GameLogic
             static std::unique_ptr<Piece> PromotePawn(Enums::PieceType piece_type, Enums::Color player_color);
 
             static bool ExecutePawnPromotionMove(const Move &move, Enums::Color player_color, Board &board);
+
+            static bool ExecuteCastleMove(const Move &move, Board &board);
     };
 } // namespace GameLogic
 

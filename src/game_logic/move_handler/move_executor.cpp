@@ -104,4 +104,22 @@ namespace GameLogic
         return true;
     }
 
+    bool MoveExecutor::ExecuteCastleMove(const Move &move, Board &board)
+    {
+        Position king_from_position = move.GetFromPosition();
+        Position king_to_position = move.GetToPosition();
+
+        Position rook_from_position = move.GetMoveType() == Enums::MoveType::CastleKS
+                                        ? king_from_position + Direction::East * Constants::KING_SIDE_ROOK_OFFSET
+                                        : king_from_position + Direction::West * Constants::QUEEN_SIDE_ROOK_OFFSET;
+
+        Position rook_to_position = move.GetMoveType() == Enums::MoveType::CastleQS
+                                        ? king_to_position + Direction::West
+                                        : king_to_position + Direction::East;
+
+        board.MovePiece(king_from_position, king_to_position);
+        board.MovePiece(rook_from_position, rook_to_position);
+
+        return true;
+    }
 } // namespace GameLogic

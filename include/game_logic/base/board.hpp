@@ -19,7 +19,7 @@ namespace GameLogic
 
             // Helpers used to execute moves
             // Make a Normal move for a Piece object from one position to another on the board
-            bool MovePiece(const Position &from_position, const Position &to_position);
+            bool MovePiece(const Position &from_position, const Position &to_position, bool simulate = false);
 
             // Remove a Piece object at a position on the board
             void RemovePieceAt(const Position &position);
@@ -41,6 +41,9 @@ namespace GameLogic
 
             // Returns true of positions has no piece on it and false otherwise
             bool IsPositionEmpty(const Position &position) const;
+
+            // Returns true if a list of specified positions are empty
+            bool ArePositionsEmpty(const std::vector<Position> &positions) const;
 
         private:
             // 8 by 8 vector that keeps track of what piece is on what square and if a square is empty
