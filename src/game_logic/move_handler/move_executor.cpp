@@ -17,6 +17,9 @@ namespace GameLogic
             case Enums::MoveType::Normal:
                 return ExecuteNormalMove(move, board);
 
+            case Enums::MoveType::DoublePawn:
+                return ExecuteNormalMove(move, board);
+
             case Enums::MoveType::EnPassant:
                 return ExecuteEnPassantMove(move, board);
 
@@ -24,7 +27,15 @@ namespace GameLogic
                 // this logic promotes the pawn before moving it to the end of the board
                 return ExecutePawnPromotionMove(move, player_color, board);
 
-            // The rest of the move type can also use MovePiece function but might neeed some extra logic
+            case Enums::MoveType::CastleKS:
+            {
+                return ExecuteCastleMove(move, board);
+            }
+
+            case Enums::MoveType::CastleQS:
+            {
+                return ExecuteCastleMove(move, board);
+            }
 
             // Invalid move type
             default:

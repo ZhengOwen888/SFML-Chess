@@ -49,6 +49,12 @@ namespace GameLogic
             // 8 by 8 vector that keeps track of what piece is on what square and if a square is empty
             std::vector<std::vector<std::unique_ptr<Piece>>> board_;
 
+            // Castling rights tracking (initialized as true, set to false when king/rook moves)
+            bool can_castle_light_king_side_;
+            bool can_castle_light_queen_side_;
+            bool can_castle_dark_king_side_;
+            bool can_castle_dark_queen_side_;
+
             // Set up all pieces in starting positions
             void InitializeBoard();
     };

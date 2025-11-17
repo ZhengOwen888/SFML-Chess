@@ -21,6 +21,12 @@ namespace GameLogic
     // Construct the Board object, initialize the 8x8 board with nullptr
     Board::Board()
     {
+        // Initialize castling rights to true
+        can_castle_light_king_side_ = true;
+        can_castle_light_queen_side_ = true;
+        can_castle_dark_king_side_ = true;
+        can_castle_dark_queen_side_ = true;
+
         InitializeBoard(); // Initialize the Pieces objects
     }
 
