@@ -36,6 +36,13 @@ namespace GameLogic
 
             // Returns true if pawn promotion is legal
             static bool PawnPromotionMoveIsLegal(const Move &move, Enums::Color player, Board &board);
+
+        private:
+            // Helper to add castling moves if legal
+            static void AddCastlingMovesIfLegal(const Position &king_position, Enums::Color player_color, Board &board, std::vector<Move> &moves);
+
+            // Check if a square is under attack by the opponent
+            static bool IsSquareUnderAttack(const Position &square, Enums::Color by_opponent, Board &board);
     };
 } // namespace GameLogic
 
