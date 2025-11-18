@@ -37,8 +37,12 @@ namespace GameLogic
     // Update the game state after each move
     void Game::UpdateGameState()
     {
+        if (fifty_move_counter_ == 100)
+        {
+            result_.SetDraw(Enums::GameState::FiftyMoveRule);
+        }
         // Check if the current player has any legal moves
-        if (GetAllLegalMovesForPlayer(this->current_player_color_).size() == 0)
+        else if (GetAllLegalMovesForPlayer(this->current_player_color_).size() == 0)
         {
             // Checkmate if current player has no legal moves and their king is in check
             if (MoveValidator::IsKingInCheck(this->current_player_color_, this->board_))
@@ -64,14 +68,24 @@ namespace GameLogic
     {
         // Check if the move is legal
         bool is_legal_move = MoveValidator::IsLegalMove(move, this->current_player_color_, this->board_);
-
         if (is_legal_move == false)
         {
             return false;
         }
 
-        //  Execute the move with move executor
+        // Execute the move with move executor
         MoveExecutor::ExecuteMove(move, this->current_player_color_, this->board_);
+
+        // Check if move captures a piece or is a pawn move
+        bool is_capture_move = MoveValidator::IsCaptureMove(move, this->board_);
+        bool is_pawn_move = MoveValidator::IsPawnMove(move, this->board_);
+
+        // Update 50 move rule counter
+        if (is_capture_move || is_pawn_move)
+        {
+            fifty_move_counter_ = 0;
+        }
+        fifty_move_counter_++;
 
         // Switch to opponenet's turn and update move_history
         this->current_player_color_ = GetOpponentPlayerColor();
