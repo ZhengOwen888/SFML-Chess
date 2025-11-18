@@ -27,14 +27,10 @@ namespace GameLogic
                 return ExecutePawnPromotionMove(move, player_color, board);
 
             case Enums::MoveType::CastleKS:
-            {
                 return ExecuteCastleMove(move, board);
-            }
 
             case Enums::MoveType::CastleQS:
-            {
                 return ExecuteCastleMove(move, board);
-            }
 
             // Invalid move type
             default:
