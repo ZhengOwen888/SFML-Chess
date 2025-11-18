@@ -52,11 +52,17 @@ namespace GameLogic
             Enums::Color GetOpponentPlayerColor() const;
 
         private:
+            // For core game state
             Board board_;
             Player player_light_;
             Player player_dark_;
             Enums::Color current_player_color_;
+
+            // Move history and tracking
             std::vector<Move> move_history_;
+            int fifty_move_counter_;
+
+            // Game outcome
             GameResult result_;
     };
 }
