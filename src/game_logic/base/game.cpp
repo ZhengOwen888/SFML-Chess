@@ -57,6 +57,13 @@ namespace GameLogic
         }
     }
 
+    // Returns true if both players have insufficent material to deliver a checkmate
+    bool Game::InsufficientMaterial() const
+    {
+        auto pieces = this->board_.GetAllPieces();
+        // Still needs further implemnation
+    }
+
     // Check if the game is over
     bool Game::IsGameOver() const
     {
