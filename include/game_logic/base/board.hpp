@@ -33,6 +33,9 @@ namespace GameLogic
             // Returns an immutable piece at a given position otherwise nullptr (for read purpose only)
             const Piece* GetPieceAt(const Position &position) const;
 
+            // Returns a immutable list of all pieces on the board
+            const std::vector<const Piece*> GetAllPieces() const;
+
             // Returns a mutable piece at a given position otherwise nullptr
             Piece* GetMutablePieceAt(const Position &position);
 

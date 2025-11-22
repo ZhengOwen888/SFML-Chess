@@ -113,6 +113,28 @@ namespace GameLogic
         return this->board_[position.GetRow()][position.GetCol()].get();
     }
 
+    // Returns a list of pointers to constant Piece objects
+    const std::vector<const Piece*> Board::GetAllPieces() const
+    {
+        std::vector<const Piece *> pieces;
+        pieces.reserve(32); // max number of chess piece in normal game
+
+        // Iterate over entire board
+        for (int row = 0; row < Constants::BOARD_SIZE; row++)
+        {
+            for (int col = 0; col < Constants::BOARD_SIZE; col++)
+            {
+                // Add to list of pieces if there is a piece
+                const Piece *piece = GetPieceAt(Position(row, col));
+                if (piece != nullptr)
+                {
+                    pieces.push_back(piece);
+                }
+            }
+        }
+        return pieces;
+    }
+
     // Returns a pointer to a Piece object at a position on the board
     Piece* Board::GetMutablePieceAt(const Position& position)
     {

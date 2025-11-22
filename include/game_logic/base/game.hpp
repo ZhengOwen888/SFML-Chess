@@ -29,6 +29,9 @@ namespace GameLogic
             // Update the game state after each move
             void UpdateGameState();
 
+            // Returns true if the both players have insufficient material to deliever a checkmate
+            bool InsufficientMaterial() const;
+
             // Check if the game is over
             bool IsGameOver() const;
 
