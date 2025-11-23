@@ -167,5 +167,4 @@ namespace GameLogic
         }
         return true;
     }
-
 } // namespace GameLogic
