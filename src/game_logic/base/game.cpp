@@ -34,6 +34,12 @@ namespace GameLogic
         return MoveValidator::GetAllLegalMovesForPlayer(player_color, this->board_, last_move);
     }
 
+    // Returns a immutable map of key: position to value: pieces
+    const std::map<Position, const Piece *> Game::GetAllPositonAndPiece() const
+    {
+        return this->board_.GetAllPositonAndPiece();
+    }
+
     // Update the game state after each move
     void Game::UpdateGameState()
     {
@@ -55,13 +61,6 @@ namespace GameLogic
                 result_.SetDraw(Enums::GameState::Stalemate);
             }
         }
-    }
-
-    // Returns true if both players have insufficent material to deliver a checkmate
-    bool Game::InsufficientMaterial() const
-    {
-        auto pieces = this->board_.GetAllPieces();
-        // Still needs further implemnation
     }
 
     // Check if the game is over

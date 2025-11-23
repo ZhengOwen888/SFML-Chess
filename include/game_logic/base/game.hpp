@@ -9,6 +9,7 @@
 
 #include "game_logic/enums.hpp"
 
+#include <map>
 #include <vector>
 
 namespace GameLogic
@@ -25,6 +26,9 @@ namespace GameLogic
 
             // Get all legal move a player can make
             std::vector<Move> GetAllLegalMovesForPlayer(Enums::Color player_color);
+
+            // Returns a immutable map of key: position to value: pieces
+            const std::map<Position, const Piece *> GetAllPositonAndPiece() const;
 
             // Update the game state after each move
             void UpdateGameState();
