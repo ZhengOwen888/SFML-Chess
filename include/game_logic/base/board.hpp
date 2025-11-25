@@ -17,7 +17,7 @@ namespace GameLogic
      * @class Board
      * @brief Represents a standard 8x8 chess board and manages the state of the game Pieces.
      *
-     * This class handles board initialization, Piece placement, movement logic, and move_history.
+     * This class handles board initialization, Piece placement, movement logic, and move history.
      ********************************************************************************************/
     class Board
     {

@@ -14,11 +14,19 @@ namespace GameLogic
     class Pawn: public Piece
     {
         public:
-            // Construct a Pawn object with color
+            /********************************************************
+             * @brief Constructs a Pawn Object with a specific color.
+             * @param color The color (Light or Dark) of the Pawn.
+             *******************************************************/
             Pawn(Enums::Color color);
+
+            /** @brief  Virtual Default Destructor*/
             ~Pawn() override = default;
 
-            // Make a clone of this Pawn object
+            /*********************************************************
+             * @brief Creates a deep copy (clone) of this Pawn object.
+             * @return A unique_ptr to the newly created Pawn clone.
+             ********************************************************/
             std::unique_ptr<Piece> ClonePiece() const override;
 
             // Get pawn moves from a position (basic):

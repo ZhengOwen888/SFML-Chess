@@ -85,9 +85,20 @@ namespace GameLogic
         if (!this->undo_history_.empty())
         {
             MoveRecord &record = this->undo_history_.back();
+
+            bool is_pawn_move = MoveValidator::IsPawnMove(record.ReadMoveMade(), this->board_);
+            bool is_capture = MoveValidator::IsCaptureMove(record.ReadMoveMade(), this->board_);
+            if (is_pawn_move || is_capture)
+            {
+                this->fifty_move_counter_--;
+            }
+
             this->board_.UnmakeMove(record);
             this->undo_history_.pop_back();
             this->redo_history_.push_back(std::move(record));
+
+            SwitchPlayerTurn();
+            UpdateGameState();
         }
     }
 
@@ -96,9 +107,20 @@ namespace GameLogic
         if (!this->redo_history_.empty())
         {
             const Move &move_to_redo = this->redo_history_.back().ReadMoveMade();
+
+            bool is_pawn_move = MoveValidator::IsPawnMove(move_to_redo, this->board_);
+            bool is_capture = MoveValidator::IsCaptureMove(move_to_redo, this->board_);
+            if (is_pawn_move || is_capture)
+            {
+                this->fifty_move_counter_++;
+            }
+
             MoveRecord record = this->board_.MakeMove(move_to_redo);
             this->redo_history_.pop_back();
             this->undo_history_.push_back(std::move(record));
+
+            SwitchPlayerTurn();
+            UpdateGameState();
         }
     }
 

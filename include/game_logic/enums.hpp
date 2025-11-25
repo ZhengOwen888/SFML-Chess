@@ -1,12 +1,11 @@
 #ifndef GAMELOGIC_ENUMS_HPP
 #define GAMELOGIC_ENUMS_HPP
 
-#include <array>
-
 namespace GameLogic
 {
     namespace Enums
     {
+        /** @brief The possible colors for the game. */
         enum class Color
         {
             Dark,
@@ -14,6 +13,7 @@ namespace GameLogic
             None
         };
 
+        /** @brief The type of pieces used. */
         enum class PieceType
         {
             Pawn,
@@ -25,6 +25,7 @@ namespace GameLogic
             None
         };
 
+        /** @brief The types of moves. */
         enum class MoveType
         {
             Normal,     // Normal Moves and Capture
@@ -36,6 +37,7 @@ namespace GameLogic
             None
         };
 
+        /** @brief The possible game states. */
         enum class GameState
         {
             Ongoing,

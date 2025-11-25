@@ -14,20 +14,37 @@ namespace GameLogic
     class Queen: public Piece
     {
         public:
-            // Construct a Queen object with color
+            /**********************************************************
+             * @brief Constructs a Queen Object with a specific color.
+             * @param color The color (Light or Dark) of the Queen.
+             *********************************************************/
             Queen(Enums::Color color);
+
+            /** @brief  Virtual Default Destructor*/
             ~Queen() override = default;
 
-            // Make a clone of this Queen object
+            /**********************************************************
+             * @brief Creates a deep copy (clone) of this Queen object.
+             * @return A unique_ptr to the newly created Queen clone.
+             *********************************************************/
             std::unique_ptr<Piece> ClonePiece() const override;
 
-            // Get queen moves from a position
-            // Combine rook + bishop logic (8 directions).
-            // Walk each direction until off board or blocked; include first enemy then stop.
+            /****************************************************************************************************
+             * @brief Calculates all potential cardinal moves the Queen can make from a given position.
+             *
+             * For each position: if on board and (empty or enemy) include.
+             *
+             * !!! IMPORTANT: This method does not check for king safety
+             *
+             * @param from_position The starting position of the Queen
+             * @param board The current state of the board for validation.
+             * @param last_move Optional pointer to the last move made in the game (not typically used by Queen).
+             * @return A vector of potential Move objects.
+             ***************************************************************************************************/
             std::vector<Move> GetPotentialMoves(
                 const Position& from_position, const Board &board, const Move* last_move = nullptr) const override;
 
-            // All 8 directions (orthogonal + diagonal)
+            /** @brief Static constant vector defining the eight cardinal directions a bishop can move in. */
             static inline const std::vector<Direction> AllDirs =
             {
                 Direction::North,
