@@ -4,6 +4,7 @@
 #include "game_logic/base/board.hpp"
 #include "game_logic/base/player.hpp"
 #include "game_logic/base/move.hpp"
+#include "game_logic/base/move_record.hpp"
 #include "game_logic/base/position.hpp"
 #include "game_logic/base/game_result.hpp"
 
@@ -11,6 +12,7 @@
 
 #include <map>
 #include <vector>
+#include <memory>
 
 namespace GameLogic
 {
@@ -19,7 +21,7 @@ namespace GameLogic
         public:
             // Construct a Game object
             Game();
-            ~Game();
+            ~Game() = default;
 
             // Get legal moves a piece can make at the given position
             std::vector<Move> GetLegalMovesAtPosition(const Position &position);
@@ -30,12 +32,6 @@ namespace GameLogic
             // Returns a immutable map of key: position to value: pieces
             const std::map<Position, const Piece *> GetAllPositonAndPiece() const;
 
-            // Update the game state after each move
-            void UpdateGameState();
-
-            // Returns true if the both players have insufficient material to deliever a checkmate
-            bool InsufficientMaterial() const;
-
             // Check if the game is over
             bool IsGameOver() const;
 
@@ -43,20 +39,18 @@ namespace GameLogic
             // Return True and switch player turn if it was successful
             bool ExecuteMove(const Move& move);
 
+            void UnExecuteMove();
+
+            void ReExecuteMove();
+
             // Return the latest move made
-            const Move GetLastMove() const;
+            const Move *GetLastMove() const;
 
             // Return the current player
             const Player &GetCurrentPlayer() const;
 
-            // Return the current player's opponent's
+            // Return the current player's opponent
             const Player &GetOpponentPlayer() const;
-
-            // Return the current player's color
-            Enums::Color GetCurrentPlayerColor() const;
-
-            // Return the current player's opponent's color
-            Enums::Color GetOpponentPlayerColor() const;
 
         private:
             // For core game state
@@ -66,11 +60,15 @@ namespace GameLogic
             Enums::Color current_player_color_;
 
             // Move history and tracking
-            std::vector<Move> move_history_;
+            std::vector<MoveRecord> undo_history_;
+            std::vector<MoveRecord> redo_history_;
             int fifty_move_counter_;
 
             // Game outcome
             GameResult result_;
+
+            void UpdateGameState();
+            void SwitchPlayerTurn();
     };
 }
 

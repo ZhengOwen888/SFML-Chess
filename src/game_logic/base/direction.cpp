@@ -6,10 +6,6 @@ namespace GameLogic
     Direction::Direction(int row_delta, int col_delta)
         : row_delta_(row_delta), col_delta_(col_delta) {};
 
-    // Default destructor
-    Direction::~Direction() {};
-
-
     // Return a new Direction object with the sum of this direction and another direction
     Direction Direction::operator+(const Direction& other_direction) const
     {

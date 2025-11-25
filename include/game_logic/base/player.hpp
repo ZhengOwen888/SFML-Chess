@@ -10,7 +10,7 @@ namespace GameLogic
         public:
             // Contruct a Player object with color
             Player(Enums::Color color);
-            ~Player();
+            ~Player() = default;
 
             // Return the color of this player
             Enums::Color GetColor() const;

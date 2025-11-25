@@ -21,18 +21,14 @@ namespace GameLogic
         public:
             // Construct a Piece object with piece type and color
             Piece(Enums::PieceType piece_type, Enums::Color color);
-            virtual ~Piece();
+            virtual ~Piece() = default;
 
             // Clone a new Piece object with the same properties
             virtual std::unique_ptr<Piece> ClonePiece() const = 0;
 
-            // Get all potential moves for Pawns
-            virtual std::vector<Move> GetPotentialMoves(
-                const Position& from_position, const Board &board, const Move &last_move) const;
-
             // Get all potential moves
             virtual std::vector<Move> GetPotentialMoves(
-                const Position& from_position, const Board &board) const;
+                const Position& from_position, const Board &board, const Move* last_move = nullptr) const = 0;
 
             // Get all positions a piece can move to from its current position (in EXACTLY ONE Direction)
             std::vector<Position> GetPositionsInDir(
@@ -43,8 +39,8 @@ namespace GameLogic
                 const Position& from_position, const Board &board, const std::vector<Direction>& directions) const;
 
             // Setters
-            void SetHasMoved();
-            void SetHasPromoted();
+            void SetHasMoved(bool has_moved);
+            void SetHasPromoted(bool has_promoted);
 
             // Getters
             Enums::PieceType GetPieceType() const;

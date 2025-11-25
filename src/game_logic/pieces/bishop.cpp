@@ -27,7 +27,8 @@ namespace GameLogic
 	// Walk each diagonal until off board or blocked.
     // Include first enemy then stop; stop on friendly.
 	// !!! Does not check king safety
-	std::vector<Move> Bishop::GetPotentialMoves(const Position& from_position, const  Board& board) const
+	std::vector<Move> Bishop::GetPotentialMoves(
+		const Position& from_position, const  Board& board, const Move* last_move) const
 	{
 		// List of positions this Bishop piece can move to
 		std::vector<Position> to_positions = GetPositionsInDirs(from_position, board, Bishop::DiagonalDirs);

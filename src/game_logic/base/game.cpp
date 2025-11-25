@@ -6,7 +6,6 @@
 #include "game_logic/base/game_result.hpp"
 
 #include "game_logic/move_handler/move_validator.hpp"
-#include "game_logic/move_handler/move_executor.hpp"
 
 #include "game_logic/enums.hpp"
 
@@ -22,7 +21,7 @@ namespace GameLogic
     // Get all legal moves a piece can make at the given position
     std::vector<Move> Game::GetLegalMovesAtPosition(const Position &position)
     {
-        Move last_move = GetLastMove();
+        const Move *last_move = GetLastMove();
         // Get all legal moves at the given position for the board object
         return MoveValidator::GetLegalMovesAtPosition(position, this->current_player_color_, this->board_, last_move);
     }
@@ -30,7 +29,7 @@ namespace GameLogic
     // Get all legal move a player can make
     std::vector<Move> Game::GetAllLegalMovesForPlayer(Enums::Color player_color)
     {
-        const Move last_move = GetLastMove();
+        const Move *last_move = GetLastMove();
         return MoveValidator::GetAllLegalMovesForPlayer(player_color, this->board_, last_move);
     }
 
@@ -38,29 +37,6 @@ namespace GameLogic
     const std::map<Position, const Piece *> Game::GetAllPositonAndPiece() const
     {
         return this->board_.GetAllPositonAndPiece();
-    }
-
-    // Update the game state after each move
-    void Game::UpdateGameState()
-    {
-        if (fifty_move_counter_ == 100)
-        {
-            result_.SetDraw(Enums::GameState::FiftyMoveRule);
-        }
-        // Check if the current player has any legal moves
-        else if (GetAllLegalMovesForPlayer(this->current_player_color_).size() == 0)
-        {
-            // Checkmate if current player has no legal moves and their king is in check
-            if (MoveValidator::IsKingInCheck(this->current_player_color_, this->board_))
-            {
-                result_.SetWin(GetOpponentPlayerColor());
-            }
-            // Stalemate if current player has no legal moves but their king is not in check
-            else
-            {
-                result_.SetDraw(Enums::GameState::Stalemate);
-            }
-        }
     }
 
     // Check if the game is over
@@ -79,8 +55,9 @@ namespace GameLogic
             return false;
         }
 
-        // Execute the move with move executor
-        MoveExecutor::ExecuteMove(move, this->current_player_color_, this->board_);
+        // // Execute the move with move executor
+        // MoveExecutor::ExecuteMove(move, this->current_player_color_, this->board_);
+        MoveRecord record = std::move(this->board_.MakeMove(move));
 
         // Check if move captures a piece or is a pawn move
         bool is_capture_move = MoveValidator::IsCaptureMove(move, this->board_);
@@ -94,24 +71,45 @@ namespace GameLogic
         fifty_move_counter_++;
 
         // Switch to opponenet's turn and update move_history
-        this->current_player_color_ = GetOpponentPlayerColor();
-        this->move_history_.push_back(move);
+        this->undo_history_.push_back(std::move(record));
+        this->redo_history_.clear();
+
+        SwitchPlayerTurn();
         UpdateGameState();
 
         return true;
     }
 
-    // Return the latest move that was made
-    const Move Game::GetLastMove() const
+    void Game::UnExecuteMove()
     {
-        if (this->move_history_.size() == 0)
+        if (!this->undo_history_.empty())
         {
-            return Move(Enums::MoveType::None, Position(-1, -1), Position(-1, -1));
+            MoveRecord &record = this->undo_history_.back();
+            this->board_.UnmakeMove(record);
+            this->undo_history_.pop_back();
+            this->redo_history_.push_back(std::move(record));
         }
-        else
+    }
+
+    void Game::ReExecuteMove()
+    {
+        if (!this->redo_history_.empty())
         {
-            return this->move_history_.back();
+            const Move &move_to_redo = this->redo_history_.back().ReadMoveMade();
+            MoveRecord record = this->board_.MakeMove(move_to_redo);
+            this->redo_history_.pop_back();
+            this->undo_history_.push_back(std::move(record));
         }
+    }
+
+    // Return the latest move that was made
+    const Move *Game::GetLastMove() const
+    {
+        if (this->undo_history_.empty())
+        {
+            return nullptr;
+        }
+        return &this->undo_history_.back().ReadMoveMade();
     }
 
     // Return the current player
@@ -126,16 +124,30 @@ namespace GameLogic
         return (this->current_player_color_ == Enums::Color::Light) ? this->player_dark_ : this->player_light_;
     }
 
-    // Return the current player's color
-    Enums::Color Game::GetCurrentPlayerColor() const
+    void Game::UpdateGameState()
     {
-        return this->current_player_color_;
+        if (fifty_move_counter_ == 100)
+        {
+            result_.SetDraw(Enums::GameState::FiftyMoveRule);
+        }
+        // Check if the current player has any legal moves
+        else if (GetAllLegalMovesForPlayer(this->current_player_color_).size() == 0)
+        {
+            // Checkmate if current player has no legal moves and their king is in check
+            if (MoveValidator::IsKingInCheck(this->current_player_color_, this->board_))
+            {
+                result_.SetWin(GetOpponentPlayer().GetColor());
+            }
+            // Stalemate if current player has no legal moves but their king is not in check
+            else
+            {
+                result_.SetDraw(Enums::GameState::Stalemate);
+            }
+        }
     }
 
-    // Return the current player's opponent's color
-    Enums::Color Game::GetOpponentPlayerColor() const
+    void Game::SwitchPlayerTurn()
     {
-        return (this->current_player_color_ == Enums::Color::Light) ? Enums::Color::Dark : Enums::Color::Light;
+        this->current_player_color_ = GetOpponentPlayer().GetColor();
     }
-
 } // namespace GameLogic

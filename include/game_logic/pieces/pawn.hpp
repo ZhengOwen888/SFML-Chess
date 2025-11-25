@@ -16,7 +16,7 @@ namespace GameLogic
         public:
             // Construct a Pawn object with color
             Pawn(Enums::Color color);
-            ~Pawn() override;
+            ~Pawn() override = default;
 
             // Make a clone of this Pawn object
             std::unique_ptr<Piece> ClonePiece() const override;
@@ -27,13 +27,14 @@ namespace GameLogic
             // 3) Captures: check two diagonal targets; include if enemy there.
             // 4) Promotion / en passant handled later.
             // !!! Does not check king safety
-            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board, const Move &last_move) const override;
+            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board, const Move* last_move = nullptr) const override;
 
             std::vector<Position> GetForwardPositions(const Position &from_position, const Board &board) const;
-            std::vector<Position> GetCapturePositions(const Position &from_position, const Board &board, const Move &last_move) const;
+
+            std::vector<Position> GetCapturePositions(const Position &from_position, const Board &board, const Move* last_move = nullptr) const;
 
             // Return true if pawn can EnPassant
-            bool CanEnPassant(const Position &from_position, const Position &to_position, const Board& board, const Move &last_move) const;
+            bool CanEnPassant(const Position &from_position, const Position &to_position, const Board& board, const Move* last_move = nullptr) const;
 
             // Return true is pawn can be promoted
             bool CanPromotePawn(const Position &forward_to_position, const Board &board) const;

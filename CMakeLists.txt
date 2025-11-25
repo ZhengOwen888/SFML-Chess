@@ -20,7 +20,7 @@ FetchContent_MakeAvailable(SFML)
 
 # Add subdirectories
 add_subdirectory("src/game_logic")
-# Add_subdirectory("src/game_render")
+Add_subdirectory("src/game_render")
 
 # Add executables to (the program)
 add_executable(main "src/main.cpp")
@@ -37,7 +37,7 @@ add_custom_command(TARGET main POST_BUILD
 target_link_libraries(main
     PRIVATE
         GameLogic
-        # GameRender
+        GameRender
         SFML::Graphics
         SFML::Window
         SFML::System

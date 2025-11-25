@@ -15,10 +15,6 @@ namespace GameLogic
     Piece::Piece(Enums::PieceType piece_type, Enums::Color color)
         : piece_type_(piece_type), color_(color), has_moved_(false), has_promoted_(false) {};
 
-    // Default destructor
-    Piece::~Piece() {};
-
-
     // Get all positions a piece can move to from its current position (in EXACTLY ONE Direction)
     std::vector<Position> Piece::GetPositionsInDir(
         const Position& from_position, const Board& board, const Direction& direction) const
@@ -65,15 +61,15 @@ namespace GameLogic
 
 
     // Mark the piece as having already moved (use for castling and pawn double step)
-    void Piece::SetHasMoved()
+    void Piece::SetHasMoved(bool has_moved)
     {
-        this->has_moved_ = true;
+        this->has_moved_ = has_moved;
     }
 
     // Mark the piece as having already promoted (for pawns)
-    void Piece::SetHasPromoted()
+    void Piece::SetHasPromoted(bool has_promoted)
     {
-        this->has_promoted_ = true;
+        this->has_promoted_ = has_promoted;
     }
 
 

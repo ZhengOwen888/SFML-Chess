@@ -16,7 +16,7 @@ namespace GameLogic
         public:
             // Construct a Knight object with color
             Knight(Enums::Color color);
-            ~Knight() override;
+            ~Knight() override = default;
 
             // Make a clone of this Knight object
             std::unique_ptr<Piece> ClonePiece() const override;
@@ -28,7 +28,8 @@ namespace GameLogic
             // Get Knight moves from a position
             // For each jump target: if on board and not friendly piece, include.
             // !!! Does not check king safety
-            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
+            std::vector<Move> GetPotentialMoves(
+                const Position& from_position, const Board &board, const Move* last_move = nullptr) const override;
 
             // Knight jump directions (8 L-shapes)
             static inline const std::vector<Direction> JumpDirs =

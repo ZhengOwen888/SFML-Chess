@@ -1,5 +1,6 @@
 #include "game_logic/base/position.hpp"
 #include "game_logic/base/move.hpp"
+#include "game_logic/base/move_record.hpp"
 #include "game_logic/base/board.hpp"
 #include "game_logic/base/piece.hpp"
 
@@ -23,8 +24,6 @@ namespace GameLogic
     {
         InitializeBoard(); // Initialize the Pieces objects
     }
-
-    Board::~Board() {};
 
     void Board::InitializeBoard()
     {
@@ -62,49 +61,227 @@ namespace GameLogic
     }
 
     // Make a Normal move for a Piece object from one position to another on the board
-    bool Board::MovePiece(const Position &from_position, const Position &to_position, bool simulate)
+    MoveRecord Board::MakeMove(const Move& move)
     {
-        // Take the piece from the start position
-        std::unique_ptr<Piece> piece = TakePieceAt(from_position);
-
-        // Return false if no piece was taken
-        if (piece == nullptr)
+        switch(move.GetMoveType())
         {
-            return false;
+            case Enums::MoveType::Normal:
+            case Enums::MoveType::DoublePawn:
+                return MakeNormalMove(move);
+
+            case Enums::MoveType::EnPassant:
+                return MakeEnPassantMove(move);
+
+            case Enums::MoveType::PawnPromotion:
+                return MakePawnPromotionMove(move);
+
+            case Enums::MoveType::CastleKS:
+            case Enums::MoveType::CastleQS:
+                return MakeCastleMove(move);
+            default:
+                throw std::runtime_error("Unknown or invalid MoveType provided to MakeMove.");
+        }
+    }
+
+    void Board::UnmakeMove(MoveRecord& record)
+    {
+        switch(record.ReadMoveMade().GetMoveType())
+        {
+            case Enums::MoveType::Normal:
+            case Enums::MoveType::DoublePawn:
+                UnmakeNormalMove(record);
+                break;
+
+            case Enums::MoveType::EnPassant:
+                UnmakeEnPassantMove(record);
+                break;
+
+            case Enums::MoveType::PawnPromotion:
+                UnmakePawnPromotionMove(record);
+                break;
+
+            case Enums::MoveType::CastleKS:
+            case Enums::MoveType::CastleQS:
+                UnmakeCastleMove(record);
+                break;
+
+            default:
+                throw std::runtime_error("Unknown or invalid MoveType found in Move Record during Unmake.");
+        }
+    }
+
+    MoveRecord Board::MakeNormalMove(const Move& move)
+    {
+        const Position &from_position = move.GetFromPosition();
+        const Position &to_position = move.GetToPosition();
+
+        MoveRecord record;
+        record.SetMoveMade(move);
+
+        std::unique_ptr<Piece> moving_piece = RemovePieceAt(from_position);
+        record.SetMovedPiece(moving_piece->ClonePiece());
+        moving_piece->SetHasMoved(true);
+
+        std::unique_ptr<Piece> captured_piece = RemovePieceAt(to_position);
+        record.SetCapturedPiece(std::move(captured_piece));
+
+        PlacePieceAt(std::move(moving_piece), to_position);
+
+        return std::move(record);
+    }
+
+    MoveRecord Board::MakeEnPassantMove(const Move& move)
+    {
+        const Position &from_position = move.GetFromPosition();
+        const Position &to_position = move.GetToPosition();
+        const Position capture_position(from_position.GetRow(), to_position.GetCol());
+
+        MoveRecord record;
+        record.SetMoveMade(move);
+
+        std::unique_ptr<Piece> moving_piece = RemovePieceAt(from_position);
+        record.SetMovedPiece(moving_piece->ClonePiece());
+        moving_piece->SetHasMoved(true);
+
+        std::unique_ptr<Piece> captured_piece = RemovePieceAt(capture_position);
+        record.SetCapturedPiece(std::move(captured_piece));
+
+        PlacePieceAt(std::move(moving_piece), to_position);
+
+        return std::move(record);
+    }
+
+    MoveRecord Board::MakePawnPromotionMove(const Move &move)
+    {
+        const Position &from_position = move.GetFromPosition();
+        const Position &to_position = move.GetToPosition();
+
+        MoveRecord record;
+        record.SetMoveMade(move);
+
+        std::unique_ptr<Piece> moving_piece = RemovePieceAt(from_position);
+        record.SetMovedPiece(moving_piece->ClonePiece());
+
+        std::unique_ptr<Piece> captured_piece = RemovePieceAt(to_position);
+        record.SetCapturedPiece(std::move(captured_piece));
+
+        std::unique_ptr<Piece> promoted_piece = std::make_unique<Queen>(moving_piece->GetColor());
+        promoted_piece->SetHasMoved(true);
+        PlacePieceAt(std::move(promoted_piece), to_position);
+
+        return std::move(record);
+    }
+
+    MoveRecord Board::MakeCastleMove(const Move &move)
+    {
+        const Position &king_from_position = move.GetFromPosition();
+        const Position &king_to_position = move.GetToPosition();
+
+        auto [rook_from_position, rook_to_position] = GetCastleRookPositions(king_from_position, king_to_position, move.GetMoveType());
+
+        MoveRecord record;
+        record.SetMoveMade(move);
+
+        std::unique_ptr<Piece> king_piece = RemovePieceAt(king_from_position);
+        record.SetMovedPiece(king_piece->ClonePiece());
+        king_piece->SetHasMoved(true);
+        PlacePieceAt(std::move(king_piece), king_to_position);
+
+        std::unique_ptr<Piece> rook_piece = RemovePieceAt(rook_from_position);
+        rook_piece->SetHasMoved(true);
+        PlacePieceAt(std::move(rook_piece), rook_to_position);
+
+        record.SetCapturedPiece(nullptr);
+
+        return std::move(record);
+    }
+
+    void Board::UnmakeNormalMove(MoveRecord &record)
+    {
+        const Move& move = record.ReadMoveMade();
+        const Position &from_position = move.GetFromPosition();
+        const Position &to_position = move.GetToPosition();
+
+        std::unique_ptr<Piece> moved_piece = record.TakeMovedPiece();
+        std::unique_ptr<Piece> captured_piece = record.TakeCapturedPiece();
+
+        PlacePieceAt(std::move(captured_piece), to_position);
+        PlacePieceAt(std::move(moved_piece), from_position);
+    }
+
+    void Board::UnmakeEnPassantMove(MoveRecord &record)
+    {
+        const Move& move = record.ReadMoveMade();
+        const Position &from_position = move.GetFromPosition();
+        const Position &to_position = move.GetToPosition();
+        const Position capture_position(from_position.GetRow(), to_position.GetCol());
+
+        std::unique_ptr<Piece> moved_piece = record.TakeMovedPiece();
+        std::unique_ptr<Piece> captured_piece = record.TakeCapturedPiece();
+
+        PlacePieceAt(std::move(captured_piece), capture_position);
+        PlacePieceAt(std::move(moved_piece), from_position);
+    }
+
+    void Board::UnmakePawnPromotionMove(MoveRecord &record)
+    {
+        const Move& move = record.ReadMoveMade();
+        const Position &from_position = move.GetFromPosition();
+        const Position &to_position = move.GetToPosition();
+
+        std::unique_ptr<Piece> moved_piece = record.TakeMovedPiece();
+        std::unique_ptr<Piece> captured_piece = record.TakeCapturedPiece();
+
+        PlacePieceAt(std::move(captured_piece), to_position);
+        PlacePieceAt(std::move(moved_piece), from_position);
+    }
+
+    void Board::UnmakeCastleMove(MoveRecord &record)
+    {
+        const Move& move = record.ReadMoveMade();
+        const Position& king_from_position = move.GetFromPosition();
+        const Position& king_to_position = move.GetToPosition();
+
+        auto [rook_from_position, rook_to_position] = GetCastleRookPositions(king_from_position, king_to_position, move.GetMoveType());
+
+        std::unique_ptr<Piece> king_piece = record.TakeMovedPiece();
+        king_piece->SetHasMoved(false);
+        std::unique_ptr<Piece> rook_piece = RemovePieceAt(rook_to_position);
+        if (rook_piece)
+        {
+            rook_piece->SetHasMoved(false);
         }
 
-        // Check if it is a simulation of a move
-        if (simulate == false)
-        {
-            // Mark the piece as having moved
-            piece->SetHasMoved();
-        }
+        PlacePieceAt(std::move(king_piece), king_from_position);
+        PlacePieceAt(std::move(rook_piece), rook_from_position);
+    }
 
-        // Remove the piece at target position
-        RemovePieceAt(to_position);
+    std::pair<Position, Position> Board::GetCastleRookPositions(
+        const Position& king_from_position, const Position& king_to_position, Enums::MoveType move_type) const
+    {
+        // The position of the rook before castling
+        const Position rook_from_position = move_type == Enums::MoveType::CastleKS
+                                        ? king_from_position + Direction::East * Constants::KING_SIDE_ROOK_OFFSET
+                                        : king_from_position + Direction::West * Constants::QUEEN_SIDE_ROOK_OFFSET;
 
-        // place piece from start position to target position
-        PlacePieceAt(std::move(piece), to_position);
+        // The position of the rook after castling
+        const Position rook_to_position = move_type == Enums::MoveType::CastleKS
+                                        ? king_to_position + Direction::West
+                                        : king_to_position + Direction::East;
 
-        return true;
+        return {rook_from_position, rook_to_position};
     }
 
     // Removes a Piece object from a position on the board
-    void Board::RemovePieceAt(const Position &position)
+    std::unique_ptr<Piece> Board::RemovePieceAt(const Position &position)
     {
-        this->board_[position.GetRow()][position.GetCol()].reset();
+        return std::move(this->board_[position.GetRow()][position.GetCol()]);
     }
 
     // Place a Piece object at a position on the board
     void Board::PlacePieceAt(std::unique_ptr<Piece> piece, const Position &position)
     {
         this->board_[position.GetRow()][position.GetCol()] = std::move(piece);
-    }
-
-    // Returns a unique pointer to a Piece object after taking it from a position
-    std::unique_ptr<Piece> Board::TakePieceAt(const Position &position)
-    {
-        return std::move(this->board_[position.GetRow()][position.GetCol()]);
     }
 
     // Returns a pointer to a constant Piece object at a position on the board
@@ -129,7 +306,6 @@ namespace GameLogic
                 }
             }
         }
-
         return position_with_piece;
     }
 

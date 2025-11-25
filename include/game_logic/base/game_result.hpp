@@ -13,6 +13,8 @@ namespace GameLogic
             // Construct a Result object which contain info on the state of the game
             GameResult(Enums::Color player_color, Enums::GameState game_state);
 
+            ~GameResult() = default;
+
             // A player won by checkmate
             void SetWin(Enums::Color winner_color);
 

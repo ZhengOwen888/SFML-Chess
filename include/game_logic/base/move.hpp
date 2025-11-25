@@ -12,16 +12,28 @@ namespace GameLogic
     class Move
     {
         public:
-            // Contructor a Move object with move type, start position and destination position
+            Move() = default;
+            /**
+             * @brief Contruct a chess Move
+             * @param move_type Type of move (Normal, DoublePawn, CastleKS, CastleQS ...)
+             * @param from_position Starting position
+             * @param to_position Destination position
+             */
             Move(Enums::MoveType move_type, const Position&  from_position, const Position& to_position);
-            ~Move();
+            ~Move() = default;
 
-            // Returns true if both moves have the same from and to position
+
+
+            /** @return true if both moves have equal move type, start position, and destination position */
             bool operator==(const Move &other_move) const;
 
-            // Getters
+            /** @return the move type of the move */
             Enums::MoveType GetMoveType() const;
+
+            /** @return the start position of the move */
             const Position& GetFromPosition() const;
+
+            /** @return the destination position of the move */
             const Position& GetToPosition() const;
 
         private:

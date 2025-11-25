@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <vector>
+#include <optional>
 
 namespace GameLogic
 {
@@ -16,7 +17,7 @@ namespace GameLogic
         public:
             // Construct Bishop object with color
             Bishop(Enums::Color color);
-            ~Bishop() override;
+            ~Bishop() override = default;
 
             // Make a clone of this Bishop object
             std::unique_ptr<Piece> ClonePiece() const override;
@@ -26,7 +27,8 @@ namespace GameLogic
             // Walk each diagonal until off board or blocked.
             // Include first enemy then stop; stop on friendly.
             // !!! Does not check king safety
-            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
+            std::vector<Move> GetPotentialMoves(
+                const Position &from_position, const Board &board, const Move* last_move = nullptr) const override;
 
             // Diagonal directions: NE, NW, SE, SW
             static inline const std::vector<Direction> DiagonalDirs =

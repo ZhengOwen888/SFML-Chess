@@ -1,5 +1,6 @@
 #include "game_logic/base/board.hpp"
 #include "game_logic/base/move.hpp"
+#include "game_logic/base/move_record.hpp"
 #include "game_logic/base/piece.hpp"
 #include "game_logic/base/position.hpp"
 
@@ -16,7 +17,7 @@ namespace GameLogic
 
     // Get all legal moves for a piece at a given position
     std::vector<Move> MoveValidator::GetLegalMovesAtPosition(
-        const Position &position, Enums::Color player_color, Board& board, const Move &last_move)
+        const Position &position, Enums::Color player_color, Board& board, const Move *last_move)
     {
         std::vector<Move> legal_moves;
 
@@ -53,7 +54,7 @@ namespace GameLogic
     }
 
     // Get all the legal moves for the current player's turn
-    std::vector<Move> MoveValidator::GetAllLegalMovesForPlayer(Enums::Color player_color, Board &board, const Move &last_move)
+    std::vector<Move> MoveValidator::GetAllLegalMovesForPlayer(Enums::Color player_color, Board &board, const Move *last_move)
     {
         std::vector<Move> legal_moves;
 
@@ -98,21 +99,12 @@ namespace GameLogic
         switch (move.GetMoveType())
         {
             case Enums::MoveType::Normal:
-                return NormalMoveIsLegal(move, player_color, board);
-
             case Enums::MoveType::DoublePawn:
-                // double pawn is a normal move except the pawn moves 2 steps forward
-                return NormalMoveIsLegal(move, player_color, board);
-
             case Enums::MoveType::EnPassant:
-                return EnPassantMoveIsLegal(move, player_color, board);
-
             case Enums::MoveType::PawnPromotion:
-                return PawnPromotionMoveIsLegal(move, player_color, board);
+
 
             case Enums::MoveType::CastleKS:
-                return CastleMoveIsLegal(move, player_color, board);
-
             case Enums::MoveType::CastleQS:
                 return CastleMoveIsLegal(move, player_color, board);
 
@@ -155,109 +147,41 @@ namespace GameLogic
         return false;
     }
 
-    // Returns true if any one of the piece can capture the opponent's players king
-    bool MoveValidator::CanCaptureOpponentKing(Enums::Color player_color, const Board &board)
+    Position MoveValidator::FindKingPosition(const Enums::Color player_color, const Board &board)
     {
-        // Iterate over all the square or position in the board
         for (int row = 0; row < Constants::BOARD_SIZE; row++)
         {
             for (int col = 0; col < Constants::BOARD_SIZE; col++)
             {
-                Position position{row, col};
-                const Piece *piece = board.GetPieceAt(position);
+                const Piece *piece = board.GetPieceAt(Position(row, col));
 
-                // Skip if there is no piece or the piece is not the same color as the player
-                if (piece == nullptr || piece->GetColor() != player_color)
+                if (piece && piece->GetPieceType() == Enums::PieceType::King && piece->GetColor() == player_color)
                 {
-                    continue;
-                }
-
-                // Get all potential moves for this piece
-                const std::vector<Move> potential_moves = piece->GetPotentialMoves(position, board);
-
-                // Check if any move lands on the opponent's king
-                for (const Move &potential_move : potential_moves)
-                {
-                    Position to_position = potential_move.GetToPosition();
-                    const Piece *target_piece = board.GetPieceAt(to_position);
-
-                    // Return true if there is a piece at the target location which is also of Type King
-                    if (target_piece != nullptr
-                        && target_piece->GetPieceType() == Enums::PieceType::King
-                        && target_piece->GetColor() != player_color)
-                    {
-                        return true;
-                    }
+                    return Position(row, col);
                 }
             }
         }
 
-        return false;
+        throw std::runtime_error("King not found on the board");
     }
 
     // Returns true if the player's king is in check
     bool MoveValidator::IsKingInCheck(Enums::Color player_color, const Board &board)
     {
-         // The opponent color is the opposite
-        Enums::Color opponent_color = (player_color == Enums::Color::Light) ? Enums::Color::Dark : Enums::Color::Light;
-
         // Check if opponent can capture the player's king
-        return CanCaptureOpponentKing(opponent_color, board);
+        Enums::Color opponent_color = (player_color == Enums::Color::Light) ? Enums::Color::Dark : Enums::Color::Light;
+        Position king_position = FindKingPosition(player_color, board);
+
+        return IsSquareUnderAttack(opponent_color, board, king_position);
     }
 
-    // Returns true if normal move is legal
-    bool MoveValidator::NormalMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
+    bool MoveValidator::IsKingSafeAfterMove(const Move &move, Enums::Color player_color, Board &board)
     {
-        Position from_position = move.GetFromPosition();
-        Position to_position = move.GetToPosition();
-
-        // Temporarily take piece from target position
-        std::unique_ptr<Piece> captured_piece = board.TakePieceAt(to_position);
-
-        // Simulate a move
-        bool simulate = true;
-
-        // Temporarily make the move
-        board.MovePiece(from_position, to_position, simulate);
-
-        // Check if the move results the king being in check
+        MoveRecord temp_move = board.MakeMove(move);
         bool king_in_check = IsKingInCheck(player_color, board);
-
-        // Undo the move
-        board.MovePiece(to_position, from_position, simulate);
-
-        // Place back the captured piece
-        board.PlacePieceAt(std::move(captured_piece), to_position);
+        board.UnmakeMove(temp_move);
 
         return king_in_check == false;
-    }
-
-    // Returns true if enpassant move is legal
-    bool MoveValidator::EnPassantMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
-    {
-        Position from_position = move.GetFromPosition();
-        Position to_position = move.GetToPosition();
-
-        // Determine the pawn that is being captured
-        Position captured_pawn_position(from_position.GetRow(), to_position.GetCol());
-
-        // Temporarily remove the captured pawn
-        std::unique_ptr<Piece> captured_pawn = board.TakePieceAt(captured_pawn_position);
-
-        // Reuse normal move check for king safety
-        bool king_in_check = NormalMoveIsLegal(move, player_color, board);
-
-        // Put the captured pawn back
-        board.PlacePieceAt(std::move(captured_pawn), captured_pawn_position);
-
-        return king_in_check == false;
-    }
-
-    // Return true if promoting the would would result in the player's king to be in check
-    bool MoveValidator::PawnPromotionMoveIsLegal(const Move &move, Enums::Color player_color, Board &board)
-    {
-        // If you can't move the pawn, you can't promote
-        return NormalMoveIsLegal(move, player_color, board);
     }
 
     // 1. King must not have moved (checked via castling rights) (!!! Handled in King class)
@@ -268,6 +192,11 @@ namespace GameLogic
     {
         Position king_position = move.GetFromPosition();
         std::vector<Position> in_between_position;
+
+        if (IsKingInCheck(player_color, board))
+        {
+            return false;
+        }
 
         // Determine the intermediate position between the king and the rook
         if (move.GetMoveType() == Enums::MoveType::CastleKS)
@@ -286,18 +215,14 @@ namespace GameLogic
             {
                 king_position + Direction::West * 1,
                 king_position + Direction::West * 2,
-                king_position + Direction::West * 3
             };
         }
 
-        // Check each intermediate position for king safety
+        Enums::Color opponent_color = (player_color == Enums::Color::Dark) ? Enums::Color::Light : Enums::Color::Dark;
+
         for (const Position& to_position : in_between_position)
         {
-            // Simulate normal move
-            Move in_between_move = Move(Enums::MoveType::Normal, king_position, to_position);
-
-            // Returns false if the king would be in check in any of the intermidiate moves
-            if (!NormalMoveIsLegal(in_between_move, player_color, board))
+            if (IsSquareUnderAttack(opponent_color, board, to_position))
             {
                 return false;
             }
@@ -308,10 +233,12 @@ namespace GameLogic
     // Returns true if the move captures a piece
     bool MoveValidator::IsCaptureMove(const Move &move, const Board &board)
     {
+        if (move.GetMoveType() == Enums::MoveType::EnPassant)
+        {
+            return true;
+        }
         Position to_position = move.GetToPosition();
-        const Piece *piece = board.GetPieceAt(to_position);
-
-        return piece != nullptr;
+        return board.GetPieceAt(to_position) != nullptr;
     }
 
     // Returns true if the move uses a pawn

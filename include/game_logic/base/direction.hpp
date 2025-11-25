@@ -6,9 +6,10 @@ namespace GameLogic
     class Direction
     {
         public:
+            Direction() = default;
             // Contruct Direction object with change in rows and change in columns
             Direction(int row_delta, int col_delta);
-            ~Direction();
+            ~Direction() = default;
 
             // Return a new Direction object with the sum of this direction and another direction
             Direction operator+(const Direction &other_direction) const;

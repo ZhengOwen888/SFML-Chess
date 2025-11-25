@@ -1,6 +1,8 @@
 #ifndef GAMELOGIC_ENUMS_HPP
 #define GAMELOGIC_ENUMS_HPP
 
+#include <array>
+
 namespace GameLogic
 {
     namespace Enums

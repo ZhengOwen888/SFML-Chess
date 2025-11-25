@@ -16,7 +16,7 @@ namespace GameLogic
         public:
             // Construct a Queen object with color
             Queen(Enums::Color color);
-            ~Queen() override;
+            ~Queen() override = default;
 
             // Make a clone of this Queen object
             std::unique_ptr<Piece> ClonePiece() const override;
@@ -24,7 +24,8 @@ namespace GameLogic
             // Get queen moves from a position
             // Combine rook + bishop logic (8 directions).
             // Walk each direction until off board or blocked; include first enemy then stop.
-            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
+            std::vector<Move> GetPotentialMoves(
+                const Position& from_position, const Board &board, const Move* last_move = nullptr) const override;
 
             // All 8 directions (orthogonal + diagonal)
             static inline const std::vector<Direction> AllDirs =

@@ -16,7 +16,7 @@ namespace GameLogic
         public:
             // Construct a King object with color
             King(Enums::Color color);
-            ~King() override;
+            ~King() override = default;
 
             // Make a clone of King object
             std::unique_ptr<Piece> ClonePiece() const override;
@@ -38,7 +38,8 @@ namespace GameLogic
             // For each adjacent position: if on board and (empty or enemy) include.
             // Castling is handled elsewhere.
             // !!! Does not check king safety
-            std::vector<Move> GetPotentialMoves(const Position &from_position, const Board &board) const override;
+            std::vector<Move> GetPotentialMoves(
+                const Position &from_position, const Board &board, const Move* last_move = nullptr) const override;
 
             // 8 adjacent directions
             static inline const std::vector<Direction> AdjacentDirs =

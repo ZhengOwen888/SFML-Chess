@@ -16,7 +16,7 @@ namespace GameLogic
         public:
             // Construct a Rook object with color
             Rook(Enums::Color color);
-            ~Rook() override;
+            ~Rook() override = default;
 
             // Make a clone of this Rook object
             std::unique_ptr<Piece> ClonePiece() const override;
@@ -25,7 +25,8 @@ namespace GameLogic
             // Steps:
             // - For each orthogonal dir, go step by step until off the board.
             // - Stop at the first piece. If enemy, include that position; if friendly, do not include it.
-            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
+            std::vector<Move> GetPotentialMoves(
+                const Position& from_position, const Board &board, const Move* last_move = nullptr) const override;
 
             // Orthogonal directions: N, S, E, W
             static inline const std::vector<Direction> OrthogonalDirs =

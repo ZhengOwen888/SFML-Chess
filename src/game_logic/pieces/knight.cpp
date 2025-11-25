@@ -60,7 +60,8 @@ namespace GameLogic
 	// Get Knight moves from a position
     // For each jump target: if on board and not friendly piece, include.
 	// !!! Does not check king safety
-	std::vector<Move> Knight::GetPotentialMoves(const Position& from_position, const Board& board) const
+	std::vector<Move> Knight::GetPotentialMoves(
+		const Position& from_position, const Board& board, const Move* last_move) const
 	{
 		// List of positions this Knight piece can move to
 		std::vector<Position> to_positions = GetPositionsFromJumpDirs(from_position, board, Knight::JumpDirs);
