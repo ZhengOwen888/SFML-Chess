@@ -1,11 +1,11 @@
-#include "game_logic/base/game.hpp"
+#include "game_logic/game.hpp"
 #include "game_logic/base/board.hpp"
 #include "game_logic/base/player.hpp"
 #include "game_logic/base/move.hpp"
 #include "game_logic/base/position.hpp"
 #include "game_logic/base/game_result.hpp"
 
-#include "game_logic/move_handler/move_validator.hpp"
+#include "game_logic/validator/move_validator.hpp"
 
 #include "game_logic/enums.hpp"
 
@@ -55,20 +55,17 @@ namespace GameLogic
             return false;
         }
 
-        // // Execute the move with move executor
-        // MoveExecutor::ExecuteMove(move, this->current_player_color_, this->board_);
-        MoveRecord record = std::move(this->board_.MakeMove(move));
-
         // Check if move captures a piece or is a pawn move
         bool is_capture_move = MoveValidator::IsCaptureMove(move, this->board_);
         bool is_pawn_move = MoveValidator::IsPawnMove(move, this->board_);
 
+        // // Execute the move with move executor
+        // MoveExecutor::ExecuteMove(move, this->current_player_color_, this->board_);
+        MoveRecord record = std::move(this->board_.MakeMove(move));
+        record.SetPrevFiftyMoveCounter(this->fifty_move_counter_);
+
         // Update 50 move rule counter
-        if (is_capture_move || is_pawn_move)
-        {
-            fifty_move_counter_ = 0;
-        }
-        fifty_move_counter_++;
+        UpdateFiftyMoveCounter(is_pawn_move, is_capture_move);
 
         // Switch to opponenet's turn and update move_history
         this->undo_history_.push_back(std::move(record));
@@ -84,17 +81,13 @@ namespace GameLogic
     {
         if (!this->undo_history_.empty())
         {
-            MoveRecord &record = this->undo_history_.back();
-
-            bool is_pawn_move = MoveValidator::IsPawnMove(record.ReadMoveMade(), this->board_);
-            bool is_capture = MoveValidator::IsCaptureMove(record.ReadMoveMade(), this->board_);
-            if (is_pawn_move || is_capture)
-            {
-                this->fifty_move_counter_--;
-            }
+            MoveRecord record = std::move(this->undo_history_.back());
+            this->undo_history_.pop_back();
 
             this->board_.UnmakeMove(record);
-            this->undo_history_.pop_back();
+
+            this->fifty_move_counter_ = record.ReadPrevFiftyMoveCounter();
+
             this->redo_history_.push_back(std::move(record));
 
             SwitchPlayerTurn();
@@ -106,18 +99,17 @@ namespace GameLogic
     {
         if (!this->redo_history_.empty())
         {
-            const Move &move_to_redo = this->redo_history_.back().ReadMoveMade();
+            MoveRecord old_record = std::move(this->redo_history_.back());
+            this->redo_history_.pop_back();
+
+            const Move &move_to_redo = old_record.ReadMoveMade();
+            MoveRecord new_record = std::move(this->board_.MakeMove(move_to_redo));
 
             bool is_pawn_move = MoveValidator::IsPawnMove(move_to_redo, this->board_);
-            bool is_capture = MoveValidator::IsCaptureMove(move_to_redo, this->board_);
-            if (is_pawn_move || is_capture)
-            {
-                this->fifty_move_counter_++;
-            }
+            bool is_capture_move = MoveValidator::IsCaptureMove(move_to_redo, this->board_);
+            UpdateFiftyMoveCounter(is_pawn_move, is_capture_move);
 
-            MoveRecord record = this->board_.MakeMove(move_to_redo);
-            this->redo_history_.pop_back();
-            this->undo_history_.push_back(std::move(record));
+            this->undo_history_.push_back(std::move(new_record));
 
             SwitchPlayerTurn();
             UpdateGameState();
@@ -148,7 +140,7 @@ namespace GameLogic
 
     void Game::UpdateGameState()
     {
-        if (fifty_move_counter_ == 100)
+        if (fifty_move_counter_ >= 100)
         {
             result_.SetDraw(Enums::GameState::FiftyMoveRule);
         }
@@ -171,5 +163,17 @@ namespace GameLogic
     void Game::SwitchPlayerTurn()
     {
         this->current_player_color_ = GetOpponentPlayer().GetColor();
+    }
+
+    void Game::UpdateFiftyMoveCounter(bool is_pawn_move, bool is_capture_move)
+    {
+        if (is_pawn_move || is_capture_move)
+        {
+            this->fifty_move_counter_ = 0;
+        }
+        else
+        {
+            this->fifty_move_counter_++;
+        }
     }
 } // namespace GameLogic

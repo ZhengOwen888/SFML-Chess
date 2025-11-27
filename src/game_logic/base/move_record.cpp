@@ -20,6 +20,11 @@ namespace GameLogic
         return this->moved_piece_.get();
     }
 
+    int MoveRecord::ReadPrevFiftyMoveCounter() const
+    {
+        return this->prev_fifty_move_counter_;
+    }
+
     std::unique_ptr<Piece> MoveRecord::TakeCapturedPiece()
     {
         return std::move(this->captured_piece_);
@@ -43,5 +48,10 @@ namespace GameLogic
     void MoveRecord::SetMovedPiece(std::unique_ptr<Piece> moved_piece)
     {
         this->moved_piece_ = std::move(moved_piece);
+    }
+
+    void MoveRecord::SetPrevFiftyMoveCounter(int counter)
+    {
+        this->prev_fifty_move_counter_ = counter;
     }
 } // namespace GameLogic

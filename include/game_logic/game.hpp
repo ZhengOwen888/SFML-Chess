@@ -129,6 +129,13 @@ namespace GameLogic
 
             /** @brief Helper function to switch player turn after each player makes a move. */
             void SwitchPlayerTurn();
+
+            /****************************************************************************************
+             * @brief Helper function to update the fifty move counter after each player makes a move
+             * @param is_capture   true if the move resulted in a capture, false otherwise.
+             * @param is_pawn_move true if the move was a pawn move, false otherwise.
+             ***************************************************************************************/
+            void UpdateFiftyMoveCounter(bool is_pawn_move, bool is_capture_move);
     };
 }
 

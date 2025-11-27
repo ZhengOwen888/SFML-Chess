@@ -1,21 +1,45 @@
-#include "game_logic/base/game.hpp"
+#include "game_logic/game.hpp"
 #include "game_render/constants.hpp"
+#include "game_render/manager/asset_manager.hpp"
+#include "game_render/renderer/board_renderer.hpp"
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 int main()
 {
+    sf::RenderWindow window(
+        sf::VideoMode({800, 800}),
+        "SFML_CHESS",
+        sf::Style::Default
+    );
+
     GameLogic::Game game;
 
-    auto position_with_pieces = game.GetAllPositonAndPiece();
+    GameRender::AssetManager* asset_manager = GameRender::AssetManager::GetInstance();
+    GameRender::BoardRenderer board_renderer{*asset_manager};
 
-    std::cout << position_with_pieces.size() << "\n";
+    asset_manager->SetAndLoadTheme(GameRender::Enums::Theme::Ocean);
+    board_renderer.UpdateView(window);
 
-    for (const auto [position, piece] : position_with_pieces)
+    while (window.isOpen())
     {
-        std::cout << "Position(" << position.GetRow() << ", " << position.GetCol() << ")";
-        std::cout << "  |   ";
-        std::cout << "Piece(" << GameRender::Constants::COLOR_STR.at(piece->GetColor()) << ", " << GameRender::Constants::PIECE_TYPE_STR.at(piece->GetPieceType()) << ")\n";
+        // check all the window's events that were triggered since the last iteration of the loop
+        while (const std::optional event = window.pollEvent())
+        {
+            // "close requested" event: we close the window
+            if (event->is<sf::Event::Closed>())
+                window.close();
+
+            if (const auto* resized = event->getIf<sf::Event::Resized>())
+                board_renderer.UpdateView(window);
+        }
+
+        board_renderer.Render(window, game);
+
+        window.display();
     }
+
+    return 0;
 }

@@ -7,7 +7,9 @@ namespace GameRender
     {
         enum class Theme
         {
-            Classic
+            Classic,
+            Walnut,
+            Ocean
         };
     } // namespace Enums
 

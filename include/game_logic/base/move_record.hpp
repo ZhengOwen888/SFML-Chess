@@ -58,6 +58,11 @@ namespace GameLogic
              ************************************************************/
             const Piece *ReadMovedPiece() const;
 
+            /********************************************************************
+             * @brief Read the fifty move counter before the move was made.
+             * @return A value of the fifty move counter before the move was made
+             *******************************************************************/
+            int ReadPrevFiftyMoveCounter() const;
 
             /***************************************************************************
              * @brief Take ownership in the Piece that was captured for unmaking a Move.
@@ -90,6 +95,12 @@ namespace GameLogic
              ****************************************************************************/
             void SetMovedPiece(std::unique_ptr<Piece> moved_piece);
 
+            /*****************************************************************************
+             * @brief Sets the value of the 50 move counter before this move was executed.
+             * @param counter The value of the counter at the time of the move.
+             ****************************************************************************/
+            void SetPrevFiftyMoveCounter(int counter);
+
         private:
             /** @brief The Move that was made */
             Move move_made_;
@@ -99,6 +110,9 @@ namespace GameLogic
 
             /** @brief A unique_ptr to the clone of the Piece that took action. */
             std::unique_ptr<Piece> moved_piece_;
+
+            /** @brief The value of the 50 move counter immediately prior to this move being made. */
+            int prev_fifty_move_counter_;
     };
 } // namespace GameLogic
 

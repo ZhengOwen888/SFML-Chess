@@ -4,7 +4,7 @@
 #include "game_logic/base/piece.hpp"
 #include "game_logic/base/position.hpp"
 
-#include "game_logic/move_handler/move_validator.hpp"
+#include "game_logic/validator/move_validator.hpp"
 
 #include "game_logic/enums.hpp"
 #include "game_logic/constants.hpp"
@@ -23,7 +23,7 @@ namespace GameLogic
 
         // Get the piece at the given position
         const Piece *piece = board.GetPieceAt(position);
-        if (piece == nullptr)
+        if (piece == nullptr || piece->GetColor() != player_color)
         {
             return {}; // No piece at given position
         }
@@ -102,7 +102,7 @@ namespace GameLogic
             case Enums::MoveType::DoublePawn:
             case Enums::MoveType::EnPassant:
             case Enums::MoveType::PawnPromotion:
-
+                return IsKingSafeAfterMove(move, player_color, board);
 
             case Enums::MoveType::CastleKS:
             case Enums::MoveType::CastleQS:

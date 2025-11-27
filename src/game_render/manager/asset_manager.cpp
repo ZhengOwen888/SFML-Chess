@@ -12,81 +12,106 @@
 #include <utility>
 #include <string>
 #include <iostream>
+#include <stdexcept>
 
 namespace GameRender
 {
+    AssetManager* AssetManager::instance_ptr_ = nullptr;
+
     AssetManager::AssetManager()
-        : current_theme_(Enums::Theme::Classic) {};
+        : current_piece_theme_(Enums::Theme::Classic), current_board_theme_(Enums::Theme::Classic) {};
 
-
-    // Load all assets for each piece and the board for a specific theme
-    bool AssetManager::LoadAssetsForTheme(Enums::Theme theme)
+    AssetManager* AssetManager::GetInstance()
     {
-        this->current_theme_ = theme;
-
-        for (auto color : GameLogic::Constants::AllColors)
+        if (AssetManager::instance_ptr_ == nullptr)
         {
-            for (auto piece_type : GameLogic::Constants::AllPieceType)
-            {
-                std::string piece_file_path = Constants::GET_PIECE_FILE_PATH(color, piece_type, theme);
-                std::pair<GameLogic::Enums::Color, GameLogic::Enums::PieceType> key = {color, piece_type};
-
-                if (!LoadTextureFromFile(piece_file_path, this->piece_textures_[key]))
-                {
-                    return false;
-                }
-            }
+            AssetManager::instance_ptr_ = new AssetManager();
         }
+        return AssetManager::instance_ptr_;
+    }
 
-        std::string board_file_path = Constants::GET_BOARD_FILE_PATH(theme);
+    bool AssetManager::SetAndLoadTheme(Enums::Theme theme)
+    {
+        this->current_piece_theme_ = theme;
+        this->current_board_theme_ = theme;
+        return LoadAllCurrentThemes();
+    }
 
-        if (!LoadTextureFromFile(board_file_path, this->board_texture_))
-        {
-            return false;
-        }
+    bool AssetManager::SetAndLoadPieceTheme(Enums::Theme theme)
+    {
+        this->current_piece_theme_ = theme;
+
+        return LoadPieceTextures();
+    }
+
+    bool AssetManager::SetAndLoadBoardTheme(Enums::Theme theme)
+    {
+        this->current_board_theme_ = theme;
+
+        return LoadBoardTexture();
+    }
+
+    bool AssetManager::LoadAllCurrentThemes()
+    {
+        LoadPieceTextures();
+        LoadBoardTexture();
 
         return true;
     }
 
-    bool AssetManager::LoadTextureFromFile(const std::string &filepath, sf::Texture &texture_target)
-    {
-        if (!texture_target.loadFromFile(filepath))
-        {
-            std::cerr << "Error: Failed to load texture from file: " << filepath << std::endl;
-            return false;
-        }
-        return true;
-    }
-
-    const sf::Texture &AssetManager::GetPieceTexture(
+    const sf::Texture & AssetManager::GetPieceTexture(
         GameLogic::Enums::Color color, GameLogic::Enums::PieceType piece_type) const
     {
-        return this->piece_textures_.at(std::make_pair(color, piece_type));
+        return this->piece_textures_.at({color, piece_type});
     }
 
-    const sf::Texture &AssetManager::GetBoardTexture() const
+    const sf::Texture & AssetManager::GetBoardTexture() const
     {
         return this->board_texture_;
     }
 
-    bool AssetManager::HasPieceTexture(
-        GameLogic::Enums::Color color, GameLogic::Enums::PieceType piece_type) const
+    bool AssetManager::LoadAssetFromFile(const std::string &filepath, sf::Texture &target_texture)
     {
-        auto it = this->piece_textures_.find(std::make_pair(color, piece_type));
-
-        if (it != this->piece_textures_.end())
+        if (!target_texture.loadFromFile(filepath))
         {
-            const sf::Texture& piece_texture = it->second;
-
-            return piece_texture.getSize().x > 0 && piece_texture.getSize().y > 0;
+            std::cerr << "Error: Failed to load texture from file path: " << filepath << std::endl;
+            return false;
         }
-
-        return false;
+        return true;
     }
 
-    bool AssetManager::HasBoardTexture() const
+    bool AssetManager::LoadPieceTextures()
     {
-        return this->board_texture_.getSize().x > 0 && this->board_texture_.getSize().y > 0;
+        for (auto color : GameLogic::Constants::AllColors)
+        {
+            for (auto piece_type : GameLogic::Constants::AllPieceType)
+            {
+                std::string piece_filepath = Constants::GET_PIECE_FILE_PATH(color, piece_type, this->current_piece_theme_);
+                std::pair<GameLogic::Enums::Color, GameLogic::Enums::PieceType> color_piece_type_key{color, piece_type};
+
+                if (!LoadAssetFromFile(piece_filepath, this->piece_textures_[color_piece_type_key]))
+                {
+                    std::string error_msg;
+                    error_msg += "Fatal Error: Failed to load piece theme for theme: ";
+                    error_msg += Constants::THEME_STR.at(this->current_piece_theme_);
+                    throw std::runtime_error(error_msg);
+                }
+            }
+        }
+        return true;
+    }
+
+    bool AssetManager::LoadBoardTexture()
+    {
+        std::string board_filepath = Constants::GET_BOARD_FILE_PATH(this->current_board_theme_);
+        if (!LoadAssetFromFile(board_filepath, this->board_texture_))
+        {
+            std::string error_msg;
+            error_msg += "Fatal Error: Failed to load board theme for theme: ";
+            error_msg += Constants::THEME_STR.at(this->current_board_theme_);
+            throw std::runtime_error(error_msg);
+        }
+        return true;
     }
 
 } // namespace GameRender

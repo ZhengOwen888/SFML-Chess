@@ -43,7 +43,9 @@ namespace GameRender
 
         inline const std::map<Theme, std::string_view> THEME_STR =
         {
-            {Theme::Classic, "classic"}
+            {Theme::Classic, "classic"},
+            {Theme::Walnut, "walnut"},
+            {Theme::Ocean, "ocean"}
         };
 
         inline const std::string GET_PIECE_FILE_PATH(Color color, PieceType piece_type, Theme theme)
@@ -67,9 +69,16 @@ namespace GameRender
             path += BOARDS_PATH;
             path += THEME_STR.at(theme);
             path += "/board";
-            path += ASSET_PATH;
+            path += ASSET_TYPE;
             return path;
         }
+
+        inline constexpr float INITIAL_WINDOW_WIDTH = 800.f;
+        inline constexpr float INITIAL_WINDOW_HEIGHT = INITIAL_WINDOW_WIDTH;
+
+        inline constexpr float INITIAL_BOARD_WIDTH = INITIAL_WINDOW_WIDTH;
+        inline constexpr float INITIAL_BOARD_HEIGHT = INITIAL_WINDOW_WIDTH;
+        inline constexpr float SQUARE_SIZE = INITIAL_BOARD_WIDTH / 8.f;
 
     } // namespace Constants
 

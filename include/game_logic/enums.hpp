@@ -8,33 +8,33 @@ namespace GameLogic
         /** @brief The possible colors for the game. */
         enum class Color
         {
+            None,
             Dark,
             Light,
-            None
         };
 
         /** @brief The type of pieces used. */
         enum class PieceType
         {
+            None,
             Pawn,
             Knight,
             Bishop,
             Rook,
             Queen,
             King,
-            None
         };
 
         /** @brief The types of moves. */
         enum class MoveType
         {
+            None,
             Normal,     // Normal Moves and Capture
             CastleKS,   // Castling king side
             CastleQS,   // Castling queen side
             DoublePawn, // Pawn moving foward 2 squares as their first move
             EnPassant,  // Pawn capture an opponent's pawn that has just moved two squares from its start position and landed beside it
             PawnPromotion,
-            None
         };
 
         /** @brief The possible game states. */
