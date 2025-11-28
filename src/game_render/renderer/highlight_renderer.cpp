@@ -1,6 +1,7 @@
 #include "game_render/renderer/highlight_renderer.hpp"
 
 #include "game_logic/base/position.hpp"
+#include "game_logic/constants.hpp"
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
@@ -8,7 +9,11 @@
 namespace GameRender
 {
     HighlightRenderer::HighlightRenderer(float square_size, bool playing_as_black)
-        : square_size_(square_size), playing_as_black_(playing_as_black) {};
+        : square_size_(square_size),
+        playing_as_black_(playing_as_black),
+        selected_position_(GameLogic::Position{-1, -1}),
+        selected_position_color_(sf::Color::Transparent)
+    {};
 
     void HighlightRenderer::Render(sf::RenderWindow &window)
     {
@@ -17,12 +22,13 @@ namespace GameRender
     }
 
     void HighlightRenderer::SetPositionsToHighlight(
-        const GameLogic::Position &selected_position, const std::vector<GameLogic::Position> &positions_to_highlight)
+        const GameLogic::Position &selected_position,
+        const sf::Color &selected_position_color,
+        const std::map<GameLogic::Position, sf::Color> &positions_to_highlight_with_colors)
     {
         this->selected_position_ = selected_position;
-
-        this->positions_to_highlight_.clear();
-        this->positions_to_highlight_ = positions_to_highlight;
+        this->selected_position_color_ = selected_position_color;
+        this->positions_to_highlight_with_colors_ = positions_to_highlight_with_colors;
     }
 
     void HighlightRenderer::SetPlayingAsBlack(bool play_as_black)
@@ -62,18 +68,37 @@ namespace GameRender
 
     void HighlightRenderer::HighlightSelectedPosition(sf::RenderWindow &window)
     {
-        sf::RectangleShape highlighted_square = GetHighlightedSquare(this->selected_position_, sf::Color{179, 158, 180, 128});
+        int col = this->selected_position_.GetCol();
+        int row = this->selected_position_.GetRow();
 
-        window.draw(highlighted_square);
+        if (IsValidPosition(col, row))
+        {
+            sf::RectangleShape highlighted_square = GetHighlightedSquare(this->selected_position_, this->selected_position_color_);
+            window.draw(highlighted_square);
+        }
     }
 
     void HighlightRenderer::HighlightPossibleMoves(sf::RenderWindow &window)
     {
-        for (const auto& position : positions_to_highlight_)
+        for (const auto& [position, color] : this->positions_to_highlight_with_colors_)
         {
-            // sf::Color{118, 150, 86, 128}
-            sf::RectangleShape highlighted_square = GetHighlightedSquare(position, sf::Color{179, 158, 180, 128});
-            window.draw(highlighted_square);
+            int col = position.GetCol();
+            int row = position.GetRow();
+
+            if (IsValidPosition(col, row))
+            {
+                sf::RectangleShape highlighted_square = GetHighlightedSquare(position, color);
+                window.draw(highlighted_square);
+            }
         }
+    }
+
+    bool HighlightRenderer::IsValidPosition(int col, int row)
+    {
+        if (col >= 0 && col < GameLogic::Constants::BOARD_SIZE && row >= 0 && row < GameLogic::Constants::BOARD_SIZE)
+        {
+            return true;
+        }
+        return false;
     }
 } // namespace GameRender

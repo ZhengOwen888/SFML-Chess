@@ -2,8 +2,9 @@
 #define GAMERENDER_CONSTANTS_HPP
 
 #include "game_logic/enums.hpp"
-
 #include "game_render/enums.hpp"
+
+#include <SFML/Graphics.hpp>
 
 #include <string>
 #include <string_view>
@@ -79,6 +80,10 @@ namespace GameRender
         inline constexpr float INITIAL_BOARD_WIDTH = INITIAL_WINDOW_WIDTH;
         inline constexpr float INITIAL_BOARD_HEIGHT = INITIAL_WINDOW_WIDTH;
         inline constexpr float SQUARE_SIZE = INITIAL_BOARD_WIDTH / 8.f;
+
+        inline const sf::Color MOVE_HIGHLIGHT_GREEN{118, 150, 86, 128};
+        inline const sf::Color INVALID_MOVE_RED{255, 0, 0, 150};
+        inline const sf::Color SUCCESS_MOVE_GOLD{218, 165, 32, 128};
 
     } // namespace Constants
 

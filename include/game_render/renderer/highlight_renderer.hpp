@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <vector>
+#include <map>
 
 namespace GameRender
 {
@@ -35,12 +36,17 @@ namespace GameRender
              **************************************************************************************************/
             void Render(sf::RenderWindow &window);
 
-            /************************************************************************************************************************
+            /***************************************************************************************************************************************************************
              * @brief Set the positions that we need to highlight based on the position the user clicked on.
              * @param selected_position A const reference to the position that the user clicked on.
-             * @param positions_to_highlight A const reference to the possible positions the player can move their selected piece to.
-             ***********************************************************************************************************************/
-            void SetPositionsToHighlight(const GameLogic::Position& selected_position, const std::vector<GameLogic::Position> &positions_to_highlight);
+             * @param selected_position_color A const reference to a sf::Color that will be used to highlight the selected position.
+             * @param positions_to_highlight_with_colors A const reference to the possible positions the player can move their selected piece to and their highlight colors.
+             **************************************************************************************************************************************************************/
+            void SetPositionsToHighlight(
+                const GameLogic::Position &selected_position,
+                const sf::Color &selected_position_color,
+                const std::map<GameLogic::Position, sf::Color> &positions_to_highlight_with_colors
+            );
 
             /************************************************************************************
              * @brief Set the flag which signals if the player is playing in black's perspective.
@@ -52,8 +58,11 @@ namespace GameRender
             /** @brief The position that the user clicked on or selected. */
             GameLogic::Position selected_position_;
 
-            /** @brief The possible positions that the piece the player selected can move to. */
-            std::vector<GameLogic::Position> positions_to_highlight_;
+            /** @brief The color that will be used to highlight the selected position. */
+            sf::Color selected_position_color_;
+
+            /** @brief The possible positions that the piece the player selected can move to and be highlighted by a specified color. */
+            std::map<GameLogic::Position, sf::Color> positions_to_highlight_with_colors_;
 
             /** @brief The size of the width and height of each square on the board. */
             float square_size_;
@@ -79,14 +88,23 @@ namespace GameRender
             /****************************************************************************
              * @brief Highlight the the position that the player selected.
              * @param window A reference to the window where we will do the highlighting.
+             * @param highlight_color A sf::Color the highlight will use.
              ***************************************************************************/
             void HighlightSelectedPosition(sf::RenderWindow &window);
 
             /**************************************************************************************
              * @brief Highlight the possible positions the player can move their selected piece to.
              * @param window A reference to the window where we will do the highlighting.
+             * @param highlight_color A sf::Color the highlight will use.
              *************************************************************************************/
             void HighlightPossibleMoves(sf::RenderWindow &window);
+
+            /************************************************************************************
+             * @brief Checks if the position is valid based on the dimensions of the chess board.
+             * @param col The col index (0 based).
+             * @param row The row index (0 based).
+             ***********************************************************************************/
+            bool IsValidPosition(int col, int row);
     };
 } // namespace GameRender
 

@@ -15,15 +15,27 @@
 #include <vector>
 #include <optional>
 #include <algorithm>
+#include <map>
 
 namespace ChessApp
 {
+    /****************************************************************************************
+     * @class GameManager
+     * @brief Orchestrates the main application loop, input handling, and game state display.
+     *
+     * This class manages the interaction between the SFML UI layer and the
+     * GameLogic layer, using a BoardRenderer to visualize the game state.
+     ***************************************************************************************/
     class GameManager
     {
         public:
+            /** @brief Constructs a new GameManager object and initialize the board renderer and the window. */
             GameManager();
+
+            /** @brief Default Destructor for GameManager. */
             ~GameManager() = default;
 
+            /** @brief Starts the main application loop. */
             void Run();
 
             /*********************************************************************************
@@ -46,8 +58,9 @@ namespace ChessApp
 
             sf::RenderWindow window_;
 
-            std::optional<GameLogic::Position> selected_position_state_;
-            std::vector<GameLogic::Position> current_legal_positions_;
+            std::optional<GameLogic::Position> selected_position_;
+            std::map<GameLogic::Position, sf::Color> current_legal_positions_with_colors_;
+            std::vector<GameLogic::Move> current_legal_moves_;
 
             void HandleEvent(const sf::Event& event);
 
@@ -57,6 +70,18 @@ namespace ChessApp
 
             void HandleClickOnBoardEvent(sf::Vector2f world_pos);
 
+            // -- Helpers to Handle Piece Selection and Move Attempt -- //
+
+            void HandleMoveAttempt(GameLogic::Position clicked_position);
+
+            void HandlePieceSelection(GameLogic::Position clicked_position);
+
+
+            void UpdateHighlight(GameLogic::Position selected_position, sf::Color highlight_color);
+
+            void ClearSelectionState();
+
+            // -- Rendering Helpers
             void Render();
 
             void Display();
