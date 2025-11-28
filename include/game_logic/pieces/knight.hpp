@@ -14,23 +14,50 @@ namespace GameLogic
     class Knight: public Piece
     {
         public:
-            // Construct a Knight object with color
+            /**********************************************************
+             * @brief Constructs a Knight Object with a specific color.
+             * @param color The color (Light or Dark) of the Knight.
+             *********************************************************/
             Knight(Enums::Color color);
-            ~Knight() override;
 
-            // Make a clone of this Knight object
+            /** @brief  Virtual Default Destructor*/
+            ~Knight() override = default;
+
+            /***********************************************************
+             * @brief Creates a deep copy (clone) of this Knight object.
+             * @return A unique_ptr to the newly created Knight clone.
+             **********************************************************/
             std::unique_ptr<Piece> ClonePiece() const override;
 
-            // Get all positions this Knight piece can move to from its current position
+            /*******************************************************************
+             * @brief Calculates all potential positions the Knight can jump to.
+             *
+             * !!! IMPORTANT: This method does not check for king safety
+             *
+             * @param from_position The knight's current position.
+             * @param board The current board state.
+             * @param directions The set of directions to check.
+             * @return A vector of valid destination positions.
+             ******************************************************************/
             std::vector<Position> GetPositionsFromJumpDirs(
                 const Position& from_position, const Board &board, const std::vector<Direction>& directions) const;
 
-            // Get Knight moves from a position
-            // For each jump target: if on board and not friendly piece, include.
-            // !!! Does not check king safety
-            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
+            /*****************************************************************************************************
+             * @brief Calculates all potential jump moes the Knight can make from a given position.
+             *
+             * For each jump position: if on board and (empty or enemy) include.
+             *
+             * !!! IMPORTANT: This method does not check for king safety
+             *
+             * @param from_position The starting position of the Knight
+             * @param board The current state of the board for validation.
+             * @param last_move Optional pointer to the last move made in the game (not typically used by Knight).
+             * @return A vector of potential Move objects.
+             ****************************************************************************************************/
+            std::vector<Move> GetPotentialMoves(
+                const Position& from_position, const Board &board, const Move* last_move = nullptr) const override;
 
-            // Knight jump directions (8 L-shapes)
+            /** @brief Static constant vector defining the 8 jump directions a Knight can jump in. */
             static inline const std::vector<Direction> JumpDirs =
             {
                 // North side jump

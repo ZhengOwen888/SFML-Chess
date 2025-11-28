@@ -9,14 +9,22 @@ namespace GameLogic
     Position::Position(int row, int col)
         : row_(row), col_(col) {};
 
-    // Default destructor
-    Position::~Position() {};
-
     // Returns true if this position and another position are eqaul in terms of row and column
     bool Position::operator==(const Position& other_position) const
     {
         return this->row_ == other_position.row_
             && this->col_ == other_position.col_;
+    }
+
+    // Returns true if this position is less than the other position by lexigraphical comparison
+    bool Position::operator<(const Position& other_position) const
+    {
+        if (this->row_ != other_position.row_)
+        {
+            return this->row_ < other_position.row_;
+        }
+
+        return this->col_ < other_position.col_;
     }
 
     // Returns a new Position object by adding change in row and change column to this position's row and column respectively
@@ -31,7 +39,7 @@ namespace GameLogic
     // Return the color of the square on the board at this position
     Enums::Color Position::GetSquareColor() const
     {
-        if (this->row_ % 2 == this->col_ % 2)
+        if ((this->row_ + this->col_) % 2 == 0)
         {
             return Enums::Color::Light;
         }

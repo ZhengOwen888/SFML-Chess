@@ -1,68 +1,116 @@
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-#include <algorithm>
+// #include "game_logic/game.hpp"
+// #include "game_render/constants.hpp"
+// #include "game_render/manager/asset_manager.hpp"
+// #include "game_render/renderer/board_renderer.hpp"
+
+// #include <SFML/Window.hpp>
+// #include <SFML/Graphics.hpp>
+// #include <iostream>
+
+#include "chess_app/game_manager.hpp"
 
 int main()
 {
-    sf::RenderWindow window(
-        sf::VideoMode({800, 800}),
-        "SFML_CHESS",
-        sf::Style::Default
-    );
 
-    sf::Texture board_texture;
-    board_texture.loadFromFile("assets/board/board.png");
+    ChessApp::GameManager game_manager;
+    game_manager.Run();
+    // sf::RenderWindow window(
+    //     sf::VideoMode({800, 800}),
+    //     "SFML_CHESS",
+    //     sf::Style::Default
+    // );
 
-    sf::Sprite board_sprite(board_texture);
+    // GameLogic::Game game;
 
-    // Center origin of board
-    board_sprite.setOrigin(sf::Vector2f{board_texture.getSize().x / 2.f, board_texture.getSize().y / 2.f});
+    // GameRender::AssetManager* asset_manager = GameRender::AssetManager::GetInstance();
+    // GameRender::BoardRenderer board_renderer{*asset_manager};
 
-    // Place it in the center of logical 800x800 space
-    board_sprite.setPosition(sf::Vector2{400.f, 400.f});
+    // asset_manager->SetAndLoadTheme(GameRender::Enums::Theme::Ocean);
+    // board_renderer.UpdateView(window);
 
+    // int click_counter = 0;
 
-    const sf::Vector2f boardSize(800.f, 800.f);
+    // GameLogic::Position from_position;
+    // GameLogic::Position to_position;
 
-    sf::View view(sf::Rect(sf::Vector2f{0.f, 0.f}, sf::Vector2f{boardSize.x, boardSize.y}));
+    // while (window.isOpen())
+    // {
+    //     // check all the window's events that were triggered since the last iteration of the loop
+    //     while (const std::optional event = window.pollEvent())
+    //     {
+    //         // "close requested" event: we close the window
+    //         if (event->is<sf::Event::Closed>())
+    //         {
+    //             window.close();
+    //         }
+    //         else if (const auto* mouse_button_event = event->getIf<sf::Event::MouseButtonPressed>())
+    //         {
+    //             if (mouse_button_event->button == sf::Mouse::Button::Left)
+    //             {
+    //                 sf::Vector2i mouse_clicked_pos = mouse_button_event->position;
+    //                 sf::Vector2f world_pos = window.mapPixelToCoords(mouse_clicked_pos);
 
-    auto updateView = [&](sf::Vector2u winSize)
-    {
-        float w = winSize.x;
-        float h = winSize.y;
+    //                 int col = static_cast<int>(world_pos.x / GameRender::Constants::SQUARE_SIZE);
+    //                 int row = static_cast<int>(world_pos.y / GameRender::Constants::SQUARE_SIZE);
 
-        float scaleX = w / boardSize.x;
-        float scaleY = h / boardSize.y;
-        float lowest = std::min(scaleX, scaleY);
+    //                 click_counter++;
 
-        sf::Vector2f newViewSize = sf::Vector2f(w, h) / lowest;
+    //                 if (row >= 0 && row < 8 && col >= 0 && col < 8)
+    //                 {
+    //                     GameLogic::Position selected_position{row, col};
 
-        view.setSize(newViewSize);
+    //                     if (click_counter == 1)
+    //                     {
+    //                         from_position = selected_position;
+    //                         const auto legal_moves = game.GetLegalMovesAtPosition(selected_position);
 
-        // Center the view around the board
-        view.setCenter(sf::Vector2{400.f, 400.f});
+    //                         std::vector<GameLogic::Position> legal_positions;
+    //                         for (const auto moves : legal_moves)
+    //                         {
+    //                             legal_positions.push_back(moves.GetToPosition());
+    //                         }
 
-        window.setView(view);
-    };
+    //                         board_renderer.SetPositionsToHighlight(selected_position, legal_positions);
+    //                     }
+    //                     if (click_counter == 2)
+    //                     {
+    //                         to_position = selected_position;
+    //                         const auto legal_moves = game.GetLegalMovesAtPosition(selected_position);
+    //                         auto it = std::find(legal_moves.begin(), legal_moves.end(), GameLogic::Move{GameLogic::Enums::MoveType::Normal, from_position, to_position});
 
-    updateView(window.getSize());
+    //                         if (it != legal_moves.end())
+    //                         {
+    //                             game.ExecuteMove(*it);
+    //                             click_counter = 0;
+    //                         }
+    //                         else
+    //                         {
+    //                             from_position = selected_position;
+    //                             const auto legal_moves = game.GetLegalMovesAtPosition(selected_position);
 
-    while (window.isOpen())
-    {
-        while (const std::optional<sf::Event> event = window.pollEvent())
-        {
-            if (event->is<sf::Event::Closed>())
-                window.close();
+    //                             std::vector<GameLogic::Position> legal_positions;
+    //                             for (const auto moves : legal_moves)
+    //                             {
+    //                                 legal_positions.push_back(moves.GetToPosition());
+    //                             }
 
-            if (const auto* resized = event->getIf<sf::Event::Resized>())
-                updateView({ resized->size.x, resized->size.y });
-        }
+    //                             board_renderer.SetPositionsToHighlight(selected_position, legal_positions);
+    //                             click_counter = 1;
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         else if (const auto* resized = event->getIf<sf::Event::Resized>())
+    //         {
+    //             board_renderer.UpdateView(window);
+    //         }
+    //     }
 
-        window.clear(sf::Color::Black);
-        window.setView(view);
-        window.draw(board_sprite);
-        window.display();
-    }
+    //     board_renderer.Render(window, game);
+
+    //     window.display();
+    // }
 
     return 0;
 }

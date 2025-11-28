@@ -3,36 +3,87 @@
 
 namespace GameLogic
 {
+    /**********************************************************************************************
+     * @class Direction
+     * @brief Represents a change in position on an 8x8 board, defined by row and column deltas.
+     *
+     * This class is useful for calculating movement vectors for chess pieces and validating moves.
+     * It supports basic arithmetic operations (addition, scalar multiplication).
+     *********************************************************************************************/
     class Direction
     {
         public:
-            // Contruct Direction object with change in rows and change in columns
-            Direction(int row_delta, int col_delta);
-            ~Direction();
+            /** @brief default Constructor, initialize Direction(0, 0). */
+            Direction() = default;
 
-            // Return a new Direction object with the sum of this direction and another direction
+            /** **********************************************************************
+             * @brief Constructs a Direction object with specific row and col changes.
+             * @param row_delta the change in row index.
+             * @param col_delta the change in col index.
+             ************************************************************************/
+            Direction(int row_delta, int col_delta);
+
+            /** @brief default Destructor for the Direction class. */
+            ~Direction() = default;
+
+            /** ***************************************************************************
+             * @brief Overload addition operator to add two Directions.
+             * @param other_direction The other Direction to be added.
+             * @return A new Direction object that represents the sum of the two Directions
+             *****************************************************************************/
             Direction operator+(const Direction &other_direction) const;
 
-            // Return a new Direction with the scalar of this direction
+            /** ************************************************************
+             * @brief Overload multiplication operator to scale a Direction.
+             * @param scalar How much the Direction will be scaled.
+             * @return A new Direction object that is scaled
+             **************************************************************/
             Direction operator*(int scalar) const;
 
-            // Getters
+            /****************************
+             * @brief Gets the row delta.
+             * @return The change in row.
+             ***************************/
             int GetRowDelta() const;
+
+            /****************************
+             * @brief Gets the col delta.
+             * @return The change in col.
+             ***************************/
             int GetColDelta() const;
 
-            // Static cardinal directions
-            static const Direction North;     // (-1,  0)
-            static const Direction South;     // ( 1,  0)
-            static const Direction East;      // ( 0,  1)
-            static const Direction West;      // ( 0, -1)
-            static const Direction NorthEast; // (-1,  1) or North + East
-            static const Direction NorthWest; // (-1, -1) or North + West
-            static const Direction SouthEast; // ( 1,  1) or South + East
-            static const Direction SouthWest; // ( 1, -1) or South + West
+            // --- Static Cardinal Directions (From First Player's (Light) perspective) --- //
+
+            /** @brief The Direction pointing up (-1,  0) */
+            static const Direction North;
+
+            /** @brief The Direction pointing down ( 1,  0) */
+            static const Direction South;
+
+            /** @brief The Direction pointing right ( 0,  1) */
+            static const Direction East;
+
+            /** @brief The Direction pointing left ( 0, -1) */
+            static const Direction West;
+
+            /** @brief The Direction pointing up-right (-1,  1) */
+            static const Direction NorthEast;
+
+            /** @brief The Direction pointing up-left (-1, -1) */
+            static const Direction NorthWest;
+
+            /** @brief The Direction pointing down-right ( 1,  1) */
+            static const Direction SouthEast;
+
+            /** @brief The Direction pointing down-left ( 1, -1) */
+            static const Direction SouthWest;
 
         private:
-            int row_delta_; // change in row (-1 = up, 1 = down)
-            int col_delta_; // change in col (-1 = left, 1 = right)
+            /** @brief Change in row index, row (-1 = up, 1 = down)*/
+            int row_delta_;
+
+            /** @brief Change in col index col (-1 = left, 1 = right)*/
+            int col_delta_;
     };
 } // namespace GameLogic
 

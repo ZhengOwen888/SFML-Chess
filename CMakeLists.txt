@@ -20,27 +20,26 @@ FetchContent_MakeAvailable(SFML)
 
 # Add subdirectories
 add_subdirectory("src/game_logic")
-# Add_subdirectory("src/game_render")
+Add_subdirectory("src/game_render")
+add_subdirectory("src/chess_app")
 
 # Add executables to (the program)
 add_executable(main "src/main.cpp")
 
-# Add custom target for copying assets
-add_custom_target(copy_assets
+# Add custom command for copying assets
+add_custom_command(TARGET main POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_SOURCE_DIR}/assets"
         "$<TARGET_FILE_DIR:main>/assets"
+    COMMENT "Copying assets to build directory"
 )
-
-# Add dependecies
-add_dependencies(main copy_assets)
-
 
 # Link dependencies and libraries
 target_link_libraries(main
     PRIVATE
         GameLogic
-        # GameRender
+        GameRender
+        ChessApp
         SFML::Graphics
         SFML::Window
         SFML::System

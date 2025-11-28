@@ -11,12 +11,11 @@ namespace GameLogic
     Move::Move(Enums::MoveType move_type, const Position &from_position, const Position &to_position)
         : move_type_(move_type), from_position_(from_position), to_position_(to_position) {};
 
-    Move::~Move() {};
-
-    // Returns true if both moves have the same from and to position
+    // Returns true if move type, start, and destination are equal
     bool Move::operator==(const Move& other_move) const
     {
-        return this->from_position_ == other_move.from_position_
+        return this->move_type_ == other_move.move_type_
+            && this->from_position_ == other_move.from_position_
             && this->to_position_ == other_move.to_position_;
     }
 

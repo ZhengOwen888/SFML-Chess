@@ -139,9 +139,22 @@ namespace GameLogic
     // For each adjacent position: if on board and (empty or enemy) include.
     // Castling is handled elsewhere.
 	// !!! Does not check king safety
-	std::vector<Move> King::GetPotentialMoves(const Position& from_position, const Board& board) const
+	std::vector<Move> King::GetPotentialMoves(
+		const Position& from_position, const Board& board, const Move* last_move) const
 	{
-		std::vector<Position> adjacent_to_positions = GetPositionsFromAdjacentDirs(from_position, board, King::AdjacentDirs);
+		/** Static constant vector defining the 8 adjacent directions a King can move in. */
+        static const std::vector<Direction> AdjacentDirs =
+        {
+            Direction::North,
+            Direction::South,
+            Direction::East,
+            Direction::West,
+            Direction::NorthEast,
+            Direction::NorthWest,
+            Direction::SouthEast,
+            Direction::SouthWest
+        };
+		std::vector<Position> adjacent_to_positions = GetPositionsFromAdjacentDirs(from_position, board, AdjacentDirs);
 		std::vector<Position> castle_to_positions = GetPositionsFromCastling(from_position, board);
 		std::vector<Move> moves;
 

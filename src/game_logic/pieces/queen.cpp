@@ -26,10 +26,23 @@ namespace GameLogic
     // Combine rook + bishop logic (8 directions).
     // Walk each direction until off board or blocked; include first enemy then stop.
 	// !!! Does not check king safety
-	std::vector<Move> Queen::GetPotentialMoves(const Position& from_position, const Board& board) const
+	std::vector<Move> Queen::GetPotentialMoves(
+		const Position& from_position, const Board& board, const Move* last_move) const
 	{
+		/** Static constant vector defining the eight cardinal directions a bishop can move in. */
+        static const std::vector<Direction> AllDirs =
+        {
+            Direction::North,
+            Direction::South,
+            Direction::East,
+            Direction::West,
+            Direction::NorthEast,
+            Direction::NorthWest,
+            Direction::SouthEast,
+            Direction::SouthWest
+        };
 		// List of positions this Queen piece can move to
-		std::vector<Position> to_positions = this->GetPositionsInDirs(from_position, board, Queen::AllDirs);
+		std::vector<Position> to_positions = this->GetPositionsInDirs(from_position, board, AllDirs);
 
 		// List of moves this Queen piece can make
 		std::vector<Move> moves;

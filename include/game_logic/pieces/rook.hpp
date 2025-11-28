@@ -16,25 +16,30 @@ namespace GameLogic
         public:
             // Construct a Rook object with color
             Rook(Enums::Color color);
-            ~Rook() override;
 
-            // Make a clone of this Rook object
+            /** @brief  Virtual Default Destructor*/
+            ~Rook() override = default;
+
+            /*********************************************************
+             * @brief Creates a deep copy (clone) of this Rook object.
+             * @return A unique_ptr to the newly created Rook clone.
+             ********************************************************/
             std::unique_ptr<Piece> ClonePiece() const override;
 
-            // Get rook moves from a position
-            // Steps:
-            // - For each orthogonal dir, go step by step until off the board.
-            // - Stop at the first piece. If enemy, include that position; if friendly, do not include it.
-            std::vector<Move> GetPotentialMoves(const Position& from_position, const Board &board) const override;
-
-            // Orthogonal directions: N, S, E, W
-            static inline const std::vector<Direction> OrthogonalDirs =
-            {
-                Direction::North,
-                Direction::South,
-                Direction::East,
-                Direction::West
-            };
+            /***************************************************************************************************
+             * @brief Calculates all potential orthogonal moves the Rook can make from a given position.
+             *
+             * For each orthogonal position: if on board and (empty or enemy) include.
+             *
+             * !!! IMPORTANT: This method does not check for king safety
+             *
+             * @param from_position The starting position of the Rook
+             * @param board The current state of the board for validation.
+             * @param last_move Optional pointer to the last move made in the game (not typically used by Rook).
+             * @return A vector of potential Move objects.
+             **************************************************************************************************/
+            std::vector<Move> GetPotentialMoves(
+                const Position& from_position, const Board &board, const Move* last_move = nullptr) const override;
     };
 } // namespace GameLogic
 

@@ -27,10 +27,20 @@ namespace GameLogic
     // - For each orthogonal dir, go step by step until off the board.
     // - Stop at the first piece. If enemy, include that position; if friendly, do not include it.
 	// !!! Does not check king safety
-	std::vector<Move> Rook::GetPotentialMoves(const Position& from_position, const Board& board) const
+	std::vector<Move> Rook::GetPotentialMoves(
+		const Position& from_position, const Board& board, const Move* last_move) const
 	{
+		/** Static constant vector defining the four orthogonal directions a bishop can move in. */
+        static const std::vector<Direction> OrthogonalDirs =
+        {
+            Direction::North,
+            Direction::South,
+            Direction::East,
+            Direction::West
+        };
+
 		// List of positions this Rook piece can move to
-		std::vector<Position> to_positions = this->GetPositionsInDirs(from_position, board, Rook::OrthogonalDirs);
+		std::vector<Position> to_positions = this->GetPositionsInDirs(from_position, board, OrthogonalDirs);
 
 		// List of moves this Rook piece can make
 		std::vector<Move> moves;

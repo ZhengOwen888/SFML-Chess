@@ -50,7 +50,7 @@ namespace GameLogic
 	}
 
 	// Get position in the forward diagonal direction
-	std::vector<Position> Pawn::GetCapturePositions(const Position& from_position, const Board& board, const Move &last_move) const
+	std::vector<Position> Pawn::GetCapturePositions(const Position& from_position, const Board& board, const Move* last_move) const
 	{
 		std::vector<Position> to_positions;
 
@@ -84,12 +84,12 @@ namespace GameLogic
 	}
 
 	// Return true if pawn can EnPassant
-	bool Pawn::CanEnPassant(const Position &from_position, const Position &to_position, const Board& board, const Move &last_move) const
+	bool Pawn::CanEnPassant(const Position &from_position, const Position &to_position, const Board& board, const Move* last_move) const
 	{
-		if (last_move.GetMoveType() == Enums::MoveType::DoublePawn && board.IsPositionEmpty(to_position))
+		if (last_move && last_move->GetMoveType() == Enums::MoveType::DoublePawn && board.IsPositionEmpty(to_position))
 		{
-			return from_position.GetRow() == last_move.GetToPosition().GetRow()
-				&& to_position.GetCol()   == last_move.GetToPosition().GetCol();
+			return from_position.GetRow() == last_move->GetToPosition().GetRow()
+				&& to_position.GetCol()   == last_move->GetToPosition().GetCol();
 		}
 
 		return false;
@@ -113,7 +113,8 @@ namespace GameLogic
     // 3) Captures: check two diagonal targets; include if enemy there.
     // 4) Promotion / en passant handled later.
     // !!! Does not check king safety
-	std::vector<Move> Pawn::GetPotentialMoves(const Position& from_position, const Board& board, const Move &last_move) const
+	std::vector<Move> Pawn::GetPotentialMoves(
+		const Position& from_position, const Board& board, const Move* last_move) const
 	{
 		std::vector<Position> forward_to_positions = GetForwardPositions(from_position, board);
 		std::vector<Position> capture_to_positions = GetCapturePositions(from_position, board, last_move);
