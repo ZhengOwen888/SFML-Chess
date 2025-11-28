@@ -21,6 +21,7 @@ FetchContent_MakeAvailable(SFML)
 # Add subdirectories
 add_subdirectory("src/game_logic")
 Add_subdirectory("src/game_render")
+add_subdirectory("src/chess_app")
 
 # Add executables to (the program)
 add_executable(main "src/main.cpp")
@@ -38,6 +39,7 @@ target_link_libraries(main
     PRIVATE
         GameLogic
         GameRender
+        ChessApp
         SFML::Graphics
         SFML::Window
         SFML::System

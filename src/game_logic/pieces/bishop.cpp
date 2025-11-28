@@ -30,8 +30,16 @@ namespace GameLogic
 	std::vector<Move> Bishop::GetPotentialMoves(
 		const Position& from_position, const  Board& board, const Move* last_move) const
 	{
+		static const std::vector<Direction> DiagonalDirs =
+		{
+			Direction::NorthEast,
+			Direction::NorthWest,
+			Direction::SouthEast,
+			Direction::SouthWest
+		};
+
 		// List of positions this Bishop piece can move to
-		std::vector<Position> to_positions = GetPositionsInDirs(from_position, board, Bishop::DiagonalDirs);
+		std::vector<Position> to_positions = GetPositionsInDirs(from_position, board, DiagonalDirs);
 
 		// List of moves this Bishop piece can make
 		std::vector<Move> moves;

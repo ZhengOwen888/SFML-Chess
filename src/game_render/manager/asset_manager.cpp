@@ -19,7 +19,10 @@ namespace GameRender
     AssetManager* AssetManager::instance_ptr_ = nullptr;
 
     AssetManager::AssetManager()
-        : current_piece_theme_(Enums::Theme::Classic), current_board_theme_(Enums::Theme::Classic) {};
+        : current_piece_theme_(Enums::Theme::Classic), current_board_theme_(Enums::Theme::Classic)
+    {
+        SetAndLoadTheme(Enums::Theme::Ocean);
+    };
 
     AssetManager* AssetManager::GetInstance()
     {

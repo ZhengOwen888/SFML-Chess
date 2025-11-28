@@ -16,6 +16,8 @@
 
 #include <vector>
 #include <memory>
+#include <string>
+#include <iostream>
 
 namespace GameLogic
 {
@@ -219,6 +221,9 @@ namespace GameLogic
         std::unique_ptr<Piece> moved_piece = record.TakeMovedPiece();
         std::unique_ptr<Piece> captured_piece = record.TakeCapturedPiece();
 
+        // Remove the pawn that did the enpassant action.
+        RemovePieceAt(to_position);
+
         PlacePieceAt(std::move(captured_piece), capture_position);
         PlacePieceAt(std::move(moved_piece), from_position);
     }
@@ -275,19 +280,36 @@ namespace GameLogic
     // Removes a Piece object from a position on the board
     std::unique_ptr<Piece> Board::RemovePieceAt(const Position &position)
     {
-        return std::move(this->board_[position.GetRow()][position.GetCol()]);
+        if (IsPositionOnBoard(position))
+        {
+            return std::move(this->board_[position.GetRow()][position.GetCol()]);
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 
     // Place a Piece object at a position on the board
     void Board::PlacePieceAt(std::unique_ptr<Piece> piece, const Position &position)
     {
-        this->board_[position.GetRow()][position.GetCol()] = std::move(piece);
+        if (IsPositionOnBoard(position))
+        {
+            this->board_[position.GetRow()][position.GetCol()] = std::move(piece);
+        }
     }
 
     // Returns a pointer to a constant Piece object at a position on the board
     const Piece* Board::GetPieceAt(const Position& position) const
     {
-        return this->board_[position.GetRow()][position.GetCol()].get();
+        if (IsPositionOnBoard(position))
+        {
+            return this->board_[position.GetRow()][position.GetCol()].get();
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 
     // Returns a immutable map of key: position to value: pieces
@@ -312,7 +334,14 @@ namespace GameLogic
     // Returns a pointer to a Piece object at a position on the board
     Piece* Board::GetMutablePieceAt(const Position& position)
     {
-        return this->board_[position.GetRow()][position.GetCol()].get();
+        if (IsPositionOnBoard(position))
+        {
+            return this->board_[position.GetRow()][position.GetCol()].get();
+        }
+        else
+        {
+            return nullptr;
+        }
     }
 
 
@@ -340,5 +369,26 @@ namespace GameLogic
             }
         }
         return true;
+    }
+
+    void Board::DisplayBoard() const
+    {
+        for (int row = 0; row < Constants::BOARD_SIZE; row++)
+        {
+            std::cout << "[";
+            for (int col = 0; col < Constants::BOARD_SIZE; col++)
+            {
+                const Piece *piece = GetPieceAt(Position{row, col});
+                std::string piece_repr = "..";
+
+                if (piece != nullptr)
+                {
+                    piece_repr = Constants::GET_PIECE_REPR(piece->GetColor(), piece->GetPieceType());
+                }
+
+                std::cout << piece_repr << " ";
+            }
+            std::cout << "]\n";
+        }
     }
 } // namespace GameLogic

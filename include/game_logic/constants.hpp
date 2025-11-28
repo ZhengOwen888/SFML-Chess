@@ -4,6 +4,9 @@
 #include "game_logic/enums.hpp"
 
 #include <array>
+#include <string_view>
+#include <string>
+#include <map>
 
 namespace GameLogic
 {
@@ -54,6 +57,49 @@ namespace GameLogic
             Enums::PieceType::Queen,
             Enums::PieceType::King
         };
+
+        inline const std::map<Enums::Color, std::string_view> LogicColorStr =
+        {
+            {Enums::Color::Light, "w"},
+            {Enums::Color::Dark, "b"},
+            {Enums::Color::None, "none"}
+        };
+
+        inline const std::map<Enums::PieceType, std::string_view> LogicPieceTypeStr =
+        {
+            {Enums::PieceType::Pawn, "p"},
+            {Enums::PieceType::Bishop, "b"},
+            {Enums::PieceType::Knight, "n"},
+            {Enums::PieceType::Rook, "r"},
+            {Enums::PieceType::Queen, "q"},
+            {Enums::PieceType::King, "k"},
+            {Enums::PieceType::None, "none"}
+        };
+
+        inline const std::map<Enums::MoveType, std::string_view> LogicMoveTypeStr =
+        {
+            {Enums::MoveType::Normal, "normal"},
+            {Enums::MoveType::DoublePawn, "double_pawn"},
+            {Enums::MoveType::EnPassant, "enpassant"},
+            {Enums::MoveType::PawnPromotion, "pawn_promotion"},
+            {Enums::MoveType::CastleKS, "castleks"},
+            {Enums::MoveType::CastleQS, "castleqs"},
+            {Enums::MoveType::None, "none"}
+        };
+
+        inline std::string GET_PIECE_REPR(Enums::Color piece_color, Enums::PieceType piece_type)
+        {
+            std::string piece_repr;
+            piece_repr += LogicColorStr.at(piece_color);
+            piece_repr += LogicPieceTypeStr.at(piece_type);
+            return piece_repr;
+        }
+
+        inline std::string GET_MOVE_TYPE_REPR(Enums::MoveType move_type)
+        {
+            std::string piece_repr(LogicMoveTypeStr.at(move_type));
+            return piece_repr;
+        }
 
     } // namespace Constants
 

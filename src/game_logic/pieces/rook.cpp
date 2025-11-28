@@ -30,8 +30,17 @@ namespace GameLogic
 	std::vector<Move> Rook::GetPotentialMoves(
 		const Position& from_position, const Board& board, const Move* last_move) const
 	{
+		/** Static constant vector defining the four orthogonal directions a bishop can move in. */
+        static const std::vector<Direction> OrthogonalDirs =
+        {
+            Direction::North,
+            Direction::South,
+            Direction::East,
+            Direction::West
+        };
+
 		// List of positions this Rook piece can move to
-		std::vector<Position> to_positions = this->GetPositionsInDirs(from_position, board, Rook::OrthogonalDirs);
+		std::vector<Position> to_positions = this->GetPositionsInDirs(from_position, board, OrthogonalDirs);
 
 		// List of moves this Rook piece can make
 		std::vector<Move> moves;

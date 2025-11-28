@@ -4,10 +4,10 @@
 #include "game_logic/base/move.hpp"
 #include "game_logic/base/position.hpp"
 #include "game_logic/base/game_result.hpp"
-
 #include "game_logic/validator/move_validator.hpp"
-
 #include "game_logic/enums.hpp"
+
+#include <iostream>
 
 namespace GameLogic
 {
@@ -55,6 +55,9 @@ namespace GameLogic
             return false;
         }
 
+        // For debugging purposes
+        std::cout << Constants::GET_MOVE_TYPE_REPR(move.GetMoveType()) << std::endl;
+
         // Check if move captures a piece or is a pawn move
         bool is_capture_move = MoveValidator::IsCaptureMove(move, this->board_);
         bool is_pawn_move = MoveValidator::IsPawnMove(move, this->board_);
@@ -73,6 +76,8 @@ namespace GameLogic
 
         SwitchPlayerTurn();
         UpdateGameState();
+
+        this->board_.DisplayBoard();
 
         return true;
     }

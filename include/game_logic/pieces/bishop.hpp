@@ -51,15 +51,6 @@ namespace GameLogic
              **************************************************************************************************************************/
             std::vector<Move> GetPotentialMoves(
                 const Position &from_position, const Board &board, const Move* last_move = nullptr) const override;
-
-            /** @brief Static constant vector defining the four diagonal directions a Bishop can move in. */
-            static inline const std::vector<Direction> DiagonalDirs =
-                {
-                    Direction::NorthEast,
-                    Direction::NorthWest,
-                    Direction::SouthEast,
-                    Direction::SouthWest
-                };
     };
 } // namespace GameLogic
 

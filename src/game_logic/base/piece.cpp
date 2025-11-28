@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 namespace GameLogic
 {
@@ -21,11 +22,23 @@ namespace GameLogic
     {
         std::vector<Position> to_positions;
 
-        for (Position to_position = from_position + direction; board.IsPositionOnBoard(to_position); to_position = to_position + direction)
+        // Add this temporary position calculation and logging BEFORE the loop starts:
+        Position first_step = from_position + direction;
+        // std::cout
+        //     << "DEBUG: First step from R" << from_position.GetRow() << " C" << from_position.GetCol()
+        //     << " with Dir R" << direction.GetRowDelta() << " C" << direction.GetColDelta()
+        //     << " results in R" << first_step.GetRow() << " C" << first_step.GetCol() << std::endl;
+
+        for (Position to_position = first_step; board.IsPositionOnBoard(to_position); to_position = to_position + direction)
         {
+            // DEBUGGING OUTPUT
+            // std::cout << "DEBUG: Checking square R" << to_position.GetRow()
+            //         << " C" << to_position.GetCol() << std::endl;
+
             // If square or position is empty, we can move the piece there
             if (board.IsPositionEmpty(to_position))
             {
+                // std::cout << "DEBUG: Square is empty, adding move." << std::endl;
                 to_positions.push_back(to_position);
                 continue;
             }
@@ -34,6 +47,7 @@ namespace GameLogic
             // If square or position contains enemy piece we can capture.
             if (piece->GetColor() != this->color_)
             {
+                // std::cout << "DEBUG: Square has enemy piece, adding capture and stopping." << std::endl;
                 to_positions.push_back(to_position);
             }
 

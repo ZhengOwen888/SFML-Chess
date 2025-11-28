@@ -13,6 +13,7 @@ namespace GameRender
 {
     BoardRenderer::BoardRenderer(AssetManager &asset_manager)
         : asset_manager_(asset_manager),
+        highlight_renderer_(Constants::SQUARE_SIZE, false),
         playing_as_black_(false),
         square_size_(Constants::SQUARE_SIZE),
         board_size_(sf::Vector2f{Constants::INITIAL_BOARD_WIDTH, Constants::INITIAL_BOARD_HEIGHT}),
@@ -26,7 +27,11 @@ namespace GameRender
         window.setView(this->view_);
 
         std::map<GameLogic::Position, const GameLogic::Piece*> position_and_piece = game.GetAllPositonAndPiece();
+
         DrawBoard(window);
+
+        this->highlight_renderer_.Render(window);
+
         DrawPieces(window, position_and_piece);
     }
 
@@ -74,17 +79,34 @@ namespace GameRender
     void BoardRenderer::TogglePerspective(bool play_as_black)
     {
         this->playing_as_black_ = play_as_black;
+        this->highlight_renderer_.SetPlayingAsBlack(play_as_black);
     }
 
-    sf::Vector2f BoardRenderer::GetSquareCenter(int row, int col)
+    void BoardRenderer::SetPositionsToHighlight(
+        const GameLogic::Position &selected_position, const std::vector<GameLogic::Position> &positions_to_highlight)
     {
-        int effective_row = row;
+        this->highlight_renderer_.SetPositionsToHighlight(selected_position, positions_to_highlight);
+    }
+
+    bool BoardRenderer::SetAndLoadPieceTheme(Enums::Theme theme)
+    {
+        return this->asset_manager_.SetAndLoadPieceTheme(theme);
+    }
+
+    bool BoardRenderer::SetAndLoadBoardTheme(Enums::Theme theme)
+    {
+        return this->asset_manager_.SetAndLoadBoardTheme(theme);
+    }
+
+    sf::Vector2f BoardRenderer::GetSquareCenter(int col, int row)
+    {
         int effective_col = col;
+        int effective_row = row;
 
         if (this->playing_as_black_ == true)
         {
-            effective_row = 7 - row;
             effective_col = 7 - col;
+            effective_row = 7 - row;
         }
 
         // X depends on COL (horizontal file a through h)
@@ -150,11 +172,15 @@ namespace GameRender
             piece_sprite.setOrigin(origin);
             piece_sprite.setScale(scale);
 
-            sf::Vector2f square_center_pos = GetSquareCenter(position.GetRow(), position.GetCol());
+            sf::Vector2f square_center_pos = GetSquareCenter(position.GetCol(), position.GetRow());
             piece_sprite.setPosition(square_center_pos);
 
             window.draw(piece_sprite);
         }
     }
 
+    sf::View BoardRenderer::GetView()
+    {
+        return this->view_;
+    }
 } // namespace GameRender
