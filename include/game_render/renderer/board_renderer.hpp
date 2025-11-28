@@ -50,12 +50,17 @@ namespace GameRender
              ************************************************************************************/
             void TogglePerspective(bool play_as_black);
 
-            /*********************************************************************************************************************************
-             * @brief Set the selcted position and the positions that needs to be highlighted for possible moves.
-             * @param selected_position A const reference to the position that the player selected to be moved.
-             * @param positions_to_highlight A const reference to the possible positions that the player can make for their selected position.
-             ********************************************************************************************************************************/
-            void SetPositionsToHighlight(const GameLogic::Position &selected_position, const std::vector<GameLogic::Position> &positions_to_highlight);
+            /***************************************************************************************************************************************************************
+             * @brief Set the positions that we need to highlight based on the position the user clicked on.
+             * @param selected_position A const reference to the position that the user clicked on.
+             * @param selected_position_color A const reference to a sf::Color that will be used to highlight the selected position.
+             * @param positions_to_highlight_with_colors A const reference to the possible positions the player can move their selected piece to and their highlight colors.
+             **************************************************************************************************************************************************************/
+            void SetPositionsToHighlight(
+                const GameLogic::Position &selected_position,
+                const sf::Color &selected_position_color,
+                const std::map<GameLogic::Position, sf::Color> &positions_to_highlight_with_colors
+            );
 
             /*********************************************************************************
              * @brief Set the current theme for pieces then load their textures.

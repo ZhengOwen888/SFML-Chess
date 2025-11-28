@@ -13,7 +13,7 @@ namespace GameRender
 {
     BoardRenderer::BoardRenderer(AssetManager &asset_manager)
         : asset_manager_(asset_manager),
-        highlight_renderer_(Constants::SQUARE_SIZE, false),
+        highlight_renderer_(Constants::SQUARE_SIZE, /*playing_as_black*/ false),
         playing_as_black_(false),
         square_size_(Constants::SQUARE_SIZE),
         board_size_(sf::Vector2f{Constants::INITIAL_BOARD_WIDTH, Constants::INITIAL_BOARD_HEIGHT}),
@@ -22,7 +22,6 @@ namespace GameRender
 
     void BoardRenderer::Render(sf::RenderWindow & window, const GameLogic::Game &game)
     {
-        window.clear();
         this->view_.setCenter(this->board_size_ / 2.f);
         window.setView(this->view_);
 
@@ -83,9 +82,11 @@ namespace GameRender
     }
 
     void BoardRenderer::SetPositionsToHighlight(
-        const GameLogic::Position &selected_position, const std::vector<GameLogic::Position> &positions_to_highlight)
+        const GameLogic::Position &selected_position,
+        const sf::Color &selected_position_color,
+        const std::map<GameLogic::Position, sf::Color> &positions_to_highlight_with_colors)
     {
-        this->highlight_renderer_.SetPositionsToHighlight(selected_position, positions_to_highlight);
+        this->highlight_renderer_.SetPositionsToHighlight(selected_position, selected_position_color, positions_to_highlight_with_colors);
     }
 
     bool BoardRenderer::SetAndLoadPieceTheme(Enums::Theme theme)

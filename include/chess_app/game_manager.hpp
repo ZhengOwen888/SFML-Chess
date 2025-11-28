@@ -47,7 +47,8 @@ namespace ChessApp
             sf::RenderWindow window_;
 
             std::optional<GameLogic::Position> selected_position_state_;
-            std::vector<GameLogic::Position> current_legal_positions_;
+            std::map<GameLogic::Position, sf::Color> current_legal_positions_with_colors_;
+            std::vector<GameLogic::Move> current_legal_moves_;
 
             void HandleEvent(const sf::Event& event);
 
