@@ -22,7 +22,7 @@ namespace ChessApp
         : game_(GameLogic::Game()),
         board_renderer_(*GameRender::AssetManager::GetInstance()),
         window_(sf::VideoMode({800, 800}), "SFML_CHESS", sf::Style::Default),
-        selected_position_state_(std::nullopt)
+        selected_position_(std::nullopt)
     {};
 
     void GameManager::Run()
@@ -66,7 +66,7 @@ namespace ChessApp
 
             // if (this->menu_render_.CheclClick(pixel_pos))
             // {
-            //      do something
+            //      do something // this will be used for the menu later probably if we have time.
             //      return;
             // }
 
@@ -94,60 +94,75 @@ namespace ChessApp
 
         GameLogic::Position clicked_position{row, col};
 
-        if (this->selected_position_state_.has_value())
+        if (this->selected_position_.has_value())
         {
-            this->board_renderer_.SetPositionsToHighlight(
-                clicked_position,
-                sf::Color(255, 0, 0, 150),
-                {}
-            );
-
-            for (const auto& move : this->current_legal_moves_)
-            {
-                if (move.GetToPosition() == clicked_position)
-                {
-                    this->board_renderer_.SetPositionsToHighlight(
-                        clicked_position,
-                        sf::Color(218, 165, 32, 128),
-                        {}
-                    );
-                    this->game_.ExecuteMove(move);
-                    break;
-                }
-            }
-
-            this->selected_position_state_ = std::nullopt;
-            this->current_legal_positions_with_colors_.clear();
-            this->current_legal_moves_.clear();
-            return;
+            HandleMoveAttempt(clicked_position);
         }
+        else
+        {
+            HandlePieceSelection(clicked_position);
+        }
+    }
 
+    void GameManager::HandleMoveAttempt(GameLogic::Position clicked_position)
+    {
+        auto valid_move = std::find_if(
+            this->current_legal_moves_.begin(),
+            this->current_legal_moves_.end(),
+            [&](const auto &move) { return move.GetToPosition() == clicked_position; });
+
+        if (valid_move != this->current_legal_moves_.end())
+        {
+            ClearSelectionState();
+            UpdateHighlight(clicked_position, GameRender::Constants::SUCCESS_MOVE_GOLD);
+            this->game_.ExecuteMove(*valid_move);
+        }
+        else
+        {
+            ClearSelectionState();
+            UpdateHighlight(clicked_position, GameRender::Constants::INVALID_MOVE_RED);
+        }
+    }
+
+    void GameManager::HandlePieceSelection(GameLogic::Position clicked_position)
+    {
+        ClearSelectionState();
+        this->board_renderer_.SetPositionsToHighlight(GameLogic::Position{-1, -1}, sf::Color::Transparent, {});
+
+        this->selected_position_ = clicked_position;
         this->current_legal_moves_ = this->game_.GetLegalMovesAtPosition(clicked_position);
 
         if (!this->current_legal_moves_.empty())
         {
-            this->selected_position_state_ = std::make_optional(clicked_position);
-            this->current_legal_positions_with_colors_.clear();
-            for (const auto &move : this->current_legal_moves_)
+            for (const auto& move : this->current_legal_moves_)
             {
-                this->current_legal_positions_with_colors_.insert({move.GetToPosition(), sf::Color(118, 150, 86, 128)});
+                this->current_legal_positions_with_colors_.insert(
+                    {move.GetToPosition(), GameRender::Constants::MOVE_HIGHLIGHT_GREEN}
+                );
             }
-            this->board_renderer_.SetPositionsToHighlight(
-                this->selected_position_state_.value(),
-                sf::Color(118, 150, 86, 128),
-                this->current_legal_positions_with_colors_
-            );
+            UpdateHighlight(this->selected_position_.value(), GameRender::Constants::MOVE_HIGHLIGHT_GREEN);
         }
         else
         {
-            this->board_renderer_.SetPositionsToHighlight(
-                clicked_position,
-                sf::Color(255, 0, 0, 150),
-                {}
-            );
-            this->selected_position_state_ = std::nullopt;
-            this->current_legal_positions_with_colors_.clear();
+            UpdateHighlight(this->selected_position_.value(), GameRender::Constants::INVALID_MOVE_RED);
+            ClearSelectionState();
         }
+    }
+
+    void GameManager::UpdateHighlight(GameLogic::Position selected_position, sf::Color highlight_color)
+    {
+        this->board_renderer_.SetPositionsToHighlight(
+            selected_position,
+            highlight_color,
+            this->current_legal_positions_with_colors_
+        );
+    }
+
+    void GameManager::ClearSelectionState()
+    {
+        this->selected_position_ = std::nullopt;
+        this->current_legal_moves_.clear();
+        this->current_legal_positions_with_colors_.clear();
     }
 
     void GameManager::Render()
@@ -170,3 +185,59 @@ namespace ChessApp
         return this->board_renderer_.SetAndLoadBoardTheme(theme);
     }
 } // namespace ChessApp
+
+
+// if (this->selected_position_state_.has_value())
+//         {
+//             this->board_renderer_.SetPositionsToHighlight(
+//                 clicked_position,
+//                 sf::Color(255, 0, 0, 150),
+//                 {}
+//             );
+
+//             for (const auto& move : this->current_legal_moves_)
+//             {
+//                 if (move.GetToPosition() == clicked_position)
+//                 {
+//                     this->board_renderer_.SetPositionsToHighlight(
+//                         clicked_position,
+//                         sf::Color(218, 165, 32, 128),
+//                         {}
+//                     );
+//                     this->game_.ExecuteMove(move);
+//                     break;
+//                 }
+//             }
+
+//             this->selected_position_state_ = std::nullopt;
+//             this->current_legal_positions_with_colors_.clear();
+//             this->current_legal_moves_.clear();
+//             return;
+//         }
+
+//         this->current_legal_moves_ = this->game_.GetLegalMovesAtPosition(clicked_position);
+
+//         if (!this->current_legal_moves_.empty())
+//         {
+//             this->selected_position_state_ = std::make_optional(clicked_position);
+//             this->current_legal_positions_with_colors_.clear();
+//             for (const auto &move : this->current_legal_moves_)
+//             {
+//                 this->current_legal_positions_with_colors_.insert({move.GetToPosition(), sf::Color(118, 150, 86, 128)});
+//             }
+//             this->board_renderer_.SetPositionsToHighlight(
+//                 this->selected_position_state_.value(),
+//                 sf::Color(118, 150, 86, 128),
+//                 this->current_legal_positions_with_colors_
+//             );
+//         }
+//         else
+//         {
+//             this->board_renderer_.SetPositionsToHighlight(
+//                 clicked_position,
+//                 sf::Color(255, 0, 0, 150),
+//                 {}
+//             );
+//             this->selected_position_state_ = std::nullopt;
+//             this->current_legal_positions_with_colors_.clear();
+//         }
