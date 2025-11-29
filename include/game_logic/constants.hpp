@@ -58,23 +58,33 @@ namespace GameLogic
             Enums::PieceType::King
         };
 
-        inline const std::map<Enums::Color, std::string_view> LogicColorStr =
+        inline const std::map<Enums::Color, char> LogicColorStr =
         {
-            {Enums::Color::Light, "w"},
-            {Enums::Color::Dark, "b"},
-            {Enums::Color::None, "none"}
+            {Enums::Color::Light, 'w'},
+            {Enums::Color::Dark, 'b'},
         };
 
-        inline const std::map<Enums::PieceType, std::string_view> LogicPieceTypeStr =
+        inline const std::map<Enums::PieceType, char> LogicPieceTypeStr =
         {
-            {Enums::PieceType::Pawn, "p"},
-            {Enums::PieceType::Bishop, "b"},
-            {Enums::PieceType::Knight, "n"},
-            {Enums::PieceType::Rook, "r"},
-            {Enums::PieceType::Queen, "q"},
-            {Enums::PieceType::King, "k"},
-            {Enums::PieceType::None, "none"}
+            {Enums::PieceType::Pawn, 'p'},
+            {Enums::PieceType::Bishop, 'b'},
+            {Enums::PieceType::Knight, 'n'},
+            {Enums::PieceType::Rook, 'r'},
+            {Enums::PieceType::Queen, 'q'},
+            {Enums::PieceType::King, 'k'},
         };
+
+        inline char GET_COLOR_REPR(Enums::Color color)
+        {
+            return LogicColorStr.at(color);
+        }
+
+        inline char GET_PIECE_REPR(Enums::Color piece_color, Enums::PieceType piece_type)
+        {
+            char piece_repr = LogicPieceTypeStr.at(piece_type);
+
+            return piece_color == Enums::Color::Light ? std::toupper(piece_repr) : piece_repr;
+        }
 
         inline const std::map<Enums::MoveType, std::string_view> LogicMoveTypeStr =
         {
@@ -86,14 +96,6 @@ namespace GameLogic
             {Enums::MoveType::CastleQS, "castleqs"},
             {Enums::MoveType::None, "none"}
         };
-
-        inline std::string GET_PIECE_REPR(Enums::Color piece_color, Enums::PieceType piece_type)
-        {
-            std::string piece_repr;
-            piece_repr += LogicColorStr.at(piece_color);
-            piece_repr += LogicPieceTypeStr.at(piece_type);
-            return piece_repr;
-        }
 
         inline std::string GET_MOVE_TYPE_REPR(Enums::MoveType move_type)
         {

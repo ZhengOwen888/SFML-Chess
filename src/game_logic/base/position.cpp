@@ -3,6 +3,8 @@
 
 #include "game_logic/enums.hpp"
 
+#include <string>
+
 namespace GameLogic
 {
     // Construct a Position object with row and column
@@ -34,6 +36,22 @@ namespace GameLogic
             this->row_ + other_direction.GetRowDelta(),
             this->col_ + other_direction.GetColDelta()
         );
+    }
+
+    std::string Position::PositionToAlgebraic() const
+    {
+        char file = 'a' + this->col_;
+        char rank = '8' - this->row_;
+
+        return std::string(1, file) + std::string(1, rank);
+    }
+
+    Position Position::AlgebraicToPosition(char file, char rank)
+    {
+        int col = file - 'a';
+        int row = '8' - rank;
+
+        return Position{row, col};
     }
 
     // Return the color of the square on the board at this position

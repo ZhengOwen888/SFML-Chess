@@ -13,4 +13,17 @@ add_library(ChessApp STATIC ${CHESS_APP_SRC})
 target_include_directories(ChessApp
 	PUBLIC
 		"${CMAKE_SOURCE_DIR}/include"
+		"${boost_SOURCE_DIR}/libs/process/include"
+		"${boost_SOURCE_DIR}/libs/asio/include"
+		"${boost_SOURCE_DIR}/libs/system/include"
+		"${boost_SOURCE_DIR}/libs/config/include"
+		"${boost_SOURCE_DIR}/libs/core/include"
+		"${boost_SOURCE_DIR}/libs/filesystem/include"
+		"${boost_SOURCE_DIR}/libs/algorithm/include"
+)
+
+target_link_libraries(ChessApp PUBLIC
+    Boost::process
+    Boost::asio
+    Boost::system
 )

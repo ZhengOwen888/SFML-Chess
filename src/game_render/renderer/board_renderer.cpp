@@ -11,7 +11,7 @@
 
 namespace GameRender
 {
-    BoardRenderer::BoardRenderer(AssetManager &asset_manager)
+    BoardRenderer::BoardRenderer(AssetManager* asset_manager)
         : asset_manager_(asset_manager),
         highlight_renderer_(Constants::SQUARE_SIZE, /*playing_as_black*/ false),
         playing_as_black_(false),
@@ -91,12 +91,12 @@ namespace GameRender
 
     bool BoardRenderer::SetAndLoadPieceTheme(Enums::Theme theme)
     {
-        return this->asset_manager_.SetAndLoadPieceTheme(theme);
+        return this->asset_manager_->SetAndLoadPieceTheme(theme);
     }
 
     bool BoardRenderer::SetAndLoadBoardTheme(Enums::Theme theme)
     {
-        return this->asset_manager_.SetAndLoadBoardTheme(theme);
+        return this->asset_manager_->SetAndLoadBoardTheme(theme);
     }
 
     sf::Vector2f BoardRenderer::GetSquareCenter(int col, int row)
@@ -120,7 +120,7 @@ namespace GameRender
 
     void BoardRenderer::DrawBoard(sf::RenderWindow &window)
     {
-        const sf::Texture &board_texture = this->asset_manager_.GetBoardTexture();
+        const sf::Texture &board_texture = this->asset_manager_->GetBoardTexture();
 
         sf::Vector2f board_texture_size(board_texture.getSize());
         sf::Vector2f board_scale =
@@ -154,7 +154,7 @@ namespace GameRender
         {
             GameLogic::Enums::Color piece_color = piece->GetColor();
             GameLogic::Enums::PieceType piece_type = piece->GetPieceType();
-            sf::Texture piece_texture = this->asset_manager_.GetPieceTexture(piece_color, piece_type);
+            sf::Texture piece_texture = this->asset_manager_->GetPieceTexture(piece_color, piece_type);
             piece_texture.setSmooth(true);
 
             sf::Sprite piece_sprite(piece_texture);

@@ -5,6 +5,9 @@
 
 #include "game_logic/enums.hpp"
 
+#include <tuple>
+
+
 namespace GameLogic
 {
     /**************************************************************************************
@@ -45,6 +48,12 @@ namespace GameLogic
              *******************************************************/
             Enums::MoveType GetMoveType() const;
 
+            /*******************************************************************************************
+             * @brief Set the type of piece the pawn will be promoted to when it gets to the final rank.
+             * @param promotion_piece_type The piece the pawn will be promoted to.
+             ******************************************************************************************/
+            void SetPromotionPieceType(Enums::PieceType promotion_piece_type);
+
             /***************************************************************
              * @brief Get the starting Position
              * @return The Position from which the Piece will be moved from.
@@ -57,6 +66,13 @@ namespace GameLogic
              *********************************************************************/
             const Position& GetToPosition() const;
 
+            /***************************************************************************************
+             * @brief Creates a Move object from a standard UCI move string (e.g., "e2e4", "a7a8q").
+             * @param uci_string The move in UCI format.
+             * @return A tuple of start position, destination and the promotion type.
+             **************************************************************************************/
+            static std::tuple<Position, Position, Enums::PieceType> FromUCI(const std::string &uci_string);
+
         private:
             /** @brief The type of the Move (Normal, DoublePawn, Enpassant, ...) */
             Enums::MoveType move_type_;
@@ -66,6 +82,9 @@ namespace GameLogic
 
             /** @brief The destination Position. */
             Position to_position_;
+
+            /** @brief The piece that the pawn will be promoted to. */
+            Enums::PieceType promotion_piece_type_;
     };
 } // namespace GameLogic
 

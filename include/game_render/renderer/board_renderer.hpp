@@ -26,7 +26,7 @@ namespace GameRender
              * @brief Construct a Board Renderer with a Asset Manager object.
              * @param asset_manager The Asset Manager object that will help load the textures of the board and pieces.
              ********************************************************************************************************/
-            BoardRenderer(AssetManager& asset_manager);
+            BoardRenderer(AssetManager* asset_manager);
 
             /** @brief Default Destructor */
             ~BoardRenderer() override = default;
@@ -83,8 +83,8 @@ namespace GameRender
             sf::View GetView();
 
         private:
-            /** @brief Reference to the application's Asset Manager for retrieving textures for the board and pieces. */
-            AssetManager &asset_manager_;
+            /** @brief Pointer to the application's Asset Manager for retrieving textures for the board and pieces. */
+            AssetManager *asset_manager_;
 
             /** @brief The renderer that will render the indicators for possible moves and more.  */
             HighlightRenderer highlight_renderer_;
