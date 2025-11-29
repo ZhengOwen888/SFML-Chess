@@ -1,4 +1,5 @@
 #include "chess_app/game_manager.hpp"
+#include "chess_app/uci_handler.hpp"
 
 int main()
 {

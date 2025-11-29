@@ -58,10 +58,10 @@ namespace GameLogic
              ************************************************************/
             const Piece *ReadMovedPiece() const;
 
-            /********************************************************************
+            /*********************************************************************
              * @brief Read the fifty move counter before the move was made.
-             * @return A value of the fifty move counter before the move was made
-             *******************************************************************/
+             * @return A value of the fifty move counter before the move was made.
+             ********************************************************************/
             int ReadPrevFiftyMoveCounter() const;
 
             /***************************************************************************

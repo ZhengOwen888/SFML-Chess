@@ -20,7 +20,8 @@ namespace ChessApp
 {
     GameManager::GameManager()
         : game_(GameLogic::Game()),
-        board_renderer_(*GameRender::AssetManager::GetInstance()),
+        asset_manager_(),
+        board_renderer_(&asset_manager_),
         window_(sf::VideoMode({800, 800}), "SFML_CHESS", sf::Style::Default),
         selected_position_(std::nullopt)
     {};
@@ -185,59 +186,3 @@ namespace ChessApp
         return this->board_renderer_.SetAndLoadBoardTheme(theme);
     }
 } // namespace ChessApp
-
-
-// if (this->selected_position_state_.has_value())
-//         {
-//             this->board_renderer_.SetPositionsToHighlight(
-//                 clicked_position,
-//                 sf::Color(255, 0, 0, 150),
-//                 {}
-//             );
-
-//             for (const auto& move : this->current_legal_moves_)
-//             {
-//                 if (move.GetToPosition() == clicked_position)
-//                 {
-//                     this->board_renderer_.SetPositionsToHighlight(
-//                         clicked_position,
-//                         sf::Color(218, 165, 32, 128),
-//                         {}
-//                     );
-//                     this->game_.ExecuteMove(move);
-//                     break;
-//                 }
-//             }
-
-//             this->selected_position_state_ = std::nullopt;
-//             this->current_legal_positions_with_colors_.clear();
-//             this->current_legal_moves_.clear();
-//             return;
-//         }
-
-//         this->current_legal_moves_ = this->game_.GetLegalMovesAtPosition(clicked_position);
-
-//         if (!this->current_legal_moves_.empty())
-//         {
-//             this->selected_position_state_ = std::make_optional(clicked_position);
-//             this->current_legal_positions_with_colors_.clear();
-//             for (const auto &move : this->current_legal_moves_)
-//             {
-//                 this->current_legal_positions_with_colors_.insert({move.GetToPosition(), sf::Color(118, 150, 86, 128)});
-//             }
-//             this->board_renderer_.SetPositionsToHighlight(
-//                 this->selected_position_state_.value(),
-//                 sf::Color(118, 150, 86, 128),
-//                 this->current_legal_positions_with_colors_
-//             );
-//         }
-//         else
-//         {
-//             this->board_renderer_.SetPositionsToHighlight(
-//                 clicked_position,
-//                 sf::Color(255, 0, 0, 150),
-//                 {}
-//             );
-//             this->selected_position_state_ = std::nullopt;
-//             this->current_legal_positions_with_colors_.clear();
-//         }

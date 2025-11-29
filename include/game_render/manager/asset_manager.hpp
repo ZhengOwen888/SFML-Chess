@@ -22,11 +22,11 @@ namespace GameRender
     class AssetManager
     {
         public:
-            /*****************************************************************************************************
-             * @brief Following the Singleton pattern, The single and exact same Asset Manager Object is returned.
-             * @return A pointer to a static instance of Asset Manager Object.
-             ****************************************************************************************************/
-            static AssetManager *GetInstance();
+            /** @brief Private constructor enforces the Singleton pattern. */
+            AssetManager();
+
+            /** @brief Default Destructor. */
+            ~AssetManager() = default;
 
             /*******************************************************************************************************
              * @brief Set the current theme and load the textures for both the board and the pieces with that theme.
@@ -72,20 +72,6 @@ namespace GameRender
             const sf::Texture &GetBoardTexture() const;
 
         private:
-            /** @brief Private constructor enforces the Singleton pattern. */
-            AssetManager();
-
-            /** @brief Default Destructor. */
-            ~AssetManager() = default;
-
-            /** @brief Disable Copy Constructor. */
-            AssetManager(const AssetManager &) = delete;
-
-            /** @brief Disable Copy Assignemnt operator. */
-            AssetManager &operator=(const AssetManager &) = delete;
-
-            /** @brief The asset manager instance */
-            static AssetManager *instance_ptr_;
 
             /** @brief Map storing the piece textures keyed by its color and piece type. */
             std::map<std::pair<GameLogic::Enums::Color, GameLogic::Enums::PieceType>, sf::Texture> piece_textures_;

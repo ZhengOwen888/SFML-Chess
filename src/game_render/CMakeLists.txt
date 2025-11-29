@@ -13,4 +13,5 @@ add_library(GameRender STATIC ${GAME_RENDER_SRC})
 target_include_directories(GameRender
 	PUBLIC
 		"${CMAKE_SOURCE_DIR}/include"
+		"${SFML_INCLUDE_DIRS}"
 )

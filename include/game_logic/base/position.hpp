@@ -5,6 +5,8 @@
 
 #include "game_logic/enums.hpp"
 
+#include <string>
+
 namespace GameLogic
 {
     /*************************************************************************
@@ -56,6 +58,20 @@ namespace GameLogic
              * Example: Position(3, 3) + Direction::North which is (-1, 0) = Position(2, 3)
              *****************************************************************************/
             Position operator+(const Direction &other_direction) const;
+
+            /********************************************************************************************
+             * @brief Converts the internal row/column coordinates to standard chess notation (a1 to h8).
+             * @return A string representing the algebraic notation.
+             *******************************************************************************************/
+            std::string PositionToAlgebraic() const;
+
+            /****************************************************************************************
+             * @brief Converts standard chess notation (a1 to h8) to internal row/column coordinates.
+             * @param file The column representation of the position.
+             * @param rank The row representation of the position.
+             * @return A internal Position object representing the chess position.
+             ***************************************************************************************/
+            static Position AlgebraicToPosition(char file, char rank);
 
             /***********************************************************************
              * @brief Get the color of this square at this position.

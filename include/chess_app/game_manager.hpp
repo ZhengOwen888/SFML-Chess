@@ -53,10 +53,11 @@ namespace ChessApp
             bool SetAndLoadBoardTheme(GameRender::Enums::Theme theme);
 
         private:
-            GameLogic::Game game_;
-            GameRender::BoardRenderer board_renderer_;
-
             sf::RenderWindow window_;
+
+            GameLogic::Game game_;
+            GameRender::AssetManager asset_manager_;
+            GameRender::BoardRenderer board_renderer_;
 
             std::optional<GameLogic::Position> selected_position_;
             std::map<GameLogic::Position, sf::Color> current_legal_positions_with_colors_;

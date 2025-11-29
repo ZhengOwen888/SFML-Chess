@@ -16,21 +16,10 @@
 
 namespace GameRender
 {
-    AssetManager* AssetManager::instance_ptr_ = nullptr;
-
     AssetManager::AssetManager()
         : current_piece_theme_(Enums::Theme::Ocean), current_board_theme_(Enums::Theme::Ocean)
     {
         SetAndLoadTheme(Enums::Theme::Ocean);
-    };
-
-    AssetManager* AssetManager::GetInstance()
-    {
-        if (AssetManager::instance_ptr_ == nullptr)
-        {
-            AssetManager::instance_ptr_ = new AssetManager();
-        }
-        return AssetManager::instance_ptr_;
     }
 
     bool AssetManager::SetAndLoadTheme(Enums::Theme theme)
@@ -85,6 +74,8 @@ namespace GameRender
 
     bool AssetManager::LoadPieceTextures()
     {
+        this->piece_textures_.clear();
+
         for (auto color : GameLogic::Constants::AllColors)
         {
             for (auto piece_type : GameLogic::Constants::AllPieceType)

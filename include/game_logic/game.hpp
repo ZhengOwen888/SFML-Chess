@@ -13,6 +13,7 @@
 #include <map>
 #include <vector>
 #include <memory>
+#include <string>
 
 namespace GameLogic
 {
@@ -75,6 +76,12 @@ namespace GameLogic
             /** @brief Redo the last move that was undoed */
             void ReExecuteMove();
 
+            /************************************************************************************
+             * @brief Generate the state of the board in Forsyth–Edwards Notation (FEN) Notation.
+             * @return A string in FEN notation that represent the current state of the board.
+             ***********************************************************************************/
+            std::string GenerateFen() const;
+
             /*************************************************************************************************************
              * @brief Gets a pointer to the most recently executed move.
              * @return A const pointer to the last Move object in the undo history, or nullptr if no moves have been made.
@@ -116,8 +123,11 @@ namespace GameLogic
             /** @brief History of moves undoed, used for redo. */
             std::vector<MoveRecord> redo_history_;
 
-            /** @brief Tracks moves since the last capture or pawn move for the fifty-move draw rule. */
+            /** @brief Tracks half moves since the last capture or pawn move for the fifty-move draw rule. */
             int fifty_move_counter_;
+
+            /** @brief The total number of full moves made */
+            int full_move_counter_;
 
             // -- Game Outcome -- //
 
@@ -136,6 +146,73 @@ namespace GameLogic
              * @param is_pawn_move true if the move was a pawn move, false otherwise.
              ***************************************************************************************/
             void UpdateFiftyMoveCounter(bool is_pawn_move, bool is_capture_move);
+
+
+            // --- FEN Generation Helpers ---
+
+            /******************************************************************************************
+             * @brief Generates the FEN representation of the board's piece placement (Part 1 of FEN).
+             *
+             * Iterates over all 8 ranks (rows) from top to bottom, using numbers for empty squares
+             * and piece characters (case sensitive for color). Ranks are separated by '/'.
+             * Example: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR" (the starting state of the board)
+             *
+             * @return The FEN piece placement string.
+             *****************************************************************************************/
+            std::string GenerateFenPiecePlacement() const;
+
+            /*********************************************************************************
+             * @brief Generates the FEN representation of the active color (Part 2 of FEN).
+             *
+             * Returns 'w' if it is Light's turn to move, or 'b' if it is Dark's turn to move.
+             * Example: "w"
+             *
+             * @return The FEN active color character as a string.
+             ********************************************************************************/
+            std::string GenerateFenActiveColor() const;
+
+            /***********************************************************************************
+             * @brief Generates the FEN representation of castling availability (Part 3 of FEN).
+             *
+             * Returns "KQkq" if all castling moves are available, or a subset based on which
+             * kings/rooks have moved. Returns '-' if no castling is possible.
+             * Example: "KQ" or "-"
+             *
+             * @return The FEN castling availability string.
+             **********************************************************************************/
+            std::string GenerateFenCastlingRights() const;
+
+            /******************************************************************************************
+             * @brief Generates the FEN representation of the en passant target square (Part 4 of FEN).
+             *
+             * Returns the algebraic notation of the square immediately behind the destination
+             * of the last double pawn move. Returns '-' otherwise.
+             * Example: "e3" or "-"
+             *
+             * @return The FEN en passant target square string.
+             ******************************************************************************************/
+            std::string GenerateFenEnPassantSquare() const;
+
+            /**************************************************************************************
+             * @brief Generates the FEN representation of the halfmove clock (Part 5 of FEN).
+             *
+             * This counter tracks the number of half-moves since the last pawn advance or capture,
+             * used for the 50-move draw rule.
+             * Example: "0" or "15"
+             *
+             * @return The FEN halfmove clock value as a string.
+             *************************************************************************************/
+            std::string GenerateFenHalfmoveClock() const;
+
+            /******************************************************************************************
+             * @brief Generates the FEN representation of the fullmove number (Part 6 of FEN).
+             *
+             * The move number starts at 1 and is incremented after every full move pair (White+Black).
+             * Example: "1" or "42"
+             *
+             * @return The FEN fullmove number value as a string.
+             *****************************************************************************************/
+            std::string GenerateFenFullmoveNumber() const;
     };
 }
 

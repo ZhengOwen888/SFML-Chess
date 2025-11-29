@@ -8,6 +8,7 @@
 #include "game_logic/enums.hpp"
 
 #include <iostream>
+#include <sstream>
 
 namespace GameLogic
 {
@@ -75,8 +76,12 @@ namespace GameLogic
         this->redo_history_.clear();
 
         SwitchPlayerTurn();
-        UpdateGameState();
+        if (this->current_player_color_ == Enums::Color::Light)
+        {
+            this->full_move_counter_++;
+        }
 
+        UpdateGameState();
         this->board_.DisplayBoard();
 
         return true;
@@ -96,6 +101,10 @@ namespace GameLogic
             this->redo_history_.push_back(std::move(record));
 
             SwitchPlayerTurn();
+            if (this->current_player_color_ == Enums::Color::Dark)
+            {
+                this->full_move_counter_--;
+            }
             UpdateGameState();
         }
     }
@@ -117,6 +126,10 @@ namespace GameLogic
             this->undo_history_.push_back(std::move(new_record));
 
             SwitchPlayerTurn();
+            if (this->current_player_color_ == Enums::Color::Light)
+            {
+                this->full_move_counter_++;
+            }
             UpdateGameState();
         }
     }
@@ -180,5 +193,156 @@ namespace GameLogic
         {
             this->fifty_move_counter_++;
         }
+    }
+
+    std::string Game::GenerateFen() const
+    {
+        std::stringstream fen_ss;
+
+        fen_ss << GenerateFenPiecePlacement() << ' ';
+        fen_ss << GenerateFenActiveColor() << ' ';
+        fen_ss << GenerateFenCastlingRights() << ' ';
+        fen_ss << GenerateFenEnPassantSquare() << ' ';
+        fen_ss << GenerateFenHalfmoveClock() << ' ';
+        fen_ss << GenerateFenFullmoveNumber();
+
+        return fen_ss.str();
+    }
+
+    std::string Game::GenerateFenPiecePlacement() const
+    {
+        std::string piece_placement;
+
+        for (int row = 0; row < Constants::BOARD_SIZE; row++)
+        {
+            int empty_squares = 0;
+
+            for (int col = 0; col < Constants::BOARD_SIZE; col++)
+            {
+                const Piece *piece = this->board_.GetPieceAt(Position{row, col});
+
+                if (piece == nullptr)
+                {
+                    empty_squares++;
+                }
+                else
+                {
+                    if (empty_squares > 0)
+                    {
+                        piece_placement += std::to_string(empty_squares);
+                        empty_squares = 0;
+                    }
+
+                    piece_placement += Constants::GET_PIECE_REPR(piece->GetColor(), piece->GetPieceType());
+                }
+            }
+
+            if (empty_squares > 0)
+            {
+                piece_placement += std::to_string(empty_squares);
+            }
+            if (row < Constants::BOARD_SIZE - 1)
+            {
+                piece_placement += '/';
+            }
+        }
+
+        return piece_placement;
+    }
+
+    std::string Game::GenerateFenActiveColor() const
+    {
+        return std::to_string(Constants::GET_COLOR_REPR(this->current_player_color_));
+    }
+
+    std::string Game::GenerateFenCastlingRights() const
+    {
+        std::string castling_rights = "";
+
+        const Piece *white_king = this->board_.GetPieceAt(Position{7, 4});
+        if (
+            white_king
+        &&  white_king->GetPieceType() == Enums::PieceType::King
+        &&  white_king->GetColor() == Enums::Color::Light
+        &&  white_king->HasMoved() == false)
+        {
+            const Piece *white_rook_ks = this->board_.GetPieceAt(Position{7, 7});
+            if (
+                white_rook_ks
+            &&  white_rook_ks->GetPieceType() == Enums::PieceType::Rook
+            &&  white_rook_ks->GetColor() == Enums::Color::Light
+            &&  white_rook_ks->HasMoved() == false)
+            {
+                castling_rights += 'K';
+            }
+            const Piece *white_rook_qs = this->board_.GetPieceAt(Position{7, 0});
+            if (
+                white_rook_qs
+            &&  white_rook_qs->GetPieceType() == Enums::PieceType::Rook
+            &&  white_rook_qs->GetColor() == Enums::Color::Light
+            &&  white_rook_qs->HasMoved() == false)
+            {
+                castling_rights += 'Q';
+            }
+        }
+
+
+        const Piece *black_king = this->board_.GetPieceAt(Position{0, 4});
+        if (
+            black_king
+        &&  black_king->GetPieceType() == Enums::PieceType::King
+        &&  black_king->GetColor() == Enums::Color::Dark
+        &&  black_king->HasMoved() == false)
+        {
+            const Piece *black_rook_ks = this->board_.GetPieceAt(Position{0, 7});
+            if (
+                black_rook_ks
+            &&  black_rook_ks->GetPieceType() == Enums::PieceType::Rook
+            &&  black_rook_ks->GetColor() == Enums::Color::Dark
+            &&  black_rook_ks->HasMoved() == false)
+            {
+                castling_rights += 'k';
+            }
+            const Piece *black_rook_qs = this->board_.GetPieceAt(Position{0, 0});
+            if (
+                black_rook_qs
+            &&  black_rook_qs->GetPieceType() == Enums::PieceType::Rook
+            &&  black_rook_qs->GetColor() == Enums::Color::Dark
+            &&  black_rook_qs->HasMoved() == false)
+            {
+                castling_rights += 'q';
+            }
+        }
+
+        return castling_rights.empty() ? "-" : castling_rights;
+    }
+
+    std::string Game::GenerateFenEnPassantSquare() const
+    {
+        const Move *last_move = GetLastMove();
+
+        if (last_move != nullptr && last_move->GetMoveType() == Enums::MoveType::DoublePawn)
+        {
+            Position two_step_position = last_move->GetToPosition();
+            int one_step_row = (current_player_color_ == Enums::Color::Light)
+                ? two_step_position.GetRow() + 1
+                : two_step_position.GetRow() - 1;
+            int one_step_col = two_step_position.GetCol();
+            return  Position{one_step_row, one_step_col}.PositionToAlgebraic();
+        }
+        else
+        {
+            return "-";
+        }
+    }
+
+    std::string Game::GenerateFenHalfmoveClock() const
+    {
+        return std::to_string(this->fifty_move_counter_);
+    }
+
+    std::string Game::GenerateFenFullmoveNumber() const
+    {
+        return std::to_string(this->full_move_counter_);
     }
 } // namespace GameLogic

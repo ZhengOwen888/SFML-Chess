@@ -30,7 +30,8 @@ namespace GameLogic
     void Board::InitializeBoard()
     {
         this->board_.resize(8);  // 8 rows
-        for (auto& row : this->board_) {
+        for (auto& row : this->board_)
+        {
             row.resize(8);  // 8 columns, each element initialized to nullptr
         }
 
@@ -379,7 +380,7 @@ namespace GameLogic
             for (int col = 0; col < Constants::BOARD_SIZE; col++)
             {
                 const Piece *piece = GetPieceAt(Position{row, col});
-                std::string piece_repr = "..";
+                char piece_repr = '.';
 
                 if (piece != nullptr)
                 {
