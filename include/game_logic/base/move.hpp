@@ -66,6 +66,12 @@ namespace GameLogic
              *********************************************************************/
             const Position& GetToPosition() const;
 
+            /**************************************************
+             * @brief Get the promotion piece type for pawns.
+             * @return The piece that the pawn will promote to.
+             *************************************************/
+            Enums::PieceType GetPromotionPieceType() const;
+
             /***************************************************************************************
              * @brief Creates a Move object from a standard UCI move string (e.g., "e2e4", "a7a8q").
              * @param uci_string The move in UCI format.

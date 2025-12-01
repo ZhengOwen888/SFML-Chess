@@ -20,15 +20,6 @@ namespace GameLogic
             && this->to_position_ == other_move.to_position_;
     }
 
-    void Move::SetPromotionPieceType(Enums::PieceType promotion_piece_type)
-    {
-        if (promotion_piece_type == Enums::PieceType::King || promotion_piece_type == Enums::PieceType::Pawn)
-        {
-            throw std::invalid_argument("Invalid promotion piece type: King or Pawn.");
-        }
-        this->promotion_piece_type_ = promotion_piece_type;
-    }
-
     std::tuple<Position, Position, Enums::PieceType> Move::FromUCI(const std::string &uci_string)
     {
         if (uci_string.size() < 4 || uci_string.size() > 5)
@@ -85,6 +76,21 @@ namespace GameLogic
     const Position& Move::GetToPosition() const
     {
         return this->to_position_;
+    }
+
+    // Return the piece that the pawn will promote to.
+    Enums::PieceType Move::GetPromotionPieceType() const
+    {
+        return this->promotion_piece_type_;
+    }
+
+    void Move::SetPromotionPieceType(Enums::PieceType promotion_piece_type)
+    {
+        if (promotion_piece_type == Enums::PieceType::King || promotion_piece_type == Enums::PieceType::Pawn)
+        {
+            throw std::invalid_argument("Invalid promotion piece type: King or Pawn.");
+        }
+        this->promotion_piece_type_ = promotion_piece_type;
     }
 
 } // namespace GameLogic
