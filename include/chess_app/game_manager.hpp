@@ -9,12 +9,15 @@
 #include "game_render/renderer/board_renderer.hpp"
 #include "game_render/renderer/highlight_renderer.hpp"
 
+#include "chess_app/uci_handler.hpp"
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
 #include <vector>
 #include <optional>
 #include <algorithm>
+#include <tuple>
 #include <map>
 
 namespace ChessApp
@@ -59,9 +62,13 @@ namespace ChessApp
             GameRender::AssetManager asset_manager_;
             GameRender::BoardRenderer board_renderer_;
 
+            ChessApp::UCIHandler uci_handler_;
+
             std::optional<GameLogic::Position> selected_position_;
             std::map<GameLogic::Position, sf::Color> current_legal_positions_with_colors_;
             std::vector<GameLogic::Move> current_legal_moves_;
+
+            bool playing_as_black_;
 
             void HandleEvent(const sf::Event& event);
 
@@ -77,10 +84,15 @@ namespace ChessApp
 
             void HandlePieceSelection(GameLogic::Position clicked_position);
 
+            void ExecuteAIMove();
+
+            void TryExecuteAIMove();
 
             void UpdateHighlight(GameLogic::Position selected_position, sf::Color highlight_color);
 
             void ClearSelectionState();
+
+            void HandleSwitchColor();
 
             // -- Rendering Helpers
             void Render();
