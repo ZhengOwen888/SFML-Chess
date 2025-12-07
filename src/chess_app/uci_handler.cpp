@@ -60,6 +60,8 @@ namespace ChessApp
             {
                 throw std::runtime_error("UCI command failed during initialization: Can't use 'usi' or 'isready'\n");
             }
+
+            SendCommand("setoption name Threads value 8");
         }
         catch (const std::exception& e)
         {
@@ -78,8 +80,6 @@ namespace ChessApp
 
         while (std::getline(this->pipe_is_, line))
         {
-            std::cout << line << "\n";
-
             if (line.find(expected_response_substring) != std::string::npos)
             {
                 return line;

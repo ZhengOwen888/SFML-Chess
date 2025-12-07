@@ -9,12 +9,16 @@
 #include "game_render/renderer/highlight_renderer.hpp"
 #include "game_render/constants.hpp"
 
+#include "chess_app/uci_handler.hpp"
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
 #include <vector>
 #include <optional>
 #include <algorithm>
+#include <tuple>
+#include <map>
 
 namespace ChessApp
 {
@@ -22,8 +26,10 @@ namespace ChessApp
         : game_(GameLogic::Game()),
         asset_manager_(),
         board_renderer_(&asset_manager_),
+        uci_handler_("./stockfish"),
         window_(sf::VideoMode({800, 800}), "SFML_CHESS", sf::Style::Default),
-        selected_position_(std::nullopt)
+        selected_position_(std::nullopt),
+        playing_as_black_(false)
     {};
 
     void GameManager::Run()
@@ -37,6 +43,7 @@ namespace ChessApp
                 HandleEvent(*event);
             }
 
+            TryExecuteAIMove();
             Render();
             Display();
         }
@@ -110,7 +117,8 @@ namespace ChessApp
         auto valid_move = std::find_if(
             this->current_legal_moves_.begin(),
             this->current_legal_moves_.end(),
-            [&](const auto &move) { return move.GetToPosition() == clicked_position; });
+            [&](const auto &move) { return move.GetToPosition() == clicked_position; }
+        );
 
         if (valid_move != this->current_legal_moves_.end())
         {
@@ -150,6 +158,44 @@ namespace ChessApp
         }
     }
 
+    void GameManager::ExecuteAIMove()
+    {
+        std::string fen_str = this->game_.GenerateFen();
+        std::string uci_best_move = this->uci_handler_.GetBestMove(fen_str);
+        auto [from_position, to_position, promotion_type] = GameLogic::Move::FromUCI(uci_best_move);
+
+        auto ai_legal_moves = this->game_.GetLegalMovesAtPosition(from_position);
+
+        auto valid_move = std::find_if(
+            ai_legal_moves.begin(),
+            ai_legal_moves.end(),
+            [&](const GameLogic::Move &move) { return move.GetToPosition() == to_position; }
+        );
+
+        if (valid_move != ai_legal_moves.end())
+        {
+            this->game_.ExecuteMove(*valid_move);
+        }
+        else
+        {
+            throw std::runtime_error("Error: Engine made an illegal move.");
+        }
+    }
+
+    void GameManager::TryExecuteAIMove()
+    {
+        GameLogic::Enums::Color ai_color = this->playing_as_black_
+                                            ? GameLogic::Enums::Color::Light
+                                            : GameLogic::Enums::Color::Dark;
+
+        GameLogic::Enums::Color current_player = this->game_.GetCurrentPlayer().GetColor();
+
+        if (ai_color == current_player)
+        {
+            ExecuteAIMove();
+        }
+    }
+
     void GameManager::UpdateHighlight(GameLogic::Position selected_position, sf::Color highlight_color)
     {
         this->board_renderer_.SetPositionsToHighlight(
@@ -164,6 +210,11 @@ namespace ChessApp
         this->selected_position_ = std::nullopt;
         this->current_legal_moves_.clear();
         this->current_legal_positions_with_colors_.clear();
+    }
+
+    void GameManager::HandleSwitchColor()
+    {
+        this->playing_as_black_ = !this->playing_as_black_;
     }
 
     void GameManager::Render()
