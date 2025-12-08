@@ -99,6 +99,9 @@ namespace GameLogic
             /** @brief Display the current state of the board. */
             void DisplayBoard() const;
 
+            /** @brief Reset every pieces' position.*/
+            void ResetBoard();
+
         private:
             /** @brief The 8x8 internal representation of the chess board
              *  Each element is a unique_ptr to a Piece or nullptr. */

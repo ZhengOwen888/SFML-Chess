@@ -34,4 +34,24 @@ namespace GameLogic
     {
         return game_state_ == Enums::GameState::Ongoing;
     }
+
+    // Returns the current game state
+    Enums::GameState GameResult::GetGameState() const noexcept
+    {
+        return game_state_;
+    }
+
+    // Returns the winner's color
+    Enums::Color GameResult::GetWinnerColor() const noexcept
+    {
+        return player_color_;
+    }
+
+    // Reset the game result
+    void GameResult::Reset()
+    {
+        player_color_ = Enums::Color::None;
+        game_state_ = Enums::GameState::Ongoing;
+    }
+
 } // namespace GameLogic

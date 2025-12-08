@@ -22,8 +22,9 @@ namespace GameRender
 
     void BoardRenderer::Render(sf::RenderWindow & window, const GameLogic::Game &game)
     {
-        this->view_.setCenter(this->board_size_ / 2.f);
-        window.setView(this->view_);
+        // UpdateView(window);
+        // this->view_.setCenter(this->board_size_ / 2.f);
+        // window.setView(this->view_);
 
         std::map<GameLogic::Position, const GameLogic::Piece*> position_and_piece = game.GetAllPositonAndPiece();
 
@@ -57,6 +58,7 @@ namespace GameRender
             // The percentage of the distance from the top and left to the view to the window size.
             sf::Vector2f
             {
+                // static_cast<float>(start_x) / window_width,
                 static_cast<float>(start_x) / window_width,
                 static_cast<float>(start_y) / window_height
             },

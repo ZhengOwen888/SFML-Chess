@@ -4,6 +4,7 @@
 #include "game_logic/game.hpp"
 #include "game_logic/base/move.hpp"
 #include "game_logic/base/position.hpp"
+#include "game_logic/enums.hpp"
 
 #include "game_render/manager/asset_manager.hpp"
 #include "game_render/renderer/board_renderer.hpp"
@@ -69,6 +70,27 @@ namespace ChessApp
             std::vector<GameLogic::Move> current_legal_moves_;
 
             bool playing_as_black_;
+            GameLogic::Enums::Color ai_color_;
+
+            // -- UI State -- //
+            bool showing_promotion_dialog_ = false;
+            GameLogic::Move pending_promotion_move_;
+            bool showing_game_over_dialog_ = false;
+
+            // -- UI Elements -- //
+            sf::Font font_;
+            bool font_loaded_ = false;
+
+            // -- Button Rectangles -- //
+            sf::FloatRect undo_button_rect_;
+            sf::FloatRect redo_button_rect_;
+            sf::FloatRect new_game_button_rect_;
+
+            // -- Promotion Button Rectangles -- //
+            sf::FloatRect queen_button_rect_;
+            sf::FloatRect rook_button_rect_;
+            sf::FloatRect bishop_button_rect_;
+            sf::FloatRect knight_button_rect_;
 
             void HandleEvent(const sf::Event& event);
 
@@ -77,6 +99,8 @@ namespace ChessApp
             void HandleWindowResizeEvent();
 
             void HandleClickOnBoardEvent(sf::Vector2f world_pos);
+
+            void HandleUIClick(sf::Vector2i pixel_pos);
 
             // -- Helpers to Handle Piece Selection and Move Attempt -- //
 
@@ -98,6 +122,28 @@ namespace ChessApp
             void Render();
 
             void Display();
+
+            // -- UI Rendering -- //
+            void RenderUI();
+
+            void RenderButtons();
+
+            void RenderPromotionDialog();
+
+            void RenderGameOverDialog();
+
+            // -- UI Button Helpers -- //
+            void DrawButton(const sf::FloatRect& rect, const std::string& text, bool enabled = true);
+
+            bool IsPointInRect(sf::Vector2f point, const sf::FloatRect& rect);
+
+            // -- Promotion Handling -- //
+            void ShowPromotionDialog(const GameLogic::Move& move);
+
+            void HandlePromotionChoice(GameLogic::Enums::PieceType type);
+
+            // -- Game State Helpers -- //
+            void CheckGameOver();
     };
 } // namespace ChessApp
 

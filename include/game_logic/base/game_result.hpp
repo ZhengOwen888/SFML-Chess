@@ -52,6 +52,21 @@ namespace GameLogic
              *****************************************************************/
             bool IsOngoing() const;
 
+            /******************************************************************
+             * @brief Get the current game state.
+             * @return The current GameState enum value.
+             *****************************************************************/
+            Enums::GameState GetGameState() const noexcept;
+
+            /******************************************************************
+             * @brief Get the winner's color (only valid for Checkmate).
+             * @return The winning player's color, or Color::None for draws.
+             *****************************************************************/
+            Enums::Color GetWinnerColor() const noexcept;
+
+            /** @brief Reset the game result to ongoing state. */
+            void Reset();
+
         private:
             /** @brief The color associated with the final game state (Win: (Light, Dark), Draw : None) */
             Enums::Color player_color_;

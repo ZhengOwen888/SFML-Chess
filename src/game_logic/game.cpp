@@ -80,8 +80,10 @@ namespace GameLogic
         {
             this->full_move_counter_++;
         }
+        position_history_.push_back(GenerateFenPiecePlacement());
 
         UpdateGameState();
+        std::cout << "FiftyMoveCounter: " << this->fifty_move_counter_ << "\n";
         this->board_.DisplayBoard();
 
         return true;
@@ -101,10 +103,21 @@ namespace GameLogic
             this->redo_history_.push_back(std::move(record));
 
             SwitchPlayerTurn();
+
             if (this->current_player_color_ == Enums::Color::Dark)
             {
                 this->full_move_counter_--;
             }
+            // Remove the last position from history
+            if (!position_history_.empty())
+            {
+                position_history_.pop_back();
+            }
+
+            std::cout << "Undo\n";
+            std::cout << "FiftyMoveCounter: " << this->fifty_move_counter_ << "\n";
+            this->board_.DisplayBoard();
+
             UpdateGameState();
         }
     }
@@ -118,6 +131,7 @@ namespace GameLogic
 
             const Move &move_to_redo = old_record.ReadMoveMade();
             MoveRecord new_record = std::move(this->board_.MakeMove(move_to_redo));
+            new_record.SetPrevFiftyMoveCounter(this->fifty_move_counter_);
 
             bool is_pawn_move = MoveValidator::IsPawnMove(move_to_redo, this->board_);
             bool is_capture_move = MoveValidator::IsCaptureMove(move_to_redo, this->board_);
@@ -130,6 +144,13 @@ namespace GameLogic
             {
                 this->full_move_counter_++;
             }
+            // Add position to history
+            position_history_.push_back(GenerateFenPiecePlacement());
+
+            std::cout << "Redo\n";
+            std::cout << "FiftyMoveCounter: " << this->fifty_move_counter_ << "\n";
+            this->board_.DisplayBoard();
+
             UpdateGameState();
         }
     }
@@ -158,12 +179,29 @@ namespace GameLogic
 
     void Game::UpdateGameState()
     {
+        // Check fifty move rule
         if (fifty_move_counter_ >= 100)
         {
             result_.SetDraw(Enums::GameState::FiftyMoveRule);
+            return;
         }
+
+        // Check threefold repetition
+        if (IsThreefoldRepetition())
+        {
+            result_.SetDraw(Enums::GameState::ThreeFoldRepetition);
+            return;
+        }
+
+        // Check insufficient material
+        if (IsInsufficientMaterial())
+        {
+            result_.SetDraw(Enums::GameState::InsufficientMaterial);
+            return;
+        }
+
         // Check if the current player has any legal moves
-        else if (GetAllLegalMovesForPlayer(this->current_player_color_).size() == 0)
+        if (GetAllLegalMovesForPlayer(this->current_player_color_).empty())
         {
             // Checkmate if current player has no legal moves and their king is in check
             if (MoveValidator::IsKingInCheck(this->current_player_color_, this->board_))
@@ -183,6 +221,27 @@ namespace GameLogic
         this->current_player_color_ = GetOpponentPlayer().GetColor();
     }
 
+    bool Game::CanUndo() const
+    {
+        return undo_history_.size() >= 2;
+    }
+
+    bool Game::CanRedo() const
+    {
+        return redo_history_.size() >= 2;
+    }
+
+    void Game::Reset()
+    {
+        board_.ResetBoard();
+        current_player_color_ = Enums::Color::Light;
+        undo_history_.clear();
+        redo_history_.clear();
+        fifty_move_counter_ = 0;
+        position_history_.clear();
+        result_.Reset();
+    }
+
     void Game::UpdateFiftyMoveCounter(bool is_pawn_move, bool is_capture_move)
     {
         if (is_pawn_move || is_capture_move)
@@ -193,6 +252,11 @@ namespace GameLogic
         {
             this->fifty_move_counter_++;
         }
+    }
+
+    void Game::DisplayBoard() const
+    {
+        this->board_.DisplayBoard();
     }
 
     std::string Game::GenerateFen() const
@@ -252,7 +316,7 @@ namespace GameLogic
 
     std::string Game::GenerateFenActiveColor() const
     {
-        return std::to_string(Constants::GET_COLOR_REPR(this->current_player_color_));
+        return std::string(1, Constants::GET_COLOR_REPR(this->current_player_color_));
     }
 
     std::string Game::GenerateFenCastlingRights() const
@@ -345,4 +409,101 @@ namespace GameLogic
     {
         return std::to_string(this->full_move_counter_);
     }
+
+    const GameResult &Game::GetGameResult() const
+    {
+        return result_;
+    }
+
+    bool Game::IsThreefoldRepetition() const
+    {
+        if (position_history_.empty())
+        {
+            return false;
+        }
+
+        const std::string &current_position = position_history_.back();
+        return std::count(position_history_.begin(), position_history_.end(), current_position) >= 3;
+    }
+
+    bool Game::IsInsufficientMaterial() const
+    {
+        std::vector<Enums::PieceType> light_pieces;
+        std::vector<Enums::PieceType> dark_pieces;
+        std::vector<Enums::Color> light_bishop_colors;
+        std::vector<Enums::Color> dark_bishop_colors;
+
+        // Collect all pieces
+        for (int row = 0; row < Constants::BOARD_SIZE; row++)
+        {
+            for (int col = 0; col < Constants::BOARD_SIZE; col++)
+            {
+                Position pos(row, col);
+                const Piece *piece = board_.GetPieceAt(pos);
+                if (piece)
+                {
+                    Enums::PieceType type = piece->GetPieceType();
+
+                    // Pawns, rooks, queens can always deliver checkmate
+                    if (type == Enums::PieceType::Pawn ||
+                        type == Enums::PieceType::Rook ||
+                        type == Enums::PieceType::Queen)
+                    {
+                        return false;
+                    }
+
+                    if (piece->GetColor() == Enums::Color::Light)
+                    {
+                        if (type != Enums::PieceType::King)
+                        {
+                            light_pieces.push_back(type);
+                            if (type == Enums::PieceType::Bishop)
+                            {
+                                light_bishop_colors.push_back(pos.GetSquareColor());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (type != Enums::PieceType::King)
+                        {
+                            dark_pieces.push_back(type);
+                            if (type == Enums::PieceType::Bishop)
+                            {
+                                dark_bishop_colors.push_back(pos.GetSquareColor());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // King vs King
+        if (light_pieces.empty() && dark_pieces.empty())
+        {
+            return true;
+        }
+
+        // King + minor piece vs King
+        if ((light_pieces.empty() && dark_pieces.size() == 1
+        && (dark_pieces[0] == Enums::PieceType::Bishop || dark_pieces[0] == Enums::PieceType::Knight))
+        || (dark_pieces.empty() && light_pieces.size() == 1
+        && (light_pieces[0] == Enums::PieceType::Bishop || light_pieces[0] == Enums::PieceType::Knight)))
+        {
+            return true;
+        }
+
+        // King + Bishop vs King + Bishop (same color bishops)
+        if (light_pieces.size() == 1 && dark_pieces.size() == 1 &&
+            light_pieces[0] == Enums::PieceType::Bishop &&
+            dark_pieces[0] == Enums::PieceType::Bishop &&
+            !light_bishop_colors.empty() && !dark_bishop_colors.empty() &&
+            light_bishop_colors[0] == dark_bishop_colors[0])
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 } // namespace GameLogic

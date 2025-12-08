@@ -63,6 +63,19 @@ namespace GameLogic
         }
     }
 
+    void Board::ResetBoard()
+    {
+        for (int row = 0; row < Constants::BOARD_SIZE; row++)
+        {
+            for (int col = 0; col < Constants::BOARD_SIZE; col++)
+            {
+                RemovePieceAt(Position{row, col});
+            }
+        }
+
+        InitializeBoard();
+    }
+
     // Make a Normal move for a Piece object from one position to another on the board
     MoveRecord Board::MakeMove(const Move& move)
     {
@@ -158,6 +171,7 @@ namespace GameLogic
     {
         const Position &from_position = move.GetFromPosition();
         const Position &to_position = move.GetToPosition();
+        Enums::PieceType promoted_piece_type = move.GetPromotionPieceType();
 
         MoveRecord record;
         record.SetMoveMade(move);
@@ -168,7 +182,26 @@ namespace GameLogic
         std::unique_ptr<Piece> captured_piece = RemovePieceAt(to_position);
         record.SetCapturedPiece(std::move(captured_piece));
 
-        std::unique_ptr<Piece> promoted_piece = std::make_unique<Queen>(moving_piece->GetColor());
+        std::unique_ptr<Piece> promoted_piece;
+
+        switch (promoted_piece_type)
+        {
+            case (Enums::PieceType::Bishop):
+                promoted_piece = std::make_unique<Bishop>(moving_piece->GetColor());
+                break;
+            case (Enums::PieceType::Knight):
+                promoted_piece = std::make_unique<Knight>(moving_piece->GetColor());
+                break;
+            case (Enums::PieceType::Rook):
+                promoted_piece = std::make_unique<Rook>(moving_piece->GetColor());
+                break;
+            case (Enums::PieceType::Queen):
+                promoted_piece = std::make_unique<Queen>(moving_piece->GetColor());
+                break;
+            default:
+                promoted_piece = std::make_unique<Queen>(moving_piece->GetColor());
+                break;
+        }
         promoted_piece->SetHasMoved(true);
         PlacePieceAt(std::move(promoted_piece), to_position);
 
@@ -268,14 +301,15 @@ namespace GameLogic
         // The position of the rook before castling
         const Position rook_from_position = move_type == Enums::MoveType::CastleKS
                                         ? king_from_position + Direction::East * Constants::KING_SIDE_ROOK_OFFSET
-                                        : king_from_position + Direction::West * Constants::QUEEN_SIDE_ROOK_OFFSET;
+                                        :
+                king_from_position + Direction::West *Constants::QUEEN_SIDE_ROOK_OFFSET;
 
-        // The position of the rook after castling
-        const Position rook_to_position = move_type == Enums::MoveType::CastleKS
-                                        ? king_to_position + Direction::West
-                                        : king_to_position + Direction::East;
+                // The position of the rook after castling
+                const Position rook_to_position = move_type == Enums::MoveType::CastleKS
+                                                      ? king_to_position + Direction::West
+                                                      : king_to_position + Direction::East;
 
-        return {rook_from_position, rook_to_position};
+                return {rook_from_position, rook_to_position};
     }
 
     // Removes a Piece object from a position on the board
