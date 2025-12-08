@@ -1,0 +1,14 @@
+# executables
+*.exe
+*.out
+*.o
+
+# vscode
+.vscode
+
+# build
+build
+
+cmake_test.txt
+*test*
+*todo*
