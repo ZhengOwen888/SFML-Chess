@@ -75,15 +75,40 @@ namespace GameRender
         }
 
         inline constexpr float INITIAL_WINDOW_WIDTH = 800.f;
-        inline constexpr float INITIAL_WINDOW_HEIGHT = INITIAL_WINDOW_WIDTH;
+        inline constexpr float INITIAL_WINDOW_HEIGHT = 800.f;
 
-        inline constexpr float INITIAL_BOARD_WIDTH = INITIAL_WINDOW_WIDTH;
-        inline constexpr float INITIAL_BOARD_HEIGHT = INITIAL_WINDOW_WIDTH;
+        inline constexpr float WINDOW_RATIO_WIDTH_TO_HEIGHT = 4.f / 3.f;
+        inline constexpr float WINDOW_RATIO_HEIGHT_TO_WIDTH = 3.f / 4.f;
+
+        // Board Constants
+
+        inline constexpr float INITIAL_BOARD_WIDTH = 800.f;
+        inline constexpr float INITIAL_BOARD_HEIGHT = INITIAL_BOARD_WIDTH;
         inline constexpr float SQUARE_SIZE = INITIAL_BOARD_WIDTH / 8.f;
 
         inline const sf::Color MOVE_HIGHLIGHT_GREEN{118, 150, 86, 128};
         inline const sf::Color INVALID_MOVE_RED{255, 0, 0, 150};
         inline const sf::Color SUCCESS_MOVE_GOLD{218, 165, 32, 128};
+
+
+        // UI Constants
+
+        constexpr float BUTTON_WIDTH = 100.f;
+        constexpr float BUTTON_HEIGHT = 40.f;
+        constexpr float BUTTON_MARGIN = 10.f;
+        constexpr float UI_PANEL_HEIGHT = 60.f;
+
+        constexpr float DIALOG_WIDTH = 400.f;
+        constexpr float DIALOG_HEIGHT = 200.f;
+
+        constexpr float PROMOTION_BUTTON_SIZE = 80.f;
+        constexpr float PROMOTION_BUTTON_MARGIN = 10.f;
+
+        const sf::Color BUTTON_COLOR{70, 130, 180};
+        const sf::Color BUTTON_DISABLED_COLOR{128, 128, 128};
+        const sf::Color BUTTON_TEXT_COLOR{255, 255, 255};
+        const sf::Color DIALOG_BG_COLOR{50, 50, 50, 230};
+        const sf::Color DIALOG_BORDER_COLOR{200, 200, 200};
 
     } // namespace Constants
 

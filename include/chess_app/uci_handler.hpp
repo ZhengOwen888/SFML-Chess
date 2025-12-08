@@ -37,7 +37,7 @@ namespace ChessApp
              * @param depth The depth the engines goes to search for moves.
              * @param search_time_ms The time the engine will take to search for moves in milliseconds.
              ***************************************************************************************************************************************************************/
-            std::string GetBestMove(const std::string fen, int depth = 10, int search_time_ms = 2000);
+            std::string GetBestMove(const std::string fen, int depth = 8, int search_time_ms = 2000);
 
         private:
             /** @brief The child process that will run the stockfish engine program. */

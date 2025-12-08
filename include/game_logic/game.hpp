@@ -100,6 +100,29 @@ namespace GameLogic
              **********************************************************************/
             const Player &GetOpponentPlayer() const;
 
+            /***********************************************************************
+             * @brief Get a const reference to the game result.
+             * @return A const reference to the GameResult object.
+             **********************************************************************/
+            const GameResult &GetGameResult() const;
+
+            /***********************************************************************
+             * @brief Check if there are moves available for undo.
+             * @return true if undo is possible, false otherwise.
+             **********************************************************************/
+            bool CanUndo() const;
+
+            /***********************************************************************
+             * @brief Check if there are moves available for redo.
+             * @return true if redo is possible, false otherwise.
+             **********************************************************************/
+            bool CanRedo() const;
+
+            /** @brief Reset the game to initial state. */
+            void Reset();
+
+            void DisplayBoard() const;
+
         private:
             // -- Core -- //
 
@@ -123,16 +146,25 @@ namespace GameLogic
             /** @brief History of moves undoed, used for redo. */
             std::vector<MoveRecord> redo_history_;
 
+            /** @brief Stores existing board states for three fold repetition. */
+            std::map<std::string, int> board_states_;
+
             /** @brief Tracks half moves since the last capture or pawn move for the fifty-move draw rule. */
             int fifty_move_counter_;
 
             /** @brief The total number of full moves made */
             int full_move_counter_;
 
+            /** @brief History of board positions represented as strings for threefold repetition. */
+            std::vector<std::string> position_history_;
+
             // -- Game Outcome -- //
 
             /** @brief Store the current result of the game (Ongoing, Checkmate, Stalemate... ) */
             GameResult result_;
+
+            /** @brief Pending promotion type for pawn promotion moves. */
+            Enums::PieceType pending_promotion_type_ = Enums::PieceType::Queen;
 
             /** @brief Helper function to update game state after each player makes a move. */
             void UpdateGameState();
@@ -146,6 +178,18 @@ namespace GameLogic
              * @param is_pawn_move true if the move was a pawn move, false otherwise.
              ***************************************************************************************/
             void UpdateFiftyMoveCounter(bool is_pawn_move, bool is_capture_move);
+
+            /****************************************************************************************
+             * @brief Check if the current position has occurred three or more times.
+             * @return true if threefold repetition has occurred.
+             ***************************************************************************************/
+            bool IsThreefoldRepetition() const;
+
+            /****************************************************************************************
+             * @brief Check if there is insufficient material for checkmate.
+             * @return true if neither side can checkmate.
+             ***************************************************************************************/
+            bool IsInsufficientMaterial() const;
 
 
             // --- FEN Generation Helpers ---
