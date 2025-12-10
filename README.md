@@ -39,8 +39,6 @@ make
 
 ```bash
 .
-├── CMakeLists.txt
-├── README.md
 ├── assets
 │   ├── boards/
 │   │   ├── classic/
@@ -71,48 +69,44 @@ make
 │   ├── chess_app/
 │   │   ├── game_manager.hpp
 │   │   └── uci_handler.hpp
-│   │
 │   ├── game_logic/
 │   │   ├── base/
 │   │   │   └── *.hpp
-│   │   │
 │   │   ├── pieces/
 │   │   │   └── *.hpp
-│   │   │
 │   │   ├── validator/
-│   │   │   └── move_validator.hpp
-│   │   │
+│   │   │   └── *validator.hpp
 │   │   ├── constants.hpp
 │   │   ├── enums.hpp
 │   │   └── game.hpp
-│   │
 │   └── game_render/
-│       ├── constants.hpp
-│       ├── enums.hpp
 │       ├── manager/
-│       │   └── asset_manager.hpp
-│       │
-│       └── renderer/
-│           └── *renderer.hpp
-└── src
-    ├── chess_app/
-    │   ├── CMakeLists.txt
-    │   ├── game_manager.cpp
-    │   └── uci_handler.cpp
-    ├── game_logic/
-    │   ├── CMakeLists.txt
-    │   ├── base/
-    │   │   └── *.cpp
-    │   ├── pieces/
-    │   │   └── *.cpp
-    │   ├── validator/
-    │   │   └── move_validator.cpp
-    │   └── game.cpp
-    ├── game_render/
-    │   ├── CMakeLists.txt
-    │   ├── manager/
-    │   │   └── asset_manager.cpp
-    │   └── renderer/
-    │       └── *renderer.cpp
-    └── main.cpp
+│       │   └── *manager.hpp
+│       ├── renderer/
+│       │   └── *renderer.hpp
+│       ├── constants.hpp
+│       └── enums.hpp
+├── src
+│   ├── chess_app/
+│   │   ├── game_manager.cpp
+│   │   ├── uci_handler.cpp
+│   │   └── CMakeLists.txt
+│   ├── game_logic/
+│   │   ├── base/
+│   │   │   └── *.cpp
+│   │   ├── pieces/
+│   │   │   └── *.cpp
+│   │   ├── validator/
+│   │   │   └── *validator.cpp
+│   │   ├── game.cpp
+│   │   └── CMakeLists.txt
+│   ├── game_render/
+│   │   ├── manager/
+│   │   │   └── *.cpp
+│   │   ├── renderer/
+│   │   │   └── *renderer.cpp
+│   │   └── CMakeLists.txt
+│   └── main.cpp
+├── CMakeLists.txt
+└── README.md
 ```
