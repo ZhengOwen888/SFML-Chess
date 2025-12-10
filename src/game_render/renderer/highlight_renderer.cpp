@@ -2,6 +2,7 @@
 
 #include "game_logic/base/position.hpp"
 #include "game_logic/constants.hpp"
+#include "game_logic/game.hpp"
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
@@ -15,7 +16,7 @@ namespace GameRender
         selected_position_color_(sf::Color::Transparent)
     {};
 
-    void HighlightRenderer::Render(sf::RenderWindow &window)
+    void HighlightRenderer::Render(sf::RenderWindow &window, const GameLogic::Game &game)
     {
         HighlightSelectedPosition(window);
         HighlightPossibleMoves(window);

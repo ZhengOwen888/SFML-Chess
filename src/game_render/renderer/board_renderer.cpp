@@ -30,7 +30,7 @@ namespace GameRender
 
         DrawBoard(window);
 
-        this->highlight_renderer_.Render(window);
+        this->highlight_renderer_.Render(window, game);
 
         DrawPieces(window, position_and_piece);
     }
