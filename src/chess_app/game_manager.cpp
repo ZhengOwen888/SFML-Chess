@@ -355,6 +355,10 @@ namespace ChessApp
 
         if (valid_move != ai_legal_moves.end())
         {
+            if (valid_move->GetMoveType() == GameLogic::Enums::MoveType::PawnPromotion)
+            {
+                valid_move->SetPromotionPieceType(promotion_type);
+            }
             this->game_.ExecuteMove(*valid_move);
         }
         else
