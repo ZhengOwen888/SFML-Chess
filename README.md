@@ -35,7 +35,7 @@ make
 ./main
 ```
 
-## File Structure
+## Project Structure
 
 ```bash
 .
