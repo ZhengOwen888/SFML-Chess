@@ -1,7 +1,9 @@
 #ifndef GAMERENDERER_HIGHLIGHT_RENDERER_HPP
 #define GAMERENDERER_HIGHLIGHT_RENDERER_HPP
 
+#include "game_logic/game.hpp"
 #include "game_logic/base/position.hpp"
+#include "game_render/renderer/base_renderer.hpp"
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
@@ -17,7 +19,7 @@ namespace GameRender
      *
      * Handles highlighting squares for visual effects.
      ********************************************************************************/
-    class HighlightRenderer
+    class HighlightRenderer: public BaseRenderer
     {
         public:
             /**************************************************************************************************************************************
@@ -34,7 +36,7 @@ namespace GameRender
              * @brief Render the indicator of highlighting for possible move hinting, illegal moves, and others.
              * @param window A reference to the window where we will do the rendering.
              **************************************************************************************************/
-            void Render(sf::RenderWindow &window);
+            void Render(sf::RenderWindow &window, const GameLogic::Game &game);
 
             /***************************************************************************************************************************************************************
              * @brief Set the positions that we need to highlight based on the position the user clicked on.
