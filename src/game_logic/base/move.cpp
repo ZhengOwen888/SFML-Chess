@@ -35,7 +35,7 @@ namespace GameLogic
         char to_rank = uci_string.at(3);
         Position to_position = Position::AlgebraicToPosition(to_file, to_rank);
 
-        char promotion_type = uci_string.size() == 5 ? uci_string.at(5) : '\0';
+        char promotion_type = uci_string.size() == 5 ? uci_string.at(4) : '\0';
         Enums::PieceType promotion_piece_type;
 
         switch (std::tolower(promotion_type))
