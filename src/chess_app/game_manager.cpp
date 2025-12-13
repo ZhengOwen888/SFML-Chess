@@ -529,13 +529,20 @@ namespace ChessApp
 
     void GameManager::RenderGameOverDialog()
     {
-        float center_x = window_.getSize().x / 2.f;
-        float center_y = window_.getSize().y / 2.f;
+        sf::View board_view = board_renderer_.GetView();
+        sf::Vector2f center = board_view.getCenter();
+
+        float center_x = center.x;
+        float center_y = center.y;
+
+        window_.setView(window_.getDefaultView());
 
         // Draw semi-transparent overlay
         sf::RectangleShape overlay(sf::Vector2f{static_cast<float>(window_.getSize().x), static_cast<float>(window_.getSize().y)});
         overlay.setFillColor(sf::Color(0, 0, 0, 150));
         window_.draw(overlay);
+
+        window_.setView(board_view);
 
         // Draw dialog background
         sf::RectangleShape dialog(sf::Vector2f{GameRender::Constants::DIALOG_WIDTH, GameRender::Constants::DIALOG_HEIGHT});
